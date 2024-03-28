@@ -15,7 +15,7 @@
 
 ## Frontend
 
-`cd proyecto-gps` (raíz)
+`cd frontend`
 
 #### Instalar dependencias
 
