@@ -1,24 +1,24 @@
 const mongoose = require("mongoose");
 
-const bicicletaSchema = new mongoose.Schema({
-    color: {
+const guardiaSchema = new mongoose.Schema({
+    nombre: {
         type: String,
         required: true
     },
-    tipo: {
+    apellido: {
         type: String,
         required: true
     },
-    descripcion: {
+    cargo: {
         type: String,
         required: true
     },
-    estado: {
+    situacion_laboral: {
         type: String,
         required: true
     }
 });
 
-const Bicicleta = mongoose.model("Bicicleta", bicicletaSchema);
+const Guardia = mongoose.model("Guardia", guardiaSchema);
 
-module.exports = Bicicleta;
+module.exports = Guardia;
