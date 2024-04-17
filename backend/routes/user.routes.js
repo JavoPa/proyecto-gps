@@ -24,6 +24,6 @@ router.use(logRequest); //funcion temporal mientras desarrollan el middleware de
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
 router.post("/validar", accesoController.validarToken); //Validar token para ingresar a una jaula
-//router.post("/salir", accesoController.salir); //Generar token para salir de una jaula
+//router.post("/salir", accesoController.registrarSalida); //Generar token para salir de una jaula
 
 module.exports = router;

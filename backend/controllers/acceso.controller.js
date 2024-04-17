@@ -46,7 +46,29 @@ async function validarToken(req, res) { //Solicitud emitida por el guardia para 
   }
 }
 
+/**
+ * Crea un nuevo acceso
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function registrarSalida(req, res){ //Solicitud emitida por el Usuario para Salir, Request.body=>id
+  try{
+    const { body } = req;
+    const { error: bodyError } = userIdSchema.validate(body);
+    if (bodyError) return respondError(req, res, 400, bodyError.message);
+
+    const [token, tokenError] = await accesoService.registrarSalida(req.body.id);
+    if (tokenError) return respondError(req, res, 500, tokenError);
+    if(!token) return respondError(req, res, 400, 'No se creó el token');
+    respondSuccess(req, res, 201, token);
+  }catch{
+    handleError(error, "acceso.controller -> registrarSalida");
+    respondError(req, res, 500, "No se registró la salida");
+  }
+}
+
 module.exports = {
     registrarIngreso,
-    validarToken
+    validarToken,
+    registrarSalida
 };

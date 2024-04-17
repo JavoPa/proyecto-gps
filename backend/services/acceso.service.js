@@ -98,7 +98,33 @@ async function validarToken(token, guardiaId) {
   }
 }
 
+/**
+ * Crea un nuevo acceso en la base de datos.
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+ */
+async function registrarSalida(usuarioId) {
+  try{
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, salida: null });
+    if (!accesoExistente) {
+      return [null, 'El usuario no registra ingreso en el bicicletero'];
+    }
+
+    // Generar un nuevo token y lo guarda en la base de datos
+    const acceso = await generarToken(usuarioId);
+
+    // Devolver el token
+    return [acceso, null];
+  }catch{
+    handleError(error, "acceso.service -> registrarSalida");
+    return [null, error];
+  }
+
+}
+
   module.exports = {
     registrarIngreso,
-    validarToken
+    validarToken,
+    registrarSalida
 };
