@@ -20,6 +20,15 @@ function logRequest(req, res, next) { //funcion temporal mientras desarrollan el
   
 router.use(logRequest); //funcion temporal mientras desarrollan el middleware de autenticacion********
 //router.use(authenticationMiddleware);
+const usuarioController = require('../controllers/usuario.controller.js'); // Adjust path as necessary
+
+//para el crud de user
+router.post('/usuarios', usuarioController.create);
+router.get('/usuarios', usuarioController.findAll);
+router.get('/usuarios/:usuarioId', usuarioController.findOne);
+router.put('/usuarios/:usuarioId', usuarioController.update);
+router.delete('/usuarios/:usuarioId', usuarioController.delete);
+
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
