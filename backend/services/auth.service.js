@@ -1,10 +1,10 @@
 
 
-const User = require("../models/user.model.js");
+const User = require("../models/usuario.model.js");
 
 const jwt = require("jsonwebtoken");
 
-const { ACCESS_JWT_SECRET,REFRESH_JWT_SECRET,} = require("../config/configEnv.js");
+const { ACCESS_JWT_SECRET,REFRESH_JWT_SECRET,} = require("../config/env.config.js");
 
 const { handleError } = require("../utils/errorHandler");
 
@@ -13,8 +13,8 @@ async function login(user) {
       const { correo, password } = user;
   
       const userFound = await User.findOne({ correo: correo })
-        .populate("roles")
         .exec();
+      console.log("userFound", userFound);
       if (!userFound) {
         return [null, null, "El usuario y/o contraseña son incorrectos"];
       }
@@ -29,21 +29,22 @@ async function login(user) {
       }
   
       const accessToken = jwt.sign(
-        { email: userFound.email, roles: userFound.roles },
+        { correo: userFound.correo, roles: userFound.rol },
         ACCESS_JWT_SECRET,
         {
           expiresIn: "1d",
         },
       );
+    
   
       const refreshToken = jwt.sign(
-        { email: userFound.email },
+        { correo: userFound.correo },
         REFRESH_JWT_SECRET,
         {
           expiresIn: "7d", // 7 días
         },
       );
-  
+
       return [accessToken, refreshToken, null];
     } catch (error) {
       handleError(error, "auth.service -> signIn");
@@ -62,15 +63,14 @@ async function login(user) {
           if (err) return [null, "La sesion a caducado, vuelva a iniciar sesion"];
   
           const userFound = await User.findOne({
-            email: user.email,
+            correo: user.correo,
           })
-            .populate("roles")
             .exec();
   
           if (!userFound) return [null, "No usuario no autorizado"];
   
           const accessToken = jwt.sign(
-            { email: userFound.email, roles: userFound.roles },
+            { correo: userFound.correo, roles: userFound.rol },
             ACCESS_JWT_SECRET,
             {
               expiresIn: "1d",

@@ -9,6 +9,7 @@ const { authLoginBodySchema } = require("../schema/auth.schema");
 async function login(req, res) {
     try {
       const { body } = req;
+      console.log("body", body);
       const { error: bodyError } = authLoginBodySchema.validate(body);
       if (bodyError) return respondError(req, res, 400, bodyError.message);
   
@@ -23,7 +24,7 @@ async function login(req, res) {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       });
   
-      respondSuccess(req, res, 200, { accessToken });
+      respondSuccess(req, res, 200, { accessToken,refreshToken });
     } catch (error) {
       handleError(error, "auth.controller -> login");
       respondError(req, res, 400, error.message);

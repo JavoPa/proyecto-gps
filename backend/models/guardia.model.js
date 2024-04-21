@@ -1,14 +1,7 @@
 const mongoose = require("mongoose");
+const Usuario = require("./usuario.model");
 
 const guardiaSchema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true
-    },
-    apellido: {
-        type: String,
-        required: true
-    },
     cargo: {
         type: String,
         required: true
@@ -19,6 +12,6 @@ const guardiaSchema = new mongoose.Schema({
     }
 });
 
-const Guardia = mongoose.model("Guardia", guardiaSchema);
+const Guardia = Usuario.discriminator("Guardia", guardiaSchema);
 
 module.exports = Guardia;

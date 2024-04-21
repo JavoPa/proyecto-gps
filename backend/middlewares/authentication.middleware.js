@@ -8,6 +8,8 @@ const { respondError } = require("../utils/resHandler");
 
 const verifyJWT = (req, res, next) => {
     try {
+      console.log("Authentication middleware");
+      console.log(req.headers.authorization);
       const authHeader = req.headers.authorization || req.headers.Authorization;
   
       if (!authHeader?.startsWith("Bearer ")) {

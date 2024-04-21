@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 
 const usuarioSchema = new mongoose.Schema({
     rut: {
@@ -29,40 +28,10 @@ const usuarioSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    cargo: {
-        type: String,
-        required: false
-    },
-    area: {
-        type: String,
-        required: false
-    },
-    situacion_laboral: {
-        type: String,
-        required: false
-    },
-    departamento: {
-        type: String,
-        required: false
-    },
-    carrera: {
-        type: String,
-        required: false
-    },
-    situacion_academica: {
-        type: String,
-        required: false
-    },
     rol: {
         type: String,
         required: true
-    },
-    roles: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Roles",
-        },
-      ]
+    }
 });
 
 /** Encripta la contraseña del usuario */
