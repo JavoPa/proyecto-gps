@@ -13,6 +13,6 @@ const authenticationMiddleware = require("../middlewares/authentication.middlewa
 // Define las rutas para la autenticación /api/auth
 router.use("/auth", authRoutes);
 // Define las rutas para los usuarios /api/usuarios
-router.use("/users", authenticationMiddleware, userRoutes);
+router.use("/users",/* authenticationMiddleware, */userRoutes);
 
 module.exports = router;
