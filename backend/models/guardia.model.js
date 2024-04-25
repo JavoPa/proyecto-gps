@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+
 const Usuario = require("./usuario.model");
 
 const guardiaSchema = new mongoose.Schema({
+
     cargo: {
         type: String,
         required: true
@@ -13,5 +15,6 @@ const guardiaSchema = new mongoose.Schema({
 });
 
 const Guardia = Usuario.discriminator("Guardia", guardiaSchema);
+
 
 module.exports = Guardia;

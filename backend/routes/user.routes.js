@@ -4,6 +4,7 @@ const express = require("express");
 
 /* Controladores */
 const accesoController = require("../controllers/acceso.controller.js");
+
 const usuarioController = require("../controllers/usuario.controller.js");
 
 /** Middlewares de autorización */
@@ -14,16 +15,8 @@ const authenticationMiddleware = require("../middlewares/authentication.middlewa
 
 /** Instancia del enrutador */
 const router = express.Router();
-/*
-// Define el middleware de autenticación para todas las rutas
-function logRequest(req, res, next) { //funcion temporal mientras desarrollan el middleware de autenticacion********
-    console.log(`${req.method} ${req.originalUrl}`);
-    next();
-  }
-  
-router.use(logRequest); //funcion temporal mientras desarrollan el middleware de autenticacion********
-*/
-//router.use(authenticationMiddleware);
+
+router.use(authenticationMiddleware);
 
 // creacion de usuarios
 
