@@ -1,0 +1,100 @@
+
+
+#Documentacion funciones
+
+###### Funcion crear usuario ######
+
+Funcion que filtra la creacion de usuario por un campo
+Tipo (Estudiante,Guardia,Funcionario,Academico,Administrador)
+Dependiendo el tipo este solicita campos opcionesl
+
+Ruta:  /api/users/crear
+
+Formato Obligatorio:
+            {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                ...,
+                ...
+            }
+    
+Formato Opciona:
+
+    Estudiante:
+               {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                "carrera":"",
+                "situacion_academica":""
+            }
+    
+     Guardia:
+               {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                "cargo":"",
+                "situacion_laboral":""
+            }
+    
+
+     Academico:
+               {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                "cargo":"",
+                "area":"",
+                "situacion_laboral":""
+            }
+    
+     Funcionario:
+               {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                "situacion_laboral":"",
+                "departamento":"".
+                "cargo":""
+            }
+    
+     Administrador:
+               {
+                "tipo":"",
+                "rut":"",
+                "nombre":"",
+                "apellido":"",
+                "fono":"",
+                "correo":"",
+                "password":"",
+                "rol":"",
+                "cargo":"",
+                "departamento":""
+            }

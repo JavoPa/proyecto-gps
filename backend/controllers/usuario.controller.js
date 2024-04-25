@@ -9,6 +9,17 @@ const {
 } = require('../services/usuario.service')
 
 
+async function validarRut(req,res) {
+    try {
+        const { rut } = req.body;
+        // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
+        // segun el caso
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 async function crearUsuario(req,res) {
     try {
         const { body } = req;
@@ -25,6 +36,8 @@ async function crearUsuario(req,res) {
         
         //validar tipo de usuario a crear
         if(body.tipo == "Estudiante"){
+
+
             const nuevoEstudiante = crearEstudiante(body);
 
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoEstudiante);
