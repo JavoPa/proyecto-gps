@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Usuario = require("./usuario.model.js");
+const Usuario = require("./user.models");
 
 const administradorSchema = new mongoose.Schema({
     cargo: {

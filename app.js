@@ -1,6 +1,9 @@
 require('dotenv').config()
-
-const {DATABASE_URL} = require('dotenv').config()
+const mongoose = require('mongoose'); 
+const {
+  DATABASE_URL,
+  PORT,
+} = require('dotenv').config()
 
 const {poblarBD} = require('./config/poblar.bd.js')
 
@@ -13,8 +16,21 @@ app.get('/', (req, res) => {
 
 })
 
+async function connectBaseDatos(){
+  //conectar a base de datos
+  await mongoose.connect('mongodb+srv://User:C2676@mi-bd.snhr7ql.mongodb.net/?retryWrites=true&w=majority');
+
+}
+
+
+
 app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`)
-  poblarBD();
-})
+  console.log(`Servidor en ecucha en http://localhost:${PORT}`)
+  //connectBaseDatos();
+  console.log(DATABASE_URL);
+  console.log(PORT);
+  for (let i = 0; i < 10; i++){
+    poblarBD();
+  }
+});
 
