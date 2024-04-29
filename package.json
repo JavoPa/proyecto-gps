@@ -1,7 +1,7 @@
 {
   "name": "server-ubb",
   "version": "1.0.0",
-  "description": "api para consultas base de datos sql",
+  "description": "api para consultas base de datos nosql",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",

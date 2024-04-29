@@ -37,7 +37,6 @@ function validarRut(y){
     if (resta === 11) {
         return 0;
     }
-    console.log(typeof(resta.toString()));
     return resta;
 }
 
