@@ -4,27 +4,28 @@ const Funcionario = require('../models/funcionario.model');
 const Estudiante = require('../models/estudiante.model');
 const Academico = require('../models/academico.model');
 const Administrador = require('../models/administrador.model');
-const User = require('../models/user.model');
+const User = require('../models/user.models.js');
 const {generarDatos} = require('../functions/generarDatos.js');
+const fs = require('fs');
 
-async function poblarBD(n){
+async function poblarBD(cantidad){
     try {
 
         // base de datos esta vacia
-        const consulta = await User.find();
-        
+        const consulta = await User.find({});
+
         if(consulta.length > 0){
             return console.log("Base de datos ya tiene datos");
         }
 
         // crear n de usuarios
-        for(let i = 0; i < n; i++){
+        for(let i = 0; i < cantidad; i++){
             //genera datos azar
             const datos = generarDatos();
+            //console.log(`Entre valor i : ${i}`);
             //crea usuario por tipo
-            if(datos[9]== "estudiante"){
-                console.log(datos);
-                const est = new Estudiante({
+            if(datos[9] == "estudiante"){
+                const est = await new Estudiante({
                     rut: datos[0],
                     nombre: datos[1],
                     apellido: datos[2],
@@ -40,12 +41,14 @@ async function poblarBD(n){
                     Fecha_ingreso: datos[12],
                     situacion_academica: datos[13]
                 }).save();
-                return est;
+                fs.appendFile("Datos.txt", est.rut + "\n", (err) => {
+                    if (err) throw err;
+                    console.log("Datos guardados");
+                });
+                //console.log(est);
             }
-
             if(datos[9]== "funcionario"){
-                console.log(datos);
-                const fun = new Funcionario({
+                const fun = await new Funcionario({
                     rut: datos[0],
                     nombre: datos[1],
                     apellido: datos[2],
@@ -63,12 +66,15 @@ async function poblarBD(n){
                     anexo: datos[14],
                     oficina: datos[15]
                 }).save();
-                return fun;
+                fs.appendFile("Datos.txt", fun.rut + "\n", (err) => {
+                    if (err) throw err;
+                    console.log("Datos guardados");
+                });
+                //console.log(fun);
             }
 
             if(datos[9]== "academico"){
-                console.log(datos);
-                const aca = new Academico({
+                const aca = await new Academico({
                     rut: datos[0],
                     nombre: datos[1],
                     apellido: datos[2],
@@ -86,12 +92,15 @@ async function poblarBD(n){
                     oficina: datos[14],
                     situacion_laboral: datos[15]
                 }).save();
-                return aca;
+                fs.appendFile("Datos.txt", aca.rut + "\n", (err) => {
+                    if (err) throw err;
+                    console.log("Datos guardados");
+                });
+                //console.log(aca);
             }
 
             if(datos[9]== "administrador"){
-                console.log(datos);
-                const admin = new Administrador({
+                const admin = await new Administrador({
                     rut: datos[0],
                     nombre: datos[1],
                     apellido: datos[2],
@@ -108,15 +117,17 @@ async function poblarBD(n){
                     anexo: datos[13],
                     oficina: datos[14]
                 }).save();
-                return admin
+                fs.appendFile("Datos.txt", admin.rut + "\n", (err) => {
+                    if (err) throw err;
+                    console.log("Datos guardados");
+                });
+                //console.log(admin);
             }
-
-            return console.log("Error crear usuario");
         }
         
         
     } catch (error) {
-        
+        console.log(error);
     }
 }
 

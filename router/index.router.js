@@ -1,12 +1,10 @@
 
 const router = require('express').Router();
-const usuarios = require('./request.router.js');
+const consulta = require('./request.router.js');
 
 
 // middleware para manejar las rutas
 
-
-router.get('/users',usuarios);
-
+router.use('/users',consulta);
 
 module.exports = router;

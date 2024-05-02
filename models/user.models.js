@@ -16,7 +16,7 @@ const usuarioSchema = new mongoose.Schema({
         required: true
     },
     fecha_nacimiento: {
-        type: Date,
+        type: String,
         required: true
     },
     Direccion: {
@@ -24,7 +24,7 @@ const usuarioSchema = new mongoose.Schema({
         required: true
     },
     fono: {
-        type: String,
+        type: Number,
         required: true
     },
     correo: {

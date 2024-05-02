@@ -6,6 +6,7 @@ const validar = require('../config/validarRut.js');
 
 async function obtenerUsuarios(req,res){
     try {
+        console.log("Dentro de obtener");
         const rut = req.body.rut;
         // validar formato rut
         //12345678-9

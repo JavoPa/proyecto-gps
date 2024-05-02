@@ -1,15 +1,18 @@
 require('dotenv').config()
+const mongoose = require('mongoose');
 const {poblarBD} = require('./config/poblar.bd.js')
 const express = require('express')
 const {PORT, DB_URL} = process.env
 const indexRouter = require('./router/index.router.js')
+const morgan = require("morgan");
 
 
 async function servidorGeneral(){
   try {
     const app = express()
     app.use(express.json())
-    app.use("/v1.1",indexRouter);
+    app.use(morgan("dev"));
+    app.use("/api",indexRouter);
     app.listen(PORT, () => {
       console.log(`Servidor en ecucha en http://localhost:${PORT}`)
     });
@@ -35,7 +38,7 @@ async function backendInicio(){
     // conexion bd
     await connectBaseDatos();
     // poblar Bd
-    await poblarBD(10);
+    await poblarBD(5);
     //iniciar servidor
     await servidorGeneral();
   } catch (error) {
@@ -43,4 +46,5 @@ async function backendInicio(){
   }
 }
 
+backendInicio().then(() => console.log("Backend iniciado"));
 

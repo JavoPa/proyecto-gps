@@ -1,7 +1,7 @@
 
 const { faker } = require('@faker-js/faker');
 const {Roles, Carreras, Areas, Situacion_Laboral, Situacion_Academica} = require('../constant/constantes');
-const {validarRut} = require('./validarRut');
+const {validarRut} = require('../config/validarRut.js');
 
 function generarDatos() {
     // usar fakerjs para crear datos ficticios y otros segun dato
@@ -37,7 +37,7 @@ function generarDatos() {
     }
  
     if(Datos[9]  == "funcionario"){
-        Datos.push(Situacion_Laboral[Math.floor(Math.random()*situacion_laboral.length)]);
+        Datos.push(Situacion_Laboral[Math.floor(Math.random()*Situacion_Laboral.length)]);
         Datos.push("Departamento de Informatica");
         Datos.push("X");
         Datos.push("Jefe de Departamento X");
