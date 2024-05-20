@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
 var connectDB = require('../config/db.config.js');
+const createUser = require("../config/User.Test.js")
 
 /**
  * Get port from environment and store in Express.
@@ -24,8 +25,28 @@ var server = http.createServer(app);
 
 /**
  * Connect to MongoDB
+ * Create User initial
  */
 connectDB();
+createUser();
+
+const Academico = require("../models/academico.model.js");
+const { networkInterfaces } = require('os');
+/*
+const newAcademico = new Academico({
+    rut: "11.111.111-9",
+    nombre: "Academico",
+    apellido: "Apellido",
+    fono: "123456789",
+    correo: "a@ubb.cl",
+    password: "123456",
+    rol: "academico",
+    cargo: "Profesor",
+    area: "Informatica",
+    situacion_laboral: "Contratado"
+}).save();
+*/
+
 
 /**
  * Listen on provided port, on all network interfaces.
