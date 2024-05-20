@@ -7,6 +7,10 @@ const accesoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Usuario' 
     },
+    invitado: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Invitado'
+    },
     guardia: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Guardia' 
