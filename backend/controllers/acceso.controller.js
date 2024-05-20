@@ -1,7 +1,7 @@
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const { userIdSchema } = require("../schema/usuario.schema");
-const { tokenSchema } = require("../schema/acceso.schema");
+const { tokenSchema, invitadoSchema } = require("../schema/acceso.schema");
 const accesoService = require('../services/acceso.service');
 
 /**
@@ -11,11 +11,12 @@ const accesoService = require('../services/acceso.service');
  */
 async function registrarIngreso(req, res) { //Solicitud emitida por el Usuario para Ingresar, Request.body=>id
   try {
-    const { body } = req;
-    const { error: bodyError } = userIdSchema.validate(body);
-    if (bodyError) return respondError(req, res, 400, bodyError.message);
+    const userId = req.id;
+    
+    const { error: idError } = userIdSchema.validate({ id: userId });
+    if (idError) return respondError(req, res, 400, idError.message);
 
-    const [token, tokenError] = await accesoService.registrarIngreso(req.body.id);
+    const [token, tokenError] = await accesoService.registrarIngreso(userId);
     if (tokenError) return respondError(req, res, 500, tokenError);
     if(!token) return respondError(req, res, 400, 'No se creó el token');
     respondSuccess(req, res, 201, token);
@@ -35,8 +36,10 @@ async function validarToken(req, res) { //Solicitud emitida por el guardia para 
     const { body } = req;
     const { error: bodyError } = tokenSchema.validate(body);
     if (bodyError) return respondError(req, res, 400, bodyError.message);
-
-    const [valido, tokenError] = await accesoService.validarToken(req.body.token, req.body.guardiaId);
+    const guardiaId = req.id;
+    const { error: idError } = userIdSchema.validate({ id: guardiaId });
+    if (idError) return respondError(req, res, 400, idError.message);
+    const [valido, tokenError] = await accesoService.validarToken(req.body.token, guardiaId);
     if (tokenError) return respondError(req, res, 500, tokenError);
     if(!valido) return respondError(req, res, 400, 'Token no válido');
     respondSuccess(req, res, 200, { success: true });
@@ -46,7 +49,32 @@ async function validarToken(req, res) { //Solicitud emitida por el guardia para 
   }
 }
 
+/**
+ * Crea un nuevo acceso manual por el guardia
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function ingresoInvitado(req, res) { //Solicitud emitida por el Guardia
+  try {
+    const guardiaId = req.id;
+    const { error: idError } = userIdSchema.validate({ id: guardiaId });
+    if (idError) return respondError(req, res, 400, idError.message);
+    const { body } = req;
+    const { error: bodyError } = invitadoSchema.validate(body);
+    if (bodyError) return respondError(req, res, 400, bodyError.message);
+
+    const [ingreso, ingresoError] = await accesoService.ingresoInvitado(body, guardiaId);
+    if (ingresoError) return respondError(req, res, 500, ingresoError);
+    if(!ingreso) return respondError(req, res, 400, 'No se registró el ingreso');
+    respondSuccess(req, res, 201, ingreso);
+  } catch (error) {
+    handleError(error, "acceso.controller -> ingresoInvitado");
+    respondError(req, res, 500, "No se registró el ingreso");
+  }
+}
+
 module.exports = {
     registrarIngreso,
-    validarToken
+    validarToken,
+    ingresoInvitado,
 };
