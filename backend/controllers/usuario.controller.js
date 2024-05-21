@@ -6,13 +6,102 @@ const {
     crearAdministrador,
     crearFuncionario,
     crearGuardia
-} = require('../services/usuario.service')
+} = require('../services/usuario.service');
+
+const axios = require('axios');
 
 
-async function validarRut(req,res) {
+async function preCreacion(req,res) {
     try {
         const { rut } = req.body;
         // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
+        const aux = await axios.get('http://localhost:5000/api/users/obtener',{
+            data:{
+                "rut": rut
+            }
+        }).catch((error) => {
+            console.log(error.code);
+            return res.status(404).json({message: "Usuario no encontrado"});
+        });
+
+        const usuario = aux.data;
+
+        if(!usuario){
+            return res.status(404).json({message: "Usuario no encontrado"});
+        }
+
+        //consultar si existe el usuario
+
+        if(usuario.Rol == "estudiante"){
+            const Datos = {
+                "rut": usuario.rut,
+                "nombre": usuario.nombre,
+                "apellido": usuario.apellido,
+                "fono": usuario.fono,
+                "correo": usuario.correo,
+                "password": usuario.password,
+                "rol": usuario.Rol,
+                "carrera": usuario.carrera,
+                "situacion_academica": usuario.situacion_academica
+            }
+            const nuevoEstudiante = await crearEstudiante(Datos);
+            return res.status(200).send(nuevoEstudiante);
+
+        }
+        if(usuario.Rol == "academico"){
+            const Datos = {
+                "rut": usuario.rut,
+                "nombre": usuario.nombre,
+                "apellido": usuario.apellido,
+                "fono": usuario.fono,
+                "correo": usuario.correo,
+                "password": usuario.password,
+                "rol": usuario.Rol,
+                "cargo": usuario.cargo,
+                "area": usuario.area,
+                "situacion_laboral": usuario.situacion_laboral
+            
+            }
+
+            const nuevoAcademico = await crearAcademico(Datos);
+            return res.status(200).send(nuevoAcademico);
+        }
+        if(usuario.Rol == "administrador"){
+            const Datos = {
+                "rut": usuario.rut,
+                "nombre": usuario.nombre,
+                "apellido": usuario.apellido,
+                "fono": usuario.fono,
+                "correo": usuario.correo,
+                "password": usuario.password,
+                "rol": usuario.Rol,
+                "cargo": usuario.cargo,
+                "departamento": usuario.departamento
+            }
+
+            const nuevoAdministrador = await crearAdministrador(Datos);
+            return res.status(200).send(nuevoAdministrador);
+            
+        }
+        if(usuario.Rol == "funcionario"){
+            const Datos = {
+                "rut": usuario.rut,
+                "nombre": usuario.nombre,
+                "apellido": usuario.apellido,
+                "fono": usuario.fono,
+                "correo": usuario.correo,
+                "password": usuario.password,
+                "rol": usuario.Rol,
+                "situacion_laboral": usuario.situacion_laboral,
+                "departamento": usuario.departamento,
+                "cargo": usuario.cargo
+            }
+
+            const nuevoFuncionario = await crearFuncionario(Datos);
+            return res.status(200).send(nuevoFuncionario);
+            
+        }
+
         // segun el caso
     } catch (error) {
         console.log(error);
@@ -70,4 +159,7 @@ async function crearUsuario(req,res) {
     }
 }
 
-module.exports = {crearUsuario};
+module.exports = {
+    crearUsuario,
+    preCreacion
+};
