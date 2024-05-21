@@ -31,6 +31,10 @@ const usuarioSchema = new mongoose.Schema({
     rol: {
         type: String,
         required: true
+    },
+    bicicleta: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Bicicleta'
     }
 });
 
