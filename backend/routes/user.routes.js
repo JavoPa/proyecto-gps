@@ -7,6 +7,8 @@ const accesoController = require("../controllers/acceso.controller.js");
 
 const usuarioController = require("../controllers/usuario.controller.js");
 
+const bicicletaController = require("../controllers/bicicleta.controller.js");
+
 /** Middlewares de autorización */
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
@@ -27,9 +29,8 @@ router.post("/acceder", accesoController.registrarIngreso); //Generar token para
 //router.post("/salir", accesoController.salir); //Generar token para salir de una jaula
 
 // Define las rutas post acceso a jaula
-router.get("/bicicleta", accesoController.registrarSalida); //Ver detalles de la bicicleta del estudiante
-router.post("/bicicleta", accesoController.registrarSalida); //Definir detalles de la bicicleta del estudiante
-router.put("/bicicleta", accesoController.registrarSalida); //Actualizar detalles de la bicicleta del estudiante
-router.delete("/bicicleta", accesoController.registrarSalida); //Eliminar detalles de la bicicleta del estudiante
+router.get("/bicicleta", bicicletaController.getBicicleta); //Ver detalles de la bicicleta del estudiante
+router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detalles de la bicicleta del estudiante
+router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
 
 module.exports = router;
