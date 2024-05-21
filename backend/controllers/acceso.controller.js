@@ -73,8 +73,46 @@ async function ingresoInvitado(req, res) { //Solicitud emitida por el Guardia
   }
 }
 
+
+
+/**
+ * Registra el ingreso del guardia y lo asigna a una jaula específica.
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function ingresoGuardia(req, res) {
+  try {
+      const { guardiaId, jaulaId } = req.body;
+      if (!guardiaId || !jaulaId) {
+          return respondError(req, res, 400, "Se requiere el ID del guardia y de la jaula");
+      }
+
+      // Registrar inicio de turno del guardia
+      const acceso = await Acceso.findOne({ guardia: guardiaId, entrada: { $eq: null } });
+      if (!acceso) {
+          return respondError(req, res, 404, "No se encontró un acceso sin registrar la entrada");
+      }
+      acceso.entrada = new Date();
+      await acceso.save();
+
+      // Asignar guardia a la jaula
+      const jaula = await Jaula.findById(jaulaId);
+      if (!jaula) {
+          return respondError(req, res, 404, "Jaula no encontrada");
+      }
+      jaula.guardiaAsignado = guardiaId;
+      await jaula.save();
+
+      respondSuccess(req, res, 200, { mensaje: "Ingreso de guardia y asignación a jaula realizados con éxito", acceso, jaula });
+  } catch (error) {
+      handleError(error, "acceso.controller -> ingresoGuardia");
+      respondError(req, res, 500, "Error al registrar el ingreso de guardia y asignar la jaula");
+  }
+}
+
 module.exports = {
     registrarIngreso,
     validarToken,
     ingresoInvitado,
+    ingresoGuardia
 };
