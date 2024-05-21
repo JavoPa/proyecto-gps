@@ -4,6 +4,7 @@ const express = require("express");
 
 /* Controladores */
 const accesoController = require("../controllers/acceso.controller.js");
+
 const usuarioController = require("../controllers/usuario.controller.js");
 
 /** Middlewares de autorización */
@@ -32,7 +33,8 @@ router.post("/crear", authorizationMiddleware.esAdmin ,usuarioController.crearUs
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
-router.post("/validar", accesoController.validarToken); //Validar token para ingresar a una jaula
+router.post("/validar", /*authorizationMiddleware.esGuardia,*/ accesoController.validarToken); //Validar token para ingresar a una jaula
+router.post("/accesoInvitado", /*authorizationMiddleware.esGuardia,*/ accesoController.ingresoInvitado); //Registrar acceso manual de invitado a una jaula
 //router.post("/salir", accesoController.salir); //Generar token para salir de una jaula
 
 module.exports = router;

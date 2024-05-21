@@ -1,6 +1,7 @@
 "use strict";
 const { handleError } = require("../utils/errorHandler");
 const Acceso = require("../models/acceso.model.js");
+const Invitado = require("../models/invitado.model.js");
 
 /**
  * Crea un nuevo token de acceso en la base de datos para un usuario.
@@ -47,8 +48,13 @@ const generarToken = async (usuarioId) => {
  */
 async function registrarIngreso(usuarioId) {
   try {
-    // Verificar si el estudiante ya tiene un acceso sin fecha de salida
-    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, salida: null });
+    // Verificar si el estudiante tiene un token activo (token sin escanear)
+    const tokenActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
+    if (tokenActivo) {
+      return [null, 'El usuario ya tiene un token activo. Token: ' + tokenActivo.token];
+    }
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
     if (accesoExistente) {
       return [null, 'El usuario ya tiene un acceso sin fecha de salida'];
     }
@@ -97,8 +103,45 @@ async function validarToken(token, guardiaId) {
     return [null, error];
   }
 }
+/**
+ * Crea un nuevo acceso de en la base de datos.
+ * @param {string} guardiaId Id de guardia
+ * @returns {Promise} Promesa con el objeto de usuario creado
+ */
+async function ingresoInvitado(body, guardiaId) {
+  try {
+    //Crear el usuario
+    let invitado = await Invitado.findOne({ rut: body.rut });
+    if(!invitado){
+      invitado = new Invitado({
+        nombre: body.nombre,
+        apellido: body.apellido,
+        rut: body.rut,
+        fono: body.fono,
+        rol: 'invitado'
+      });
+      await invitado.save();
+    }
+
+    const acceso = new Acceso({
+      usuario: invitado._id,
+      guardia: guardiaId,
+      entrada: new Date(),
+      salida: null
+    });
+  
+    await acceso.save();
+  
+    // Devolver el ACCESO
+    return [acceso, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> ingresoInvitado");
+    return [null, error];
+  }
+}
 
   module.exports = {
     registrarIngreso,
-    validarToken
+    validarToken,
+    ingresoInvitado
 };

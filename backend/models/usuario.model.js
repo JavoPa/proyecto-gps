@@ -1,6 +1,6 @@
-
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+
 
 const usuarioSchema = new mongoose.Schema({
     rut: {
@@ -17,12 +17,12 @@ const usuarioSchema = new mongoose.Schema({
         required: true
     },
     fono: {
-        type: String,
-        required: true
+        type: String
     },
     correo: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
