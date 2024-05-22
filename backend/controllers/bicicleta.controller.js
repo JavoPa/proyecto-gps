@@ -76,10 +76,31 @@ async function getBicicleta(req, res) { //Solicitud emitida por el Usuario para 
         handleError(error, "bicicleta.controller -> viewBicicleta");
         respondError(req, res, 500, "No se pudo obtener la bicicleta");
     }
-    }
+}
 
+/**
+ * Obtener bicicleta por id
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function getBicicletaById(req, res) {
+    try {
+        const { id } = req.params;
+        const { error: idError } = userIdSchema.validate({ id });
+        if (idError) return respondError(req, res, 400, idError.message);
+    
+        const [token, tokenError] = await bicicletaService.getBicicletaById(id);
+        if (tokenError) return respondError(req, res, 500, tokenError);
+        if(!token) return respondError(req, res, 400, 'No se creó el token');
+        respondSuccess(req, res, 201, token);
+    } catch (error) {
+        handleError(error, "bicicleta.controller -> getBicicletaById");
+        respondError(req, res, 500, "No se pudo obtener la bicicleta");
+    }
+}
 module.exports = {
     createBicicleta,
     updateBicicleta,
-    getBicicleta
+    getBicicleta,
+    getBicicletaById
     };

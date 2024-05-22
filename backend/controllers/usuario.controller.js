@@ -5,6 +5,11 @@ const Estudiante = require("../models/estudiante.model.js");
 const Funcionario = require("../models/funcionario.model.js");
 const Administrador = require("../models/administrador.model.js");
 const Guardia = require("../models/guardia.model.js");
+const { userIdSchema } = require("../schema/usuario.schema");
+const { respondSuccess, respondError } = require("../utils/resHandler");
+const { handleError } = require("../utils/errorHandler");
+const usuarioService = require('../services/usuario.service');
+const { get } = require('mongoose');
 
 
 async function crearUsuario(req,res) {
@@ -113,6 +118,27 @@ async function crearUsuario(req,res) {
     }
 }
 
+/**
+ * Obtener detalles de usuario
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function getUserById(req, res) {
+    try {
+        const { id } = req.params;
+        const { error: idError } = userIdSchema.validate({ id });
+        if (idError) return respondError(req, res, 400, idError.message);
+    
+        const [user, userError] = await usuarioService.getUserById(id);
+        if (userError) return respondError(req, res, 500, userError);
+        if(!user) return respondError(req, res, 400, 'No se obtuvo el usuario');
+        respondSuccess(req, res, 201, user);
+    } catch (error) {
+        handleError(error, "usuario.controller -> getUserById");
+        respondError(req, res, 500, "No se pudo obtener el usuario");
+    }
+}
+
 async function indexUsuariosConBicicleta(req, res) {
     try {
         const usuariosConBicicletas = await Usuario.find({ bicicleta: { $ne: null } })
@@ -146,6 +172,7 @@ async function getUsuario(req, res) {
 
 module.exports = {
     crearUsuario,
+    getUserById,
     indexUsuariosConBicicleta,
     getUsuario
 };

@@ -79,9 +79,30 @@ async function getBicicleta(usuarioId) {
         return [null, error];
     }
 }
+/**
+ * Obtiene la bicicleta por id
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+ */
+async function getBicicletaById(bicicletaId) {
+    try {
+        // Verificar si la bici existe
+        const bicicleta = await Bicicleta.findById(bicicletaId);
+        if (!bicicleta) {
+            return [null, 'Bicicleta no encontrada'];
+        }
+        return [bicicleta, null];
+    }
+    catch (error) {
+        handleError(error, "acceso.service -> registrarIngreso");
+        return [null, error];
+    }
+}
+
 
 module.exports = {
     createBicicleta,
     updateBicicleta,
-    getBicicleta
+    getBicicleta,
+    getBicicletaById
     };
