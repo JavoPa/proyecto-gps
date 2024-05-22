@@ -32,5 +32,8 @@ router.post("/acceder", accesoController.registrarIngreso); //Generar token para
 router.get("/bicicleta", bicicletaController.getBicicleta); //Ver detalles de la bicicleta del estudiante
 router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detalles de la bicicleta del estudiante
 router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
+router.get('/usersbici', authorizationMiddleware, usuarioController.indexUsuariosConBicicleta);
+router.get('/:id', authorizationMiddleware, usuarioController.getUsuario);
+
 
 module.exports = router;

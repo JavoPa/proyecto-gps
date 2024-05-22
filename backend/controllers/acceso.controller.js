@@ -3,6 +3,8 @@ const { handleError } = require("../utils/errorHandler");
 const { userIdSchema } = require("../schema/usuario.schema");
 const { tokenSchema, invitadoSchema } = require("../schema/acceso.schema");
 const accesoService = require('../services/acceso.service');
+const Acceso = require('./acceso.model');
+const Jaula = require('./jaula.model');
 
 /**
  * Crea un nuevo acceso
@@ -82,33 +84,39 @@ async function ingresoInvitado(req, res) { //Solicitud emitida por el Guardia
  */
 async function ingresoGuardia(req, res) {
   try {
-      const { guardiaId, jaulaId } = req.body;
-      if (!guardiaId || !jaulaId) {
-          return respondError(req, res, 400, "Se requiere el ID del guardia y de la jaula");
-      }
+    const guardiaId = req.id;
+    const { error: idError } = guardiaIdSchema.validate({ id: guardiaId });
+    if (idError) return respondError(req, res, 400, idError.message);
 
-      // Registrar inicio de turno del guardia
-      const acceso = await Acceso.findOne({ guardia: guardiaId, entrada: { $eq: null } });
-      if (!acceso) {
-          return respondError(req, res, 404, "No se encontró un acceso sin registrar la entrada");
-      }
-      acceso.entrada = new Date();
-      await acceso.save();
+    const jaulaId = req.body.jaulaId;  
+    if (!jaulaId) return respondError(req, res, 400, 'El ID de la jaula es requerido');
 
-      // Asignar guardia a la jaula
-      const jaula = await Jaula.findById(jaulaId);
-      if (!jaula) {
-          return respondError(req, res, 404, "Jaula no encontrada");
-      }
-      jaula.guardiaAsignado = guardiaId;
-      await jaula.save();
+    const jaula = await Jaula.findById(jaulaId);
+    if (!jaula) return respondError(req, res, 404, 'Jaula no encontrada');
+    if (jaula.guardiaAsignado) return respondError(req, res, 400, 'La jaula ya tiene un guardia asignado');
 
-      respondSuccess(req, res, 200, { mensaje: "Ingreso de guardia y asignación a jaula realizados con éxito", acceso, jaula });
+    jaula.guardiaAsignado = guardiaId;
+    await jaula.save();
+
+    const nuevoAcceso = new Acceso({
+      usuario: guardiaId,
+      entrada: new Date(),
+      salida: null 
+    });
+
+    const accesoGuardado = await nuevoAcceso.save();
+    if (!accesoGuardado) return respondError(req, res, 400, 'No se registró el ingreso del guardia');
+    
+    respondSuccess(req, res, 201, {
+      acceso: accesoGuardado,
+      jaulaAsignada: jaula.identificador 
+    });
   } catch (error) {
-      handleError(error, "acceso.controller -> ingresoGuardia");
-      respondError(req, res, 500, "Error al registrar el ingreso de guardia y asignar la jaula");
+    handleError(error, "acceso.controller -> ingresoGuardia");
+    respondError(req, res, 500, "Error al registrar el ingreso del guardia y asignar jaula");
   }
 }
+
 
 module.exports = {
     registrarIngreso,
