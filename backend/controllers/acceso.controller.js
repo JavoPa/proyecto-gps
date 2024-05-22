@@ -3,9 +3,8 @@ const { handleError } = require("../utils/errorHandler");
 const { userIdSchema } = require("../schema/usuario.schema");
 const { tokenSchema, invitadoSchema } = require("../schema/acceso.schema");
 const accesoService = require('../services/acceso.service');
-const Acceso = require('./acceso.model');
-const Jaula = require('./jaula.model');
-
+const Acceso = require('../models/acceso.model');
+const Jaula = require('../models/jaula.model');
 /**
  * Crea un nuevo acceso
  * @param {Object} req - Objeto de petición

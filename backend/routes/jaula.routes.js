@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getJaula } = require('../controllers/jaula.controller');
 
-router.get('/', listarJaulas);  
-router.get('/:id', getJaula);
+
+const jaulaController = require("../controllers/jaula.controller.js");
+router.post('/', jaulaController.crearJaula);
+
+router.get('/', jaulaController.listarJaulas);  
+router.get('/:id', jaulaController.getJaula);
 
 module.exports = router;

@@ -48,4 +48,28 @@ async function getJaula(req, res) {
     }
 }
 
-module.exports = { listarJaulas, getJaula };
+
+// Función para crear una nueva jaula
+async function crearJaula(req, res) {
+    const { ubicacion, capacidad, identificador } = req.body;
+
+    // Puedes añadir validaciones aquí para asegurarte de que los datos son correctos
+
+    try {
+        const nuevaJaula = new Jaula({
+            ubicacion,
+            capacidad,
+            identificador,
+            situacion_actual: 0, // Inicialmente vacía
+            guardiaAsignado: null // Sin guardia asignado inicialmente
+        });
+
+        const jaulaGuardada = await nuevaJaula.save();
+        res.status(201).send({ message: "Jaula creada exitosamente", jaula: jaulaGuardada });
+    } catch (error) {
+        console.error('Error al crear la jaula', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+module.exports = { listarJaulas, getJaula, crearJaula };
