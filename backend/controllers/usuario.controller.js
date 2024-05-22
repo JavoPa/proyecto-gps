@@ -139,7 +139,40 @@ async function getUserById(req, res) {
     }
 }
 
+async function indexUsuariosConBicicleta(req, res) {
+    try {
+        const usuariosConBicicletas = await Usuario.find({ bicicleta: { $ne: null } })
+            .select('nombre apellido rut')  
+            .populate('bicicleta', 'identificador'); 
+
+        res.status(200).json(usuariosConBicicletas);
+    } catch (error) {
+        console.error('Error al obtener usuarios con bicicletas', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+
+async function getUsuario(req, res) {
+    try {
+        const usuario = await Usuario.findById(req.params.id)
+            .populate('bicicleta');
+        if (!usuario) {
+            return res.status(404).send({ message: 'Usuario no encontrado.' });
+        }
+
+        res.status(200).json(usuario);
+    } catch (error) {
+        console.error('Error al obtener el usuario', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+
+
 module.exports = {
     crearUsuario,
-    getUserById
+    getUserById,
+    indexUsuariosConBicicleta,
+    getUsuario
 };
