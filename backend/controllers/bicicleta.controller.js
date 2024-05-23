@@ -71,7 +71,7 @@ async function getBicicleta(req, res) { //Solicitud emitida por el Usuario para 
         const [token, tokenError] = await bicicletaService.getBicicleta(userId);
         if (tokenError) return respondError(req, res, 500, tokenError);
         if(!token) return respondError(req, res, 400, 'No se creó el token');
-        respondSuccess(req, res, 201, token);
+        respondSuccess(req, res, 200, token);
     } catch (error) {
         handleError(error, "bicicleta.controller -> viewBicicleta");
         respondError(req, res, 500, "No se pudo obtener la bicicleta");

@@ -26,6 +26,7 @@ router.post("/crear", usuarioController.crearUsuario); //Crear un usuario
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
+router.get("/accesoActivo", accesoController.getAccesoActivo); //Verificar si el usuario tiene un token activo
 //router.post("/salir", accesoController.salir); //Generar token para salir de una jaula
 
 // Define las rutas post acceso a jaula

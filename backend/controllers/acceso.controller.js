@@ -116,10 +116,32 @@ async function ingresoGuardia(req, res) {
   }
 }
 
+/**
+ * Obtener acceso activo
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function getAccesoActivo(req, res) { //Solicitud emitida por el Usuario para Ingresar, Request.body=>id
+  try {
+    const userId = req.id;
+    
+    const { error: idError } = userIdSchema.validate({ id: userId });
+    if (idError) return respondError(req, res, 400, idError.message);
+
+    const [acceso, accesoError] = await accesoService.getAccesoActivo(userId);
+    if (accesoError) return respondError(req, res, 500, accesoError);
+    if(!acceso) return respondError(req, res, 400, 'No se obtuvo el acceso activo');
+    respondSuccess(req, res, 200, acceso);
+  } catch (error) {
+    handleError(error, "acceso.controller -> getAccesoActivo");
+    respondError(req, res, 500, "No obtuvo el acceso activo");
+  }
+}
 
 module.exports = {
     registrarIngreso,
     validarToken,
     ingresoInvitado,
-    ingresoGuardia
+    ingresoGuardia,
+    getAccesoActivo
 };
