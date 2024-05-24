@@ -85,8 +85,15 @@ async function registrarIngreso(usuarioId) {
 async function validarToken(token, guardiaId) {
   try {
     // Buscar el acceso con el token proporcionado
-    const acceso = await Acceso.findOne({ token });
-  
+    const acceso = await Acceso.findOne({ token })
+      .populate({
+        path: 'usuario',
+        select: '-password',
+        populate: {
+          path: 'bicicleta',
+        },
+      });
+    console.log(acceso);
     // Verificar que el acceso existe y no tiene una fecha de salida
     if (!acceso || acceso.expiryDate < new Date()) {
       return [null, 'Token inválido o expirado']
