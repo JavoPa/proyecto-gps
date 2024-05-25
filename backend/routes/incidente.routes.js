@@ -8,10 +8,8 @@ const authorizationMiddleware = require("../middlewares/authorization.middleware
 // Apply authentication middleware to all routes in this router
 router.use(authenticationMiddleware);
 
-router.get("/todos", incidenteController.getIncidentes); // Obtener todos los incidentes
-router.get("/dia", authorizationMiddleware.esAcademico || authorizationMiddleware.esGuardia, incidenteController.getIncidentesDia); // Route to get incidents for a specific day, restricted to administrador and guardia
-
-// Route to create an incident
-router.post("/crear", incidenteController.crearIncidente);
+router.get("/todos", incidenteController.getIncidentes); // Ruta para obtener todos los incidentes
+router.get("/dia", authorizationMiddleware.esAcademico || authorizationMiddleware.esGuardia, incidenteController.getIncidentesDia); // Ruta para obtener los incidentes de un día en específico
+router.post("/crear", incidenteController.crearIncidente); // Ruta para crear un incidente
 
 module.exports = router;
