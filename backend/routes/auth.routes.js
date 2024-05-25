@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/login", authController.login);
 router.post("/logout", authController.logout);
-router.get("/refresh" ,authenticationMiddleware,authController.refresh);
+router.get("/refresh", authenticationMiddleware, authController.refresh);
 
 // Exporta el enrutador
 module.exports = router;

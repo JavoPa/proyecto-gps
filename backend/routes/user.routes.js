@@ -6,8 +6,6 @@ const express = require("express");
 const accesoController = require("../controllers/acceso.controller.js");
 const usuarioController = require("../controllers/usuario.controller.js");
 
-const usuarioController = require("../controllers/usuario.controller.js");
-
 /** Middlewares de autorización */
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
@@ -20,8 +18,9 @@ const router = express.Router();
 router.use(authenticationMiddleware);
 
 // creacion de usuarios
-
 router.post("/crear", usuarioController.crearUsuario); //Crear un usuario
+// obtener todos los usuarios
+router.get("/allUsers", usuarioController.getUsuarios);
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula

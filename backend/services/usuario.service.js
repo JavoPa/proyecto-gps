@@ -7,9 +7,9 @@ const { handleError } = require("../utils/errorHandler");
  * Obtiene todos los usuarios de la base de datos
  * @returns {Promise} Promesa con el objeto de los usuarios
  */
-async function getUsuarios() {
+async function getUsers() {
     try {
-        const usuarios = Usuario.find();
+        const usuarios = await Usuario.find();
 
         if (!usuarios) return [null, "No hay usuarios"];
 
@@ -20,5 +20,5 @@ async function getUsuarios() {
 }
 
 module.exports = {
-    getUsuarios
+    getUsers
 }
