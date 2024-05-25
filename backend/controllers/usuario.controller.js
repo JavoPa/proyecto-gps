@@ -1,3 +1,8 @@
+"use strict";
+
+const { respondSuccess, respondError } = require("../utils/resHandler");
+const UsuarioService = require("../services/usuario.service.js");
+const { handleError } = require("../utils/errorHandler");
 
 const Usuario = require('../models/usuario.model');
 const Academico = require("../models/academico.model.js");
@@ -168,11 +173,22 @@ async function getUsuario(req, res) {
     }
 }
 
+async function getUsuarios(req, res) {
+    try {
+        const usuario = await Usuario.find();
+        if (!usuario) { return res.status(404).send({ message: 'No hay usuarios' }); }
 
+        res.status(200).json(usuario);
+    } catch (error) {
+        console.error('Error al obtener usuarios', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
 
 module.exports = {
     crearUsuario,
     getUserById,
     indexUsuariosConBicicleta,
-    getUsuario
+    getUsuario,
+    getUsuarios
 };

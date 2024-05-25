@@ -1,6 +1,7 @@
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const { userIdSchema } = require("../schema/usuario.schema");
+const {guardiaIdSchema} = require("../schema/guardia.schema");
 const { tokenSchema, invitadoSchema } = require("../schema/acceso.schema");
 const accesoService = require('../services/acceso.service');
 const Acceso = require('../models/acceso.model');
@@ -138,10 +139,79 @@ async function getAccesoActivo(req, res) { //Solicitud emitida por el Usuario pa
   }
 }
 
+async function salidaGuardia(req, res) {
+  try {
+      const guardiaId = req.id; 
+      const jaulaId = req.body.jaulaId;  
+
+      const jaula = await Jaula.findById(jaulaId);
+      if (!jaula) {
+          return respondError(req, res, 404, 'Jaula no encontrada');
+      }
+
+      if (jaula.guardiaAsignado === null) {
+        return respondError(req, res, 400, 'No hay un guardia asignado a esta jaula');
+    }
+
+      if (jaula.guardiaAsignado.toString() !== guardiaId) {
+          return respondError(req, res, 403, 'No autorizado para registrar salida en esta jaula');
+      }
+
+    
+
+      jaula.guardiaAsignado = null;
+      await jaula.save();
+
+      const acceso = await Acceso.findOne({ usuario: guardiaId, salida: null });
+      if (acceso) {
+          acceso.salida = new Date();
+          await acceso.save();
+      }
+
+      respondSuccess(req, res, 200, { message: 'Salida registrada con éxito', jaula: jaula.identificador });
+  } catch (error) {
+      handleError(error, "acceso.controller -> salidaGuardia");
+      respondError(req, res, 500, "Error al registrar la salida del guardia");
+  }
+}
+
+async function salidaGuardiaAdmin(req, res) {
+  try {
+      const jaulaId = req.body.jaulaId;  
+      const jaula = await Jaula.findById(jaulaId).populate('guardiaAsignado');
+      if (!jaula) {
+          return respondError(req, res, 404, 'Jaula no encontrada');
+      }
+
+      if (!jaula.guardiaAsignado) {
+          return respondError(req, res, 400, 'No hay guardia asignado a esta jaula');
+      }
+
+      const guardiaId = jaula.guardiaAsignado._id;
+
+      jaula.guardiaAsignado = null;
+      await jaula.save();
+
+      const acceso = await Acceso.findOne({ usuario: guardiaId, salida: null });
+      if (acceso) {
+          acceso.salida = new Date();
+          await acceso.save();
+      }
+
+      respondSuccess(req, res, 200, { message: 'Salida del guardia registrada con éxito', jaula: jaula.identificador });
+  } catch (error) {
+      handleError(error, "acceso.controller -> salidaGuardiaAdmin");
+      respondError(req, res, 500, "Error al registrar la salida del guardia");
+  }
+}
+
+
 module.exports = {
     registrarIngreso,
     validarToken,
     ingresoInvitado,
     ingresoGuardia,
+    salidaGuardia,
+    salidaGuardiaAdmin,
     getAccesoActivo
 };

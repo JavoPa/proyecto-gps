@@ -25,7 +25,7 @@ async function createUser() {
                 fono: "123456789",
                 correo: "academico@ubb.cl", 
                 password: await Usuario.encryptPassword("Academico123"), 
-                rol: "academico",
+                rol: "Academico",
                 cargo: "Academico",
                 area: "x",
                 situacion_laboral: "Contrato"
@@ -40,7 +40,7 @@ async function createUser() {
                 fono: "123456789",
                 correo: "estudiante@ubb.cl", 
                 password: await Usuario.encryptPassword("Estudiante123"), 
-                rol: "estudiante",
+                rol: "Estudiante",
                 carrera: "Informatica",
                 situacion_academica: "Regular"
             }).save();
@@ -69,7 +69,7 @@ async function createUser() {
                 fono: "123456789",
                 correo: "admin@ubb.cl", 
                 password: await Usuario.encryptPassword("Admin123"), 
-                rol: "administrador",
+                rol: "Administrador",
                 cargo: "x",
                 departamento: "y",
             }).save();

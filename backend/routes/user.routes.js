@@ -22,7 +22,8 @@ router.use(authenticationMiddleware);
 
 // creacion de usuarios
 
-router.post("/crear", usuarioController.crearUsuario); //Crear un usuario
+router.post("/crear", usuarioController.crearUsuario); // Crear un usuario
+router.get("/allUsers", usuarioController.getUsuarios); // Obtener todos los usuarios
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
@@ -33,7 +34,5 @@ router.get("/accesoActivo", accesoController.getAccesoActivo); //Verificar si el
 router.get("/bicicleta", bicicletaController.getBicicleta); //Ver detalles de la bicicleta del estudiante
 router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detalles de la bicicleta del estudiante
 router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
-
-
 
 module.exports = router;
