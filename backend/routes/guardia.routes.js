@@ -27,6 +27,8 @@ router.get("/bicicleta/:id", authorizationMiddleware.esGuardia, bicicletaControl
 router.get("/estudiante/:id", authorizationMiddleware.esGuardia, userController.getUserById); //Ver detalles del estudiante por id
 
 router.post("/accesoGuardia", authorizationMiddleware.esGuardia, accesoController.ingresoGuardia); //Registrar acceso del guardia a una jaula   
+router.post('/salidaGuardia', authorizationMiddleware.esGuardia, accesoController.salidaGuardia); //Registrar salida del guardia de una jaula
+
 
 router.get("/usuariosbicicletas", authorizationMiddleware.esGuardia, usuarioController.indexUsuariosConBicicleta);
 router.get("/usuario/:id", authorizationMiddleware.esGuardia, usuarioController.getUsuario);
