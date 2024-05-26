@@ -58,6 +58,38 @@ async function updateBicicleta(body, usuarioId) {
     }
 }
 /**
+ * Crea o actualiza la bicicleta de un usuario
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+ */
+async function updateBicicletaUsuario(body, usuarioId) {
+  try {
+    // Verificar si el estudiante tiene una bici registrada
+    const usuario = await Usuario.findById(usuarioId).populate('bicicleta');
+    if (!usuario) {
+      return [null, 'Usuario no encontrado'];
+    }
+    if (usuario.bicicleta) {
+      // Modificar la bicicleta
+      const bicicleta = await Bicicleta.findByIdAndUpdate(usuario.bicicleta._id, body, { new: true });
+      return [bicicleta, null];
+    }
+    const bicicleta = new Bicicleta({
+      ...body
+    });
+    await bicicleta.save();
+    // Asignar la bicicleta al usuario
+    usuario.bicicleta = bicicleta._id;
+    await usuario.save();
+  
+    // Devolver la bicicleta
+    return [bicicleta, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> registrarIngreso");
+    return [null, error];
+  }
+}
+/**
  * Obtiene la bicicleta de un usuario
  * @param {string} usuarioId Id de usuario
  * @returns {Promise} Promesa con el objeto de usuario creado
@@ -69,9 +101,9 @@ async function getBicicleta(usuarioId) {
         if (!usuario) {
             return [null, 'Usuario no encontrado'];
         }
-        if (!usuario.bicicleta) {
-            return [null, 'El usuario no tiene una bicicleta registrada'];
-        }
+        // if (!usuario.bicicleta) {
+        //     return [null, 'No tienes bicicleta registrada'];
+        // }
         return [usuario.bicicleta, null];
     }
     catch (error) {
@@ -104,5 +136,6 @@ module.exports = {
     createBicicleta,
     updateBicicleta,
     getBicicleta,
-    getBicicletaById
+    getBicicletaById,
+    updateBicicletaUsuario
     };

@@ -1,9 +1,5 @@
 "use strict";
 
-const { respondSuccess, respondError } = require("../utils/resHandler");
-const UsuarioService = require("../services/usuario.service.js");
-const { handleError } = require("../utils/errorHandler");
-
 const Usuario = require('../models/usuario.model');
 const Academico = require("../models/academico.model.js");
 const Estudiante = require("../models/estudiante.model.js");

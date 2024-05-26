@@ -35,16 +35,16 @@ async function registrarIngreso(req, res) { //Solicitud emitida por el Usuario p
  */
 async function validarToken(req, res) { //Solicitud emitida por el guardia para Validar el Token, Request.body=>token, guardiaId
   try {
-    const { body } = req;
-    const { error: bodyError } = tokenSchema.validate(body);
+    const { token }= req.params;
+    const { error: bodyError } = tokenSchema.validate({token});
     if (bodyError) return respondError(req, res, 400, bodyError.message);
     const guardiaId = req.id;
     const { error: idError } = userIdSchema.validate({ id: guardiaId });
     if (idError) return respondError(req, res, 400, idError.message);
-    const [valido, tokenError] = await accesoService.validarToken(req.body.token, guardiaId);
+    const [valido, tokenError] = await accesoService.validarToken(token, guardiaId);
     if (tokenError) return respondError(req, res, 500, tokenError);
     if(!valido) return respondError(req, res, 400, 'Token no válido');
-    respondSuccess(req, res, 200, { success: true });
+    respondSuccess(req, res, 200, valido);
   } catch (error) {
     handleError(error, "acceso.controller -> validarToken");
     respondError(req, res, 500, "No se validó el token");
