@@ -31,6 +31,31 @@ async function createBicicleta(req, res) { //Solicitud emitida por el Usuario pa
 }
 
 /**
+ * Crea una bicicleta para un usuario
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function updateBicicletaUsuario(req, res) { //Solicitud emitida por el Usuario para Crear Bicicleta, Request.body=>id
+  try {
+    const { id } = req.params;
+    const { error: idError } = userIdSchema.validate({ id });
+    if (idError) return respondError(req, res, 400, idError.message);
+
+    const { body } = req;
+    const { error: bodyError } = bicicletaSchema.validate(body);
+    if (bodyError) return respondError(req, res, 400, bodyError.message);
+
+    const [bicicleta, bicicletaError] = await bicicletaService.updateBicicletaUsuario(body, id);
+    if (bicicletaError) return respondError(req, res, 500, bicicletaError);
+    if(!bicicleta) return respondError(req, res, 400, 'No se registró la bicicleta');
+    respondSuccess(req, res, 201, bicicleta);
+  } catch (error) {
+    handleError(error, "bicicleta.controller -> updateBicicletaUsuario");
+    respondError(req, res, 500, "No se registró la bicicleta");
+  }
+}
+
+/**
  * Modifica una bicicleta
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
@@ -68,10 +93,10 @@ async function getBicicleta(req, res) { //Solicitud emitida por el Usuario para 
         const { error: idError } = userIdSchema.validate({ id: userId });
         if (idError) return respondError(req, res, 400, idError.message);
     
-        const [token, tokenError] = await bicicletaService.getBicicleta(userId);
-        if (tokenError) return respondError(req, res, 500, tokenError);
-        if(!token) return respondError(req, res, 400, 'No se creó el token');
-        respondSuccess(req, res, 200, token);
+        const [bicicleta, bicicletaError] = await bicicletaService.getBicicleta(userId);
+        if (bicicletaError) return respondError(req, res, 500, bicicletaError);
+        if(!bicicleta) return respondError(req, res, 404, 'No tienes datos de tu bicicleta registrados');
+        respondSuccess(req, res, 200, bicicleta);
     } catch (error) {
         handleError(error, "bicicleta.controller -> viewBicicleta");
         respondError(req, res, 500, "No se pudo obtener la bicicleta");
@@ -102,5 +127,6 @@ module.exports = {
     createBicicleta,
     updateBicicleta,
     getBicicleta,
-    getBicicletaById
+    getBicicletaById,
+    updateBicicletaUsuario
     };

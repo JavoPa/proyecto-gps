@@ -59,7 +59,8 @@ async function registrarIngreso(usuarioId) {
     // Verificar si el estudiante tiene un token activo (token sin escanear)
     const tokenActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
     if (tokenActivo) {
-      return [null, 'El usuario ya tiene un token activo. Token: ' + tokenActivo.token];
+      //return [null, 'El usuario ya tiene un token activo. Token: ' + tokenActivo.token];
+      return [tokenActivo, null];
     }
     // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
     const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
@@ -93,7 +94,6 @@ async function validarToken(token, guardiaId) {
           path: 'bicicleta',
         },
       });
-    console.log(acceso);
     // Verificar que el acceso existe y no tiene una fecha de salida
     if (!acceso || acceso.expiryDate < new Date()) {
       return [null, 'Token inválido o expirado']
