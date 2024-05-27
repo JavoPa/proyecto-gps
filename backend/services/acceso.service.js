@@ -78,6 +78,41 @@ async function registrarIngreso(usuarioId) {
     return [null, error];
   }
 }
+
+/**
+ * Registra la salida de un usuario en la base de datos.
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+*/
+async function registrarSalida(usuarioId) {
+  try {
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    if (!accesoExistente) {
+      return [null, 'No posees una bicicleta registrada en el sistema.'];
+    }
+    // Verificar si el estudiante ya tiene una salida registrada
+    const salidaExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: { $ne: null } });
+    if (salidaExistente) {
+      return [null, 'Ya has registrado tu salida.'];
+    }
+    // Verificar si el estudiante tiene un token activo (token sin escanear)
+    const tokenActivo = await Acceso.findOne({ usuario: usuarioId, salida: null, expiryDate: { $gt: new Date() } });
+    if (tokenActivo) {
+      return[tokenActivo, null];
+    }
+
+    // Generar un nuevo token y lo guarda en la base de datos
+    const salida = await generarToken(usuarioId);
+
+    // Devolver el token
+    return [salida, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> registrarSalida");
+    return [null, error];
+  }
+}
+
 /**
  * Valida el token de acceso proporcionado guardando la fecha de entrada o salida.
  * @param {string} usuarioId Id de usuario
@@ -183,6 +218,7 @@ async function getAccesoActivo(usuarioId) {
 
   module.exports = {
     registrarIngreso,
+    registrarSalida,
     validarToken,
     ingresoInvitado,
     getAccesoActivo
