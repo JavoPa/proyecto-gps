@@ -4,26 +4,11 @@ const Guardia = require("../models/guardia.model.js");
 const Funcionario = require("../models/funcionario.model.js");
 const Estudiante = require("../models/estudiante.model.js");
 const Administrador = require("../models/administrador.model.js");
-const jwt = require("jsonwebtoken");
-const {JWT_SECRET} = require("../config/env.config");
 
 async function esAcademico(req,res,next) {
     try {
-        const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-        if (!authHeader?.startsWith("Bearer ")) {
-            return res.status(401).send({ message: "No hay token valido" });
-        }
-    
-        const token = authHeader.split(" ")[1];
-        const deco = jwt.decode(token, JWT_SECRET,true);
-
-        const academicoAux = await Academico.findOne({ correo: deco.correo });
-        if(academicoAux == null){
-            return res.status(403).send({ message: "Usuario no autorizado!!" });
-        }
-        
-        if(academicoAux.rol === "academico") {
+        const academicoAux = await Academico.findOne({ correo: req.correo });
+        if(academicoAux) {
             next();
             return
             console.log("es academico");
@@ -39,22 +24,8 @@ async function esAcademico(req,res,next) {
 
 async function esEstudiante(req, res, next) {
     try {
-        const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-        if (!authHeader?.startsWith("Bearer ")) {
-            return res.status(401).send({ message: "No hay token valido" });
-        }
-    
-        const token = authHeader.split(" ")[1];
-        const deco = jwt.decode(token, JWT_SECRET,true);
-
-        const estudianteAux = await Estudiante.findOne({ correo: deco.correo });
-
-        if(esEstudiante == null){
-            return res.status(403).send({ message: "Usuario no autorizado!!" });
-        }
-
-        if(estudianteAux.rol === "Estudiante") {
+        const estudianteAux = await Estudiante.findOne({ correo: req.correo });
+        if(estudianteAux){
             next();
             console.log("es Estudiante");
             return
@@ -69,22 +40,8 @@ async function esEstudiante(req, res, next) {
 
 async function esFuncionario(req, res, next) {
     try {
-        const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-        if (!authHeader?.startsWith("Bearer ")) {
-            return res.status(401).send({ message: "No hay token valido" });
-        }
-    
-        const token = authHeader.split(" ")[1];
-        const deco = jwt.decode(token, JWT_SECRET,true);
-
-        const funcionarioAux = await Funcionario.findOne({ correo: deco.correo });
-
-        if(funcionarioAux == null){
-            return res.status(403).send({ message: "Usuario no autorizado!!" });
-        }
-
-        if(funcionarioAux.rol === "Funcionario") {
+        const funcionarioAux = await Funcionario.findOne({ correo: req.correo });
+        if(funcionarioAux) {
             next();
             return
             console.log("es Funcionario");
@@ -99,22 +56,8 @@ async function esFuncionario(req, res, next) {
 
 async function esAdmin(req, res, next) {
     try {
-        const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-        if (!authHeader?.startsWith("Bearer ")) {
-            return res.status(401).send({ message: "No hay token valido" });
-        }
-    
-        const token = authHeader.split(" ")[1];
-        const deco = jwt.decode(token, JWT_SECRET,true);
-
-        const adminAux = await Administrador.findOne({ correo: deco.correo });
-
-        if(adminAux == null){
-            return res.status(403).send({ message: "Usuario no autorizado!!" });
-        }
-
-        if(adminAux.rol === "Administrador") {
+        const adminAux = await Administrador.findOne({ correo: req.correo });
+        if(adminAux) {
             next();
             return
             console.log("es Administrador");
@@ -127,30 +70,13 @@ async function esAdmin(req, res, next) {
     }
 }
 
-
-
 async function esGuardia(req, res, next) {
     try {
-        
-        const authHeader = req.headers.authorization || req.headers.Authorization;
-  
-        if (!authHeader?.startsWith("Bearer ")) {
-            return res.status(401).send({ message: "No hay token valido" });
-        }
-    
-        const token = authHeader.split(" ")[1];
-        const deco = jwt.decode(token, JWT_SECRET,true);
-        
-        const guardiaAux = await Guardia.findOne({ correo: deco.correo });
-
-        if(guardiaAux == null){
-            return res.status(403).send({ message: "Usuario no autorizado!!" });
-        }
-        
-        if(guardiaAux.rol === "Guardia") {
+        const guardiaAux = await Guardia.findOne({ correo: req.correo });
+        if(guardiaAux){         
             next();
-            console.log("es Guardia");
             return
+            console.log("es Guardia");
         } else {
             console.log("no es Guardia");
             return res.status(403).send({ message: "Usuario no autorizado!!" });

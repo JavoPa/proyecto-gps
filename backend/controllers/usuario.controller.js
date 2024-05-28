@@ -11,7 +11,7 @@ const {
 const axios = require('axios');
 
 
-async function preCreacion(req,res) {
+async function verificarIntranet(req,res) {
     try {
         const { rut } = req.body;
         // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
@@ -30,79 +30,8 @@ async function preCreacion(req,res) {
             return res.status(404).json({message: "Usuario no encontrado"});
         }
 
-        //consultar si existe el usuario
+        return res.status(200).json(usuario);
 
-        if(usuario.Rol == "estudiante"){
-            const Datos = {
-                "rut": usuario.rut,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "fono": usuario.fono,
-                "correo": usuario.correo,
-                "password": usuario.password,
-                "rol": usuario.Rol,
-                "carrera": usuario.carrera,
-                "situacion_academica": usuario.situacion_academica
-            }
-            const nuevoEstudiante = await crearEstudiante(Datos);
-            return res.status(200).send(nuevoEstudiante);
-
-        }
-        if(usuario.Rol == "academico"){
-            const Datos = {
-                "rut": usuario.rut,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "fono": usuario.fono,
-                "correo": usuario.correo,
-                "password": usuario.password,
-                "rol": usuario.Rol,
-                "cargo": usuario.cargo,
-                "area": usuario.area,
-                "situacion_laboral": usuario.situacion_laboral
-            
-            }
-
-            const nuevoAcademico = await crearAcademico(Datos);
-            return res.status(200).send(nuevoAcademico);
-        }
-        if(usuario.Rol == "administrador"){
-            const Datos = {
-                "rut": usuario.rut,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "fono": usuario.fono,
-                "correo": usuario.correo,
-                "password": usuario.password,
-                "rol": usuario.Rol,
-                "cargo": usuario.cargo,
-                "departamento": usuario.departamento
-            }
-
-            const nuevoAdministrador = await crearAdministrador(Datos);
-            return res.status(200).send(nuevoAdministrador);
-            
-        }
-        if(usuario.Rol == "funcionario"){
-            const Datos = {
-                "rut": usuario.rut,
-                "nombre": usuario.nombre,
-                "apellido": usuario.apellido,
-                "fono": usuario.fono,
-                "correo": usuario.correo,
-                "password": usuario.password,
-                "rol": usuario.Rol,
-                "situacion_laboral": usuario.situacion_laboral,
-                "departamento": usuario.departamento,
-                "cargo": usuario.cargo
-            }
-
-            const nuevoFuncionario = await crearFuncionario(Datos);
-            return res.status(200).send(nuevoFuncionario);
-            
-        }
-
-        // segun el caso
     } catch (error) {
         console.log(error);
     }
@@ -122,7 +51,6 @@ async function crearUsuario(req,res) {
         const usuario = await Usuario.findOne({rut: body.rut});
         if(usuario) return res.status(400).json({message: "El usuario ya existe"});
 
-        
         //validar tipo de usuario a crear
         if(body.tipo == "Estudiante"){
 
@@ -161,5 +89,5 @@ async function crearUsuario(req,res) {
 
 module.exports = {
     crearUsuario,
-    preCreacion
+    verificarIntranet
 };
