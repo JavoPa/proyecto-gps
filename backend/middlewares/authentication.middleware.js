@@ -8,8 +8,8 @@ const { respondError } = require("../utils/resHandler");
 
 const verifyJWT = (req, res, next) => {
     try {
-      console.log("Authentication middleware");
-      console.log(req.headers.authorization);
+      //console.log("Authentication middleware");
+      //console.log(req.headers.authorization);
       const authHeader = req.headers.authorization || req.headers.Authorization;
   
       if (!authHeader?.startsWith("Bearer ")) {
@@ -26,7 +26,8 @@ const verifyJWT = (req, res, next) => {
   
       jwt.verify(token, ACCESS_JWT_SECRET, (err, decoded) => {
         if (err) return respondError(req, res, 403, "No autorizado", err.message);
-        req.email = decoded.email;
+        req.id = decoded.id;
+        req.correo = decoded.correo;
         req.roles = decoded.roles;
         next();
       });

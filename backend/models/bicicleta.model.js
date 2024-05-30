@@ -1,21 +1,25 @@
 const mongoose = require("mongoose");
 
 const bicicletaSchema = new mongoose.Schema({
+    marca: {
+        type: String,
+        required: true
+    },
+    modelo: {
+        type: String
+    },
     color: {
         type: String,
         required: true
     },
     tipo: {
-        type: String,
-        required: true
+        type: String
     },
     descripcion: {
-        type: String,
-        required: true
+        type: String
     },
     estado: {
-        type: String,
-        required: true
+        type: String
     }
 });
 

@@ -29,7 +29,7 @@ async function login(user) {
       }
   
       const accessToken = jwt.sign(
-        { correo: userFound.correo, roles: userFound.rol },
+        { correo: userFound.correo, roles: userFound.rol, id: userFound._id},
         ACCESS_JWT_SECRET,
         {
           expiresIn: "1d",
