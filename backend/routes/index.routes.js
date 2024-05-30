@@ -13,21 +13,11 @@ const guardiaRoutes = require("./guardia.routes.js");
 
 const jaulaRoutes = require("./jaula.routes.js");
 
-/** Enrutador de Guardias  */
-const GuardiasRoutes = require("./Guardias.routes.js")
-
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
 
 // Define las rutas para la autenticación /api/auth
 router.use("/auth", authRoutes);
-// Define las rutas para los usuarios /api/usuarios
-router.use("/users", authenticationMiddleware, userRoutes);
-
-// Define las rutas para los usuarios /api/guardias
-router.use("/guardias", authenticationMiddleware, GuardiasRoutes);
-
-
 // Define las rutas para los usuarios /api/usuarios
 router.use("/users", authenticationMiddleware, userRoutes);
 // Define las rutas para los incidentes /api/incidentes
