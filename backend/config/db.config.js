@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const env = require('./env.config');
+const env = require('./env.config.js');
 // Function to establish database connection
 const connectDB = async () => {
   try {
