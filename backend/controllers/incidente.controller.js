@@ -3,6 +3,7 @@
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const IncidenteService = require("../services/incidente.service.js");
 const { handleError } = require("../utils/errorHandler");
+const PDFDocument = require('pdfkit');
 
 /**
  * Controlador para obtener todos los incidentes
@@ -86,8 +87,57 @@ async function crearIncidente(req, res) {
     }
 }
 
+async function generarInforme(req, res) {
+    try {
+        // Get month and year from request parameters
+        const { year, month } = req.body;
+
+        // Parse year and month to create a date object
+        const date = new Date(year, month - 1); // Month is 0-indexed in JavaScript
+
+        // Call service function to get incidents for the specified month
+        const [incidentes, error] = await IncidenteService.getIncidentesMes(date);
+
+        if (error) {
+            return res.status(500).json({ error });
+        }
+
+        // Create a new PDF document
+        const doc = new PDFDocument();
+        // Pipe the PDF document to the response
+        doc.pipe(res);
+
+        // Set response headers for PDF
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="incidentes_${year}_${month}.pdf"`);
+
+        // Add incident information to the PDF
+        doc.fontSize(12).text(`Incidentes del mes ${month} del año ${year}`, { align: 'center' });
+        doc.moveDown();
+        if (incidentes) {
+            incidentes.forEach(incidente => {
+                doc.text(`Fecha: ${incidente.fecha.toISOString()}`);
+                doc.text(`Hora: ${incidente.hora}`);
+                doc.text(`Lugar: ${incidente.lugar}`);
+                doc.text(`Tipo: ${incidente.tipo}`);
+                doc.text(`Descripción: ${incidente.descripcion}`);
+                doc.moveDown();
+            });
+        } else {
+            doc.text('No hay incidentes en el mes especificado');
+        }
+
+        // Finalize the PDF document
+        doc.end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al generar el PDF' });
+    }
+}
+
 module.exports = {
     getIncidentes,
     getIncidentesDia,
-    crearIncidente
+    crearIncidente,
+    generarInforme
 };
