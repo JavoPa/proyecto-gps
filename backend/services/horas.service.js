@@ -1,7 +1,7 @@
 "use strict";
 const { handleError } = require("../utils/errorHandler");
 const Horas = require("../models/horas.model.js");
-const inicializar = require("../utils/checkBicicletasRezagadas.js");
+const initializeSchedule = require("../utils/checkBicicletasRezagadas.js");
 /**
  * Crea un nuevo horario en la base de datos.
  * @param {Object} body Objeto con los datos del horario
@@ -14,7 +14,7 @@ async function createHorario(body) {
             ...body
         });
         await horario.save();
-        inicializar();
+        initializeSchedule(horario.limiteSalida);
         return [horario, null];
     } catch (error) {
         handleError(error, "horas.service -> createHorario");
@@ -44,7 +44,7 @@ async function getHorarios() {
 async function updateHorario(body, horarioId) {
     try {
         const horario = await Horas.findByIdAndUpdate(horarioId , body, { new: true }); 
-        inicializar();
+        initializeSchedule(horario.limiteSalida);
         return [horario, null];
     } catch (error) {
         handleError(error, "horas.service -> updateHorario");

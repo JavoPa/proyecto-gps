@@ -7,7 +7,7 @@ const authenticationMiddleware = require("../middlewares/authentication.middlewa
 const router = express.Router();
 router.use(authenticationMiddleware);
 
-router.post('/', authorizationMiddleware.esAdmin, horasController.createHorario);
+// router.post('/', authorizationMiddleware.esAdmin, horasController.createHorario);
 router.get('/', horasController.getHorarios);
 router.put('/:id', authorizationMiddleware.esAdmin, horasController.updateHorario);
 
