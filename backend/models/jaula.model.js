@@ -22,16 +22,6 @@ const jaulaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Guardia',
         default: null
-    },
-    horaLimiteIngreso:{
-        type: String,
-        required: true,
-        match: /^([01]\d|2[0-3]):([0-5]\d)$/ // formato hora HH:MM, ej: 20:30
-    },
-    horaLimiteSalida:{
-        type: String,
-        required: true,
-        match: /^([01]\d|2[0-3]):([0-5]\d)$/ // formato hora HH:MM, ej: 20:30
     }
 });
 

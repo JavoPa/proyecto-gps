@@ -18,7 +18,7 @@ router.use(authenticationMiddleware);
 
 
 router.post('/', authorizationMiddleware.esAdmin, jaulaController.crearJaula);
-router.put('/:id', authorizationMiddleware.esAdmin, jaulaController.actualizarJaula);
+
 router.get('/', jaulaController.listarJaulas);  
 router.get('/:id', jaulaController.getJaula);
 router.delete('/:id', authorizationMiddleware.esAdmin, jaulaController.eliminarJaula);
