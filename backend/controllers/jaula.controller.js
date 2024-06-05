@@ -1,4 +1,5 @@
 // jaula.controller.js
+const { func } = require('joi');
 const Jaula = require('../models/jaula.model');
 
 
@@ -9,7 +10,9 @@ async function listarJaulas(req, res) {
         const jaulasConEspaciosDisponibles = jaulas.map(jaula => ({
             identificador: jaula.identificador,
             ubicacion: jaula.ubicacion,
-            espaciosDisponibles: jaula.capacidad - jaula.situacion_actual
+            espaciosDisponibles: jaula.capacidad - jaula.situacion_actual,
+            horaLimiteIngreso: jaula.horaLimiteIngreso,
+            horaLimiteSalida: jaula.horaLimiteSalida
         }));
 
         res.status(200).json(jaulasConEspaciosDisponibles);
@@ -37,7 +40,9 @@ async function getJaula(req, res) {
             guardia: jaula.guardiaAsignado ? {
                 nombre: jaula.guardiaAsignado.nombre,
                 apellido: jaula.guardiaAsignado.apellido
-            } : null
+            } : null,
+            horaLimiteIngreso: jaula.horaLimiteIngreso,
+            horaLimiteSalida: jaula.horaLimiteSalida
         };
 
         res.status(200).json(response);
@@ -49,7 +54,7 @@ async function getJaula(req, res) {
 
 
 async function crearJaula(req, res) {
-    const { ubicacion, capacidad, identificador } = req.body;
+    const { ubicacion, capacidad, identificador, horaLimiteIngreso, horaLimiteSalida } = req.body;
 
 
     try {
@@ -58,13 +63,40 @@ async function crearJaula(req, res) {
             capacidad,
             identificador,
             situacion_actual: 0, 
-            guardiaAsignado: null
+            guardiaAsignado: null,
+            horaLimiteIngreso,
+            horaLimiteSalida
         });
 
         const jaulaGuardada = await nuevaJaula.save();
         res.status(201).send({ message: "Jaula creada exitosamente", jaula: jaulaGuardada });
     } catch (error) {
         console.error('Error al crear la jaula', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+// Probar esta función
+async function actualizarJaula(req, res) {
+    const jaulaId = await Jaula.findById(req.params.id)
+    const { ubicacion, capacidad, identificador, horaLimiteIngreso, horaLimiteSalida } = req.body;
+
+    try {
+        const jaula = await Jaula.findById(jaulaId);
+        if (!jaula) {
+            return res.status(404).send({ message: 'Jaula no encontrada' });
+        }
+
+        jaula.ubicacion = ubicacion;
+        jaula.capacidad = capacidad;
+        jaula.identificador = identificador;
+        jaula.horaLimiteIngreso = horaLimiteIngreso;
+        jaula.horaLimiteSalida = horaLimiteSalida;
+
+        await jaula.save();
+        res.status(200).send({ message: 'Jaula actualizada con éxito' });
+    } catch (error) {
+        console.error('Error al actualizar la jaula', error);
         res.status(500).send({ message: 'Error al procesar la solicitud' });
     }
 }
@@ -94,4 +126,4 @@ async function eliminarJaula(req, res) {
 }
 
 
-module.exports = { listarJaulas, getJaula, crearJaula, eliminarJaula };
+module.exports = { listarJaulas, getJaula, crearJaula, eliminarJaula, actualizarJaula };
