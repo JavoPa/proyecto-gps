@@ -9,6 +9,6 @@ router.use(authenticationMiddleware);
 
 // router.post('/', authorizationMiddleware.esAdmin, horasController.createHorario);
 router.get('/', horasController.getHorarios);
-router.put('/:id', authorizationMiddleware.esAdmin, horasController.updateHorario);
+router.put('/actualizar', authorizationMiddleware.esAdmin, horasController.updateHorario);
 
 module.exports = router;

@@ -45,9 +45,9 @@ async function getHorarios(req, res) {
  */
 async function updateHorario(req, res) {
   try {
-    const { id } = req.params;
+    // const { id } = req.params;
     const { body } = req;
-    const [horario, error] = await horasService.updateHorario(body, id);
+    const [horario, error] = await horasService.updateHorario(body);
     if (error) return respondError(req, res, 500, error);
     if (!horario) return respondError(req, res, 400, 'No se actualizó el horario');
     respondSuccess(req, res, 200, horario);

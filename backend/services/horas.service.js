@@ -41,8 +41,9 @@ async function getHorarios() {
  * @param {string} horarioId Id del horario
  */
 
-async function updateHorario(body, horarioId) {
+async function updateHorario(body) {
     try {
+        const horarioId = await Horas.find({}).select('_id');
         const horario = await Horas.findByIdAndUpdate(horarioId , body, { new: true }); 
         initializeSchedule(horario.limiteSalida);
         return [horario, null];
