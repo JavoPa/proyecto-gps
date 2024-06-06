@@ -19,10 +19,10 @@ instance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // TEMPORAL
-    else{
-      config.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJndWFyZGlhQHViYi5jbCIsInJvbGVzIjoiR3VhcmRpYSIsImlkIjoiNjY0YWI5M2VkZDY1ZTExZjNjOGFhZWZiIiwiaWF0IjoxNzE2NzQwODI5LCJleHAiOjE3MTY4MjcyMjl9.1NRqJn3L1JzuXM8DwX7dtHESTiojKm8THv3lkXX3FGg`;
-    }
+    // TEMPORAL (hice bypass del token para probar, esto hay que quitarlo)
+    // else{
+    //   config.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJndWFyZGlhQHViYi5jbCIsInJvbGVzIjoiR3VhcmRpYSIsImlkIjoiNjY0YWI5M2VkZDY1ZTExZjNjOGFhZWZiIiwiaWF0IjoxNzE2NzQwODI5LCJleHAiOjE3MTY4MjcyMjl9.1NRqJn3L1JzuXM8DwX7dtHESTiojKm8THv3lkXX3FGg`;
+    // }
 
     return config;
   },
