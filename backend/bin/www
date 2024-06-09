@@ -9,6 +9,7 @@ var debug = require('debug')('backend:server');
 var http = require('http');
 var connectDB = require('../config/db.config.js');
 const createUser = require("../config/User.Test.js")
+const scheduleConfig = require('../config/schedule.config.js');
 
 /**
  * Get port from environment and store in Express.
@@ -26,9 +27,11 @@ var server = http.createServer(app);
 /**
  * Connect to MongoDB
  * Create User initial
+ * Initialize Schedule
  */
 connectDB();
 createUser();
+scheduleConfig();
 
 const Academico = require("../models/academico.model.js");
 const { networkInterfaces } = require('os');
