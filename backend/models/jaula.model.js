@@ -12,6 +12,16 @@ const jaulaSchema = new mongoose.Schema({
     situacion_actual: {
         type: Number,
         required: true
+    },
+    identificador: {
+        type: String,
+        required: true,
+        unique: true 
+    },
+    guardiaAsignado: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Guardia',
+        default: null
     }
 });
 

@@ -7,6 +7,8 @@ const accesoController = require("../controllers/acceso.controller.js");
 
 const usuarioController = require("../controllers/usuario.controller.js");
 
+const bicicletaController = require("../controllers/bicicleta.controller.js");
+
 /** Middlewares de autorización */
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
@@ -30,11 +32,16 @@ router.use(authenticationMiddleware);
 
 router.get("/verificar",authorizationMiddleware.esAcademico, usuarioController.verificarIntranet); // valida con api externa si es estuidante academico o funcionario
 router.post("/crear", authorizationMiddleware.esAcademico ,usuarioController.crearUsuario); //Crear un usuario
+router.get("/allUsers", usuarioController.getUsuarios); // Obtener todos los usuarios
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
-router.post("/validar", /*authorizationMiddleware.esGuardia,*/ accesoController.validarToken); //Validar token para ingresar a una jaula
-router.post("/accesoInvitado", /*authorizationMiddleware.esGuardia,*/ accesoController.ingresoInvitado); //Registrar acceso manual de invitado a una jaula
+router.get("/accesoActivo", accesoController.getAccesoActivo); //Verificar si el usuario tiene un token activo
 //router.post("/salir", accesoController.salir); //Generar token para salir de una jaula
+
+// Define las rutas post acceso a jaula
+router.get("/bicicleta", bicicletaController.getBicicleta); //Ver detalles de la bicicleta del estudiante
+router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detalles de la bicicleta del estudiante
+router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
 
 module.exports = router;
