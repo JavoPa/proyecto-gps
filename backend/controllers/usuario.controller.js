@@ -9,11 +9,16 @@ const {
 } = require('../services/usuario.service');
 
 const axios = require('axios');
+const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema')
 
 
 async function verificarIntranet(req,res) {
     try {
         const { rut } = req.body;
+        const {error} = rutSchema.validate({rut: rut});
+        console.log(error);
+        if(error) return res.status(400).json({message: "El rut no es valido"});
+
         // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
         const aux = await axios.get('http://localhost:5000/api/users/obtener',{
             data:{
@@ -54,6 +59,9 @@ async function crearUsuario(req,res) {
         //validar tipo de usuario a crear
         if(body.tipo == "Estudiante"){
 
+            const {error} = estudianteSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
 
             const nuevoEstudiante = crearEstudiante(body);
 
@@ -61,21 +69,41 @@ async function crearUsuario(req,res) {
         }
 
         if(body.tipo == "Guardia"){
+
+            const {error} = guardiaSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
             const nuevoGuardia = crearGuardia(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoGuardia);
         }
 
         if(body.tipo == "Academico"){
+
+            const {error} = academicoSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
             const nuevoAcademico = crearAcademico(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAcademico);
         }
 
         if(body.tipo == "Funcionario"){
+
+            const {error} = funcionarioSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
             const nuevoFuncionario = crearFuncionario(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoFuncionario);
         }
 
         if(body.tipo == "Administrador"){
+
+            const {error} = administradorSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
             const nuevoAdministrador = crearAdministrador(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
         }

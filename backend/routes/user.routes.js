@@ -28,7 +28,7 @@ router.use(authenticationMiddleware);
 
 // creacion de usuarios
 
-router.get("/verificar",authorizationMiddleware.esAdmin, usuarioController.verificarIntranet); // valida con api externa si es estuidante academico o funcionario
+router.get("/verificar",authorizationMiddleware.esAcademico, usuarioController.verificarIntranet); // valida con api externa si es estuidante academico o funcionario
 router.post("/crear", authorizationMiddleware.esAcademico ,usuarioController.crearUsuario); //Crear un usuario
 
 // Define las rutas para los accesos a jaula
