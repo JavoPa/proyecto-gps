@@ -10,6 +10,8 @@ const userRoutes = require("./user.routes.js");
 const incidenteRoutes = require("./incidente.routes.js");
 /** Enrutador de guardias */
 const guardiaRoutes = require("./guardia.routes.js");
+/** Enrutador de horas */
+const horasRoutes = require("./horas.routes.js");
 
 const jaulaRoutes = require("./jaula.routes.js");
 
@@ -26,5 +28,7 @@ router.use("/incidentes", incidenteRoutes);
 router.use("/guardias", authenticationMiddleware, guardiaRoutes);
 // Define las rutas para las jaulas
 router.use("/jaulas", authenticationMiddleware, jaulaRoutes);
+// Define las rutas para los horarios /api/horarios
+router.use("/horarios", authenticationMiddleware, horasRoutes);
 
 module.exports = router;

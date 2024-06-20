@@ -22,15 +22,26 @@ const generarToken = async (usuarioId) => {
     }
   
     const expiryDate = new Date();
-    expiryDate.setMinutes(expiryDate.getMinutes() + 5); // El token expira en 5 minutos
-  
-    const acceso = new Acceso({
-      token,
-      expiryDate,
-      usuario: usuarioId,
-      entrada: null,
-      salida: null
-    });
+    expiryDate.setMinutes(expiryDate.getMinutes() + 2); // El token expira en 2 minutos
+
+    // Busca un acceso pendiente del usuario (entrada y salida null)
+    // let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: null, salida: null });
+
+    // Busca un acceso pendiente del usuario (salida null)
+    let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    // Si existe un acceso pendiente, se actualiza el token y la fecha de expiración
+    if(acceso){
+      acceso.token = token;
+      acceso.expiryDate = expiryDate;
+    }else{ // Si no existe un acceso pendiente, se crea uno nuevo
+      acceso = new Acceso({
+        token,
+        expiryDate,
+        usuario: usuarioId,
+        entrada: null,
+        salida: null
+      });
+    }
   
     await acceso.save();
   
@@ -51,12 +62,13 @@ async function registrarIngreso(usuarioId) {
     // Verificar si el estudiante tiene un token activo (token sin escanear)
     const tokenActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
     if (tokenActivo) {
-      return [null, 'El usuario ya tiene un token activo. Token: ' + tokenActivo.token];
+      //return [null, 'El usuario ya tiene un token activo. Token: ' + tokenActivo.token];
+      return [tokenActivo, null];
     }
     // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
     const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
     if (accesoExistente) {
-      return [null, 'El usuario ya tiene un acceso sin fecha de salida'];
+      return [null, 'Ya posees una bicicleta registrada en el sistema.'];
     }
   
     // Generar un nuevo token y lo guarda en la base de datos
@@ -69,6 +81,39 @@ async function registrarIngreso(usuarioId) {
     return [null, error];
   }
 }
+
+/**
+ * Registra la salida de un usuario en la base de datos.
+ * Modifica el acceso correspondiente al usuario en la base de datos 
+ * para registrar la fecha de salida.
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+*/
+async function registrarSalida(usuarioId) {
+  try {
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    if (!accesoExistente) {
+      return [null, 'No posees una bicicleta registrada en el sistema.'];
+    }
+    
+    // Verificar si el estudiante tiene un token activo (token sin escanear)
+    const tokenActivo = await Acceso.findOne({ usuario: usuarioId, salida: null, expiryDate: { $gt: new Date() } });
+    if (tokenActivo) {
+      return[tokenActivo, null];
+    }
+
+    // Generar un nuevo token y lo guarda en la base de datos
+    const salida = await generarToken(usuarioId);
+
+    // Devolver el token
+    return [salida, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> registrarSalida");
+    return [null, error];
+  }
+}
+
 /**
  * Valida el token de acceso proporcionado guardando la fecha de entrada o salida.
  * @param {string} usuarioId Id de usuario
@@ -77,8 +122,14 @@ async function registrarIngreso(usuarioId) {
 async function validarToken(token, guardiaId) {
   try {
     // Buscar el acceso con el token proporcionado
-    const acceso = await Acceso.findOne({ token });
-  
+    const acceso = await Acceso.findOne({ token })
+      .populate({
+        path: 'usuario',
+        select: '-password',
+        populate: {
+          path: 'bicicleta',
+        },
+      });
     // Verificar que el acceso existe y no tiene una fecha de salida
     if (!acceso || acceso.expiryDate < new Date()) {
       return [null, 'Token inválido o expirado']
@@ -140,8 +191,36 @@ async function ingresoInvitado(body, guardiaId) {
   }
 }
 
+/**
+ * Obtener un acceso activo
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+ */
+async function getAccesoActivo(usuarioId) {
+  try {
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    if (accesoExistente) {
+      return [null, 'Ya posees una bicicleta registrada en el sistema.'];
+    }
+    // Verificar si el estudiante tiene un token activo (token sin escanear)
+    const accesoActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
+    if (!accesoActivo) {
+      return [null, 'No posees un token activo.'];
+    }
+  
+    // Devolver el token
+    return [accesoActivo, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> getAccesoActivo");
+    return [null, error];
+  }
+}
+
   module.exports = {
     registrarIngreso,
+    registrarSalida,
     validarToken,
-    ingresoInvitado
+    ingresoInvitado,
+    getAccesoActivo
 };
