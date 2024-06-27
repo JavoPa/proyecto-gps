@@ -1,9 +1,5 @@
 "use strict";
 
-<<<<<<< HEAD
-const Usuario = require('../models/usuario.model');
-=======
->>>>>>> main
 const Academico = require("../models/academico.model.js");
 const Estudiante = require("../models/estudiante.model.js");
 const Funcionario = require("../models/funcionario.model.js");
