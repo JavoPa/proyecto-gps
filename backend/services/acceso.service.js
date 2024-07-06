@@ -25,7 +25,10 @@ const generarToken = async (usuarioId) => {
     expiryDate.setMinutes(expiryDate.getMinutes() + 2); // El token expira en 2 minutos
 
     // Busca un acceso pendiente del usuario (entrada y salida null)
-    let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: null, salida: null });
+    // let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: null, salida: null });
+
+    // Busca un acceso pendiente del usuario (salida null)
+    let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
     // Si existe un acceso pendiente, se actualiza el token y la fecha de expiración
     if(acceso){
       acceso.token = token;
@@ -78,6 +81,39 @@ async function registrarIngreso(usuarioId) {
     return [null, error];
   }
 }
+
+/**
+ * Registra la salida de un usuario en la base de datos.
+ * Modifica el acceso correspondiente al usuario en la base de datos 
+ * para registrar la fecha de salida.
+ * @param {string} usuarioId Id de usuario
+ * @returns {Promise} Promesa con el objeto de usuario creado
+*/
+async function registrarSalida(usuarioId) {
+  try {
+    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    if (!accesoExistente) {
+      return [null, 'No posees una bicicleta registrada en el sistema.'];
+    }
+    
+    // Verificar si el estudiante tiene un token activo (token sin escanear)
+    const tokenActivo = await Acceso.findOne({ usuario: usuarioId, salida: null, expiryDate: { $gt: new Date() } });
+    if (tokenActivo) {
+      return[tokenActivo, null];
+    }
+
+    // Generar un nuevo token y lo guarda en la base de datos
+    const salida = await generarToken(usuarioId);
+
+    // Devolver el token
+    return [salida, null];
+  } catch (error) {
+    handleError(error, "acceso.service -> registrarSalida");
+    return [null, error];
+  }
+}
+
 /**
  * Valida el token de acceso proporcionado guardando la fecha de entrada o salida.
  * @param {string} usuarioId Id de usuario
@@ -183,6 +219,7 @@ async function getAccesoActivo(usuarioId) {
 
   module.exports = {
     registrarIngreso,
+    registrarSalida,
     validarToken,
     ingresoInvitado,
     getAccesoActivo
