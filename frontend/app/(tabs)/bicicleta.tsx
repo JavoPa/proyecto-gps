@@ -1,3 +1,4 @@
+
 import { StyleSheet } from 'react-native';
 
 import BicicletaInfo from '@/components/usuario/BicicletaInfo';
