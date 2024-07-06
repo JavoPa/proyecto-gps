@@ -20,7 +20,12 @@ const incidenteSchema = new mongoose.Schema({
     descripcion: {
         type: String,
         required: true
-    }
+    },
+    informate: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Guardia o Usuario",
+        required: true
+    },
 });
 
 const Incidente = mongoose.model("Incidente", incidenteSchema);

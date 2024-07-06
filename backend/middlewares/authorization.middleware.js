@@ -8,7 +8,7 @@ const Administrador = require("../models/administrador.model.js");
 async function esAcademico(req,res,next) {
     try {
         const academicoAux = await Academico.findOne({ correo: req.correo });
-        if(academicoAux.rol === "academico") {
+        if(academicoAux) {
             next();
             return
             console.log("es academico");
@@ -25,7 +25,7 @@ async function esAcademico(req,res,next) {
 async function esEstudiante(req, res, next) {
     try {
         const estudianteAux = await Estudiante.findOne({ correo: req.correo });
-        if(estudianteAux.rol === "Estudiante") {
+        if(estudianteAux){
             next();
             console.log("es Estudiante");
             return
@@ -41,7 +41,7 @@ async function esEstudiante(req, res, next) {
 async function esFuncionario(req, res, next) {
     try {
         const funcionarioAux = await Funcionario.findOne({ correo: req.correo });
-        if(funcionarioAux.rol === "Funcionario") {
+        if(funcionarioAux) {
             next();
             return
             console.log("es Funcionario");
@@ -57,7 +57,7 @@ async function esFuncionario(req, res, next) {
 async function esAdmin(req, res, next) {
     try {
         const adminAux = await Administrador.findOne({ correo: req.correo });
-        if(adminAux.rol === "Administrador") {
+        if(adminAux) {
             next();
             return
             console.log("es Administrador");
@@ -73,7 +73,7 @@ async function esAdmin(req, res, next) {
 async function esGuardia(req, res, next) {
     try {
         const guardiaAux = await Guardia.findOne({ correo: req.correo });
-        if(guardiaAux.rol === "Guardia") {
+        if(guardiaAux){         
             next();
             return
             console.log("es Guardia");

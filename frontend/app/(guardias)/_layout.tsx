@@ -15,7 +15,7 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function TabLayout() {
+export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
 
   return (
@@ -48,17 +48,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ingresar"
+        name="ingreso"
         options={{
-          title: 'Ingresar Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
+          title: 'Validar Ingreso',
+          tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="bicicleta"
+        name="escaneo"
         options={{
-          title: 'Mi Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="bicycle" color={color} />,
+          title: 'Escanear',
+          tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
     </Tabs>
