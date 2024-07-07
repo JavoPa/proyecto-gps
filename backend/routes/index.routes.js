@@ -12,6 +12,8 @@ const incidenteRoutes = require("./incidente.routes.js");
 const guardiaRoutes = require("./guardia.routes.js");
 
 const jaulaRoutes = require("./jaula.routes.js");
+/** Enrutador de historial  */
+const historialRoutes = require("./Historial.routes.js");
 
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
@@ -26,5 +28,8 @@ router.use("/incidentes", incidenteRoutes);
 router.use("/guardias", authenticationMiddleware, guardiaRoutes);
 // Define las rutas para las jaulas
 router.use("/jaulas", authenticationMiddleware, jaulaRoutes);
+// Define las rutas para el historial
+router.use("/historial", authenticationMiddleware, historialRoutes);
+
 
 module.exports = router;
