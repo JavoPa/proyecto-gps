@@ -1,6 +1,6 @@
 
 "use strict";
-const guardiaService = require("../services/Guardias.servise");
+const guardiaService = require("../services/Guardias.service");
 
 
 /**
@@ -17,7 +17,6 @@ async function getGuardias(req, res) {
         return res.status(500).json({ message: "Error al obtener los guardias" });
     }
 }
-
 /**
  * Obtener un guardia por ID
  * @param {Object} req

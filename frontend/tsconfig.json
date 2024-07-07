@@ -12,6 +12,5 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/(login)/index.js", "app/Auth/index.ts"  ]
+    "expo-env.d.ts"]
 }

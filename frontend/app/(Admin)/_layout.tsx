@@ -47,17 +47,17 @@ export default function GuardiasLayout() {
         }}
       />
       <Tabs.Screen
-        name="ingreso"
+        name="ListaGuardias"
         options={{
-          title: 'Validar Ingreso',
-          tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
+          title: 'Guardias',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="escaneo"
+        name="CrearGuardia"
         options={{
-          title: 'Escanear',
-          tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
+          title: 'Agregar',
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />
     </Tabs>

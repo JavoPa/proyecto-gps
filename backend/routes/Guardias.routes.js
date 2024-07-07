@@ -14,11 +14,11 @@ const router = express.Router();
 router.use(authenticationMiddleware);
 
 
-router.get("/", guardiaController.getGuardias);
-router.get("/:id", guardiaController.getGuardiaById);
-router.post("/", guardiaController.createGuardia);
-router.put("/:id", guardiaController.updateGuardia);
-router.delete("/:id", guardiaController.deleteGuardia);
+router.get("/guardias/", guardiaController.getGuardias);
+router.get("/guardias/:id", guardiaController.getGuardiaById);
+router.post("/guardias/", guardiaController.createGuardia);
+router.put("/guardias/:id", guardiaController.updateGuardia);
+router.delete("/guardias/:id", guardiaController.deleteGuardia);
 
 
 module.exports = router;

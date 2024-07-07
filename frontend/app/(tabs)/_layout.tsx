@@ -1,6 +1,6 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs, Redirect, Stack } from 'expo-router';
+import { Link, Tabs} from 'expo-router';
 import { Pressable , Text} from 'react-native';
 
 import Colors from '@/constants/Colors';
@@ -19,20 +19,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
-  const { session, isLoading } = useSession();
-  //console.log(`dentro de _loyaut tab ${session} ${isLoading}`);
-  /*
-  if (isLoading) {
-    return <Text>Cagando..</Text>;
-  }*/
-
-  if(!session) {
-    return <Redirect href="/login" />;
-  }
-
   return (
-    <Stack>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -76,6 +63,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-    </Stack>
   );
 }

@@ -10,6 +10,8 @@ const userRoutes = require("./user.routes.js");
 const incidenteRoutes = require("./incidente.routes.js");
 /** Enrutador de guardias */
 const guardiaRoutes = require("./guardia.routes.js");
+/** Enrutador de CRUD guardias */
+const GuardiasRoutes = require("./Guardias.routes.js");
 /** Enrutador de horas */
 const horasRoutes = require("./horas.routes.js");
 
@@ -34,5 +36,6 @@ router.use("/jaulas", authenticationMiddleware, jaulaRoutes);
 router.use("/horarios", authenticationMiddleware, horasRoutes);
 // Define las rutas para el historia
 router.use("/historial", authenticationMiddleware, historialRoutes);
-
+// Define las rutas para ver a los guardias /api/admin/
+router.use("/Admin", authenticationMiddleware, GuardiasRoutes);
 module.exports = router;
