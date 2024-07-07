@@ -29,6 +29,28 @@ async function registrarIngreso(req, res) { //Solicitud emitida por el Usuario p
 }
 
 /**
+ * Registra la salida del usuario
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function registrarSalida(req, res) { //Solicitud emitida por el Usuario para Salir, Request.body=>id
+  try {
+    const userId = req.id;
+    
+    const { error: idError } = userIdSchema.validate({ id: userId });
+    if (idError) return respondError(req, res, 400, idError.message);
+
+    const [token, tokenError] = await accesoService.registrarSalida(userId);
+    if (tokenError) return respondError(req, res, 500, tokenError);
+    if(!token) return respondError(req, res, 400, 'No se creó el token');
+    respondSuccess(req, res, 201, token);
+  } catch (error) {
+    handleError(error, "acceso.controller -> registrarSalida");
+    respondError(req, res, 500, "No se registró la salida");
+  }
+}
+
+/**
  * Valida un token de acceso
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
@@ -208,6 +230,7 @@ async function salidaGuardiaAdmin(req, res) {
 
 module.exports = {
     registrarIngreso,
+    registrarSalida,
     validarToken,
     ingresoInvitado,
     ingresoGuardia,

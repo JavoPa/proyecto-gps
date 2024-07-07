@@ -1,7 +1,7 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, Redirect, Stack } from 'expo-router';
-import { Pressable , Text} from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -17,11 +17,11 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function TabLayout() {
+export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
 
-  const { session, isLoading } = useSession();
-  //console.log(`dentro de _loyaut tab ${session} ${isLoading}`);
+  const { session,isLoading } = useSession();
+  
   /*
   if (isLoading) {
     return <Text>Cagando..</Text>;
@@ -62,17 +62,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ingresar"
+        name="ingreso"
         options={{
-          title: 'Ingresar Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
+          title: 'Validar Ingreso',
+          tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="bicicleta"
+        name="escaneo"
         options={{
-          title: 'Mi Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="bicycle" color={color} />,
+          title: 'Escanear',
+          tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
     </Tabs>
