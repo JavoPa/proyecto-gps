@@ -21,18 +21,18 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   const { session, isLoading } = useSession();
-  //console.log(`dentro de _loyaut tab ${session} ${isLoading}`);
-  /*
+
   if (isLoading) {
     return <Text>Cagando..</Text>;
-  }*/
+  }
 
   if(!session) {
     return <Redirect href="/login" />;
   }
+  console.log(session);
 
   return (
-    <Stack>
+    
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -76,6 +76,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-    </Stack>
   );
 }

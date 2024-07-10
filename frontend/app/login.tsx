@@ -1,15 +1,15 @@
 import { StyleSheet, TextInput, Button, Alert } from 'react-native';
 import React, {useState} from 'react';
-import { Redirect } from 'expo-router';
-
 import { Text, View } from '@/components/Themed';
-
 import { useSession } from '@/flo';
+import {rolesService} from '@/services/roles.service';
+import { useRouter } from 'expo-router';
 
 export default function login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn , session } = useSession();
+    const { signIn, session } = useSession();
+    const router = useRouter();
 
     const handleLogin =  () => {
       try {
@@ -18,11 +18,15 @@ export default function login() {
           password: password
         }
         signIn(data);
-        if(session != null){
-          //dividir por roles
-          //modificar backend para que devulva el rol en ves de la cookie
-          return <Redirect href="/(tabs)" />;
+        const rol = rolesService(session);
+        if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+          return router.replace('/(tabs)')
         }
+        if(rol == "Guardia"){
+          return router.replace('/(guardia)')
+        }
+        Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
+
       } catch (error) {
         console.log(error);
         Alert.alert('Error', 'Error al iniciar sesión, vuelva a intentarlo');

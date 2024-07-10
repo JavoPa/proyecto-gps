@@ -1,13 +1,13 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs, Redirect, Stack } from 'expo-router';
-import { Pressable, Text } from 'react-native';
-
+import { Link, Tabs, Redirect } from 'expo-router';
+import { Pressable, Text , View} from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
 import { useSession } from '@/flo';
+
+
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -22,17 +22,16 @@ export default function GuardiasLayout() {
 
   const { session,isLoading } = useSession();
   
-  /*
   if (isLoading) {
     return <Text>Cagando..</Text>;
-  }*/
+  }
 
   if(!session) {
     return <Redirect href="/login" />;
   }
+  console.log(session);
 
   return (
-    <Stack>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -76,6 +75,5 @@ export default function GuardiasLayout() {
         }}
       />
     </Tabs>
-    </Stack>
   );
 }

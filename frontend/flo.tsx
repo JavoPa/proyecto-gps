@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStorageState } from './useStorageState';
 import axios from 'axios';
+import API_URL from './constants/constantes';
 
 
 
@@ -28,12 +29,11 @@ export function useSession() {
 }
 
 async function Login(data: {correo: string, password: string}) {
-  
     try {
-        const res = await axios.post('http://localhost:3000/api/auth/login', data );
+        const res = await axios.post(API_URL, data );
         return res.data.data;
     } catch (error) {
-        alert('Error al iniciar sesión, vulva a intentarlo');
+        //alert('Error al iniciar sesión, vulva a intentarlo');
         console.log(error);
         return null;
     }
@@ -45,7 +45,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
     return (
       <AuthContext.Provider
         value={{
-          signIn: async (data) => {
+          signIn: (data) => {
             Login(data).then(res => {
                 if(res == null) {
                     setSession(null);
