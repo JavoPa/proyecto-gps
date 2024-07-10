@@ -13,19 +13,6 @@ export async function getGuardias() {
     }
 }
 
-export async function getGuardiaById(id) {
-    try {
-        const response = await axios.get(`/Admin/guardias/${id}`);
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            return error.response.data;
-        } else {
-            return { message: 'Ocurrió un error en la api' };
-        }
-    }
-}
-
 export async function postGuardia(data) {
     try {
         const response = await axios.post('/Admin/guardias/', data);
@@ -39,9 +26,9 @@ export async function postGuardia(data) {
     }
 }
 
-export async function putGuardia(id, data) {
+export async function deleteGuardia(id){
     try {
-        const response = await axios.put(`/guardias/${id}`, data);
+        const response = await axios.delete(`/Admin/guardias/${id}`);
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -52,9 +39,9 @@ export async function putGuardia(id, data) {
     }
 }
 
-export async function deleteGuardia(id) {
+export async function getGuardiaById(id) {
     try {
-        const response = await axios.delete(`/guardias/${id}`);
+        const response = await axios.get(`/Admin/guardias/${id}`);
         return response.data;
     } catch (error) {
         if (error.response) {
