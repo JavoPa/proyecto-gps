@@ -25,7 +25,7 @@ const AccesoManualModal: React.FC<AccesoModalProps> = ({ modalVisible, setModalV
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.titleContainer}>Ingreso Maual</Text>
+            <Text style={styles.titleContainer}>Ingreso Manual</Text>
 
             <View style={styles.inputRow}>
               <Text style={styles.title}>Marca: </Text>
