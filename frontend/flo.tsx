@@ -1,8 +1,6 @@
 import React from 'react';
 import { useStorageState } from './useStorageState';
-import axios from 'axios';
-import API_URL from './constants/constantes';
-
+import { Login } from './services/login.service'
 
 
 const AuthContext = React.createContext<{
@@ -27,7 +25,7 @@ export function useSession() {
   
     return value;
 }
-
+/*
 async function Login(data: {correo: string, password: string}) {
     try {
         const res = await axios.post(API_URL, data );
@@ -37,7 +35,7 @@ async function Login(data: {correo: string, password: string}) {
         console.log(error);
         return null;
     }
-}
+}*/
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');

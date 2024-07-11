@@ -20,10 +20,10 @@ export default function login() {
         signIn(data);
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
-          return router.replace('/(tabs)')
+          return router.replace('/tabs')
         }
         if(rol == "Guardia"){
-          return router.replace('/(guardia)')
+          return router.replace('/guardia')
         }
         Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
 
