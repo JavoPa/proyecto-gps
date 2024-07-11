@@ -1,11 +1,14 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
-
+import { Link, Tabs, Redirect } from 'expo-router';
+import { Pressable, Text , View} from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useSession } from '@/flo';
+import { setAuthToken } from '@/services/root.service';
+
+
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -15,8 +18,21 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function TabLayout() {
+export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
+  const headerShown = useClientOnlyValue(false, true);
+  const { session,isLoading } = useSession();
+  
+  if (isLoading) {
+    return <Text>Cagando..</Text>;
+  }
+
+  if(!session) {
+    return <Redirect href="/login" />;
+  }else{
+    setAuthToken(session);
+  }
+  console.log(session);
 
   return (
     <Tabs
@@ -24,7 +40,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: headerShown,
       }}>
       <Tabs.Screen
         name="index"
@@ -48,17 +64,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ingresar"
+        name="listaGuardias"
         options={{
-          title: 'Ingresar Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
+          title: 'guardias',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="bicicleta"
+        name="crearGuardia"
         options={{
-          title: 'Mi Bicicleta',
-          tabBarIcon: ({ color }) => <TabBarIcon name="bicycle" color={color} />,
+          title: 'Agregar',
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />
     </Tabs>

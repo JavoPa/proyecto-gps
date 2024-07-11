@@ -1,14 +1,19 @@
+
 import { StyleSheet } from 'react-native';
 
-import BicicletaInfo from '@/components/usuario/BicicletaInfo';
+import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { useSession } from '@/flo';
+import { Button } from 'react-native';
 
-export default function BicicletaScreen() {
+export default function TabOneScreen() {
+  const { signOut } = useSession();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mi Bicicleta</Text>
+      <Text style={styles.title} onPress={()=>signOut()}>Tab Oner</Text>
+      <Button title="Salir" onPress={()=>signOut()} />
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <BicicletaInfo />
+      <EditScreenInfo path="app/tabs/index.tsx" />
     </View>
   );
 }
