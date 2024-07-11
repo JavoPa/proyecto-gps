@@ -95,6 +95,8 @@ const GuardiaForm: React.FC = () => {
     );
 };
 
+export default GuardiaForm;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -115,4 +117,3 @@ const styles = StyleSheet.create({
     },
 });
 
-export default GuardiaForm;

@@ -24,7 +24,7 @@ export default function GuardiasLayout() {
   const { session,isLoading } = useSession();
   
   if (isLoading) {
-    return <Text>Cagando..</Text>;
+    return <Text>Cargando..</Text>;
   }
 
   if(!session) {
@@ -74,6 +74,13 @@ export default function GuardiasLayout() {
         name="crearGuardia"
         options={{
           title: 'Agregar',
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="crearUsuarios"
+        options={{
+          title: 'Crear User',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />

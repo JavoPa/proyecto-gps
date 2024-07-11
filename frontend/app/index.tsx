@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { Button } from 'react-native';
 import { useSession } from '@/flo';
 import { useRouter } from 'expo-router';
+import {rolesService} from '@/services/roles.service';
 
 export default function TabOneScreen() {
   const { signOut, session, isLoading} = useSession();
@@ -13,6 +13,20 @@ export default function TabOneScreen() {
   const signIn = () => {
     return router.replace('/login');
   }
+  //verificar token renvia
+  const rol = rolesService(session);
+  if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+    return router.replace('/tabs')
+  }else{
+    if(rol == "Guardia"){
+      return router.replace('/guardias')
+    }else{
+      if(rol == "Administrador"){
+        return router.replace('/admin')
+      }
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title} >BICICLETERO UBB</Text>
