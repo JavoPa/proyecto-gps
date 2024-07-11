@@ -70,7 +70,7 @@ async function crearIncidente(req, res) {
             descripcion: req.body.descripcion,
             informante: req.id
         };
-
+        console.log(req.id);
         // Si no se especifica fecha, se trabaja con la fecha de hoy
         if (isNaN(data.fecha)) { data.fecha = new Date(Date.now()); }
         // Si no se especifica hora, se trabaja con la hora especificada en la fecha

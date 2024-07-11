@@ -23,7 +23,7 @@ const incidenteSchema = new mongoose.Schema({
     },
     informante: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "usuario",
+        ref: 'Usuario',
         required: true
     },
 });

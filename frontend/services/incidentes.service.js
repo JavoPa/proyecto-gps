@@ -41,9 +41,9 @@ export async function getIncidentesInforme(year, month) {
   }
 }
 
-export async function createIncidente(fecha, hora, lugar, tipo, descripcion) {
+export async function createIncidente(fecha, hora, lugar, tipo, descripcion, informante) {
   try {
-    const response = await axios.post('/incidentes/crear', { fecha, hora, lugar, tipo, descripcion });
+    const response = await axios.post('/incidentes/crear', { fecha, hora, lugar, tipo, descripcion, informante });
     return response;
   } catch (error) {
     if (error.response) {

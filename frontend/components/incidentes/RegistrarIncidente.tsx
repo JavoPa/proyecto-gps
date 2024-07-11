@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, Alert, Platform } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native';
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { createIncidente } from '@/services/incidentes.service';
+import { jwtDecode } from 'jwt-decode';
 
 const RegistrarIncidente: React.FC = () => {
   const [fecha, setFecha] = useState<Date | null>(new Date());
@@ -10,8 +11,23 @@ const RegistrarIncidente: React.FC = () => {
   const [lugar, setLugar] = useState('');
   const [tipo, setTipo] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [informante, setInformante] = useState('');
   const [showFechaPicker, setShowFechaPicker] = useState(false);
   const [showHoraPicker, setShowHoraPicker] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      // @ts-ignore
+      const userId = decodedToken.id;
+      setInformante(userId);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(typeof(informante));
+  }, [informante]);
 
   const handleSubmit = async () => {
     if (!fecha || !hora || !lugar || !tipo || !descripcion) {
@@ -20,9 +36,10 @@ const RegistrarIncidente: React.FC = () => {
     }
 
     try {
+
       const formattedFecha = fecha.toISOString().split('T')[0]; // Format the date to YYYY-MM-DD
       const formattedHora = hora.toTimeString().split(' ')[0]; // Format the time to HH:MM:SS
-      const response = await createIncidente(formattedFecha, formattedHora, lugar, tipo, descripcion);
+      const response = await createIncidente(formattedFecha, formattedHora, lugar, tipo, descripcion, informante);
       if (response.status === 200) {
         Alert.alert('Success', 'Incidente creado correctamente');
         // Reset the form fields
@@ -31,6 +48,7 @@ const RegistrarIncidente: React.FC = () => {
         setLugar('');
         setTipo('');
         setDescripcion('');
+        setInformante('');
       } else {
         Alert.alert('Error', response.message || 'No se pudo crear el incidente');
       }
