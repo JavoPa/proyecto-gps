@@ -2,7 +2,7 @@ import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, Redirect, Stack } from 'expo-router';
 import { Pressable , Text} from 'react-native';
-
+import { setAuthToken } from '@/services/root.service';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
@@ -28,6 +28,8 @@ export default function TabLayout() {
 
   if(!session) {
     return <Redirect href="/login" />;
+  }else{
+    setAuthToken(session);
   }
 
   return (
