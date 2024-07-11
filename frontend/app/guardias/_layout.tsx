@@ -6,7 +6,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
-
+import { setAuthToken } from '@/services/root.service';
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -19,7 +19,7 @@ function TabBarIcon(props: {
 
 export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
-
+  const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
   
   if (isLoading) {
@@ -28,8 +28,9 @@ export default function GuardiasLayout() {
 
   if(!session) {
     return <Redirect href="/login" />;
+  }else{
+    setAuthToken(session);
   }
-  console.log(session);
 
   return (
     <Tabs
@@ -37,7 +38,7 @@ export default function GuardiasLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: headerShown,
       }}>
       <Tabs.Screen
         name="index"

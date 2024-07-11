@@ -1,19 +1,13 @@
-
 import { StyleSheet } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
+import ListaGuardias from '@/components/admin/crearGuardia';
 import { Text, View } from '@/components/Themed';
-import { useSession } from '@/flo';
-import { Button } from 'react-native';
 
-export default function TabOneScreen() {
-  const { signOut } = useSession();
+export default function ListaScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title} onPress={()=>signOut()}>Tab Oner</Text>
-      <Button title="Salir" onPress={()=>signOut()} />
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/tabs/index.tsx" />
+      <ListaGuardias />
     </View>
   );
 }
