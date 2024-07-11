@@ -21,9 +21,9 @@ const incidenteSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    informate: {
+    informante: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Guardia o Usuario",
+        ref: 'Usuario',
         required: true
     },
 });
