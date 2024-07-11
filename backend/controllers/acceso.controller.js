@@ -64,7 +64,7 @@ async function validarToken(req, res) { //Solicitud emitida por el guardia para 
     const { error: idError } = userIdSchema.validate({ id: guardiaId });
     if (idError) return respondError(req, res, 400, idError.message);
     const [valido, tokenError] = await accesoService.validarToken(token, guardiaId);
-    if (tokenError) return respondError(req, res, 500, tokenError);
+    if (tokenError) return respondError(req, res, 400, tokenError);
     if(!valido) return respondError(req, res, 400, 'Token no válido');
     respondSuccess(req, res, 200, valido);
   } catch (error) {

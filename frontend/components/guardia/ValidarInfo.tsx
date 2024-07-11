@@ -86,6 +86,7 @@ export default function ValidarInfo() {
                   { text: 'OK' }
                 ]
               );
+              setError(null);
               setToken('');
             }else{
               Alert.alert(
@@ -95,6 +96,7 @@ export default function ValidarInfo() {
                   { text: 'OK', onPress: () => setError(response.message || "Hubo un error al registrar el ingreso") }
                 ]
               );
+              setError(response.message || "Hubo un error al registrar el ingreso");
             }
           });
         };
