@@ -6,7 +6,7 @@ const authenticationMiddleware = require("../middlewares/authentication.middlewa
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
 // Apply authentication middleware to all routes in this router
-router.use(authenticationMiddleware);
+//router.use(authenticationMiddleware);
 
 router.get("/todos", incidenteController.getIncidentes); // Ruta para obtener todos los incidentes
 router.get("/dia", /*authorizationMiddleware.esAcademico || authorizationMiddleware.esGuardia,*/ incidenteController.getIncidentesDia); // Ruta para obtener los incidentes de un día en específico

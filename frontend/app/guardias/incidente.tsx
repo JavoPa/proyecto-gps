@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import IncidentesMenu from '../../components/incidentes/IncidentesMenu';
 import MostrarIncidentes from '../../components/incidentes/MostrarIncidentes';
-import DescargarInforme from '@/components/incidentes/DescargarInforme';
+import DescargarInforme from '../../components/incidentes/DescargarInforme';
 import RegistrarIncidente from '../../components/incidentes/RegistrarIncidente';
-import IncidentesDia from '@/components/incidentes/IncidentesDia';
+import IncidentesDia from '../../components/incidentes/IncidentesDia';
 
 export default function IncidentesScreen() {
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
