@@ -19,7 +19,7 @@ function TabBarIcon(props: {
 
 export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
-
+  const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
   
   if (isLoading) {
@@ -37,7 +37,7 @@ export default function GuardiasLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: headerShown,
       }}>
       <Tabs.Screen
         name="index"
