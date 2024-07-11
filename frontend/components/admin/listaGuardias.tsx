@@ -13,24 +13,39 @@ interface Guardia {
 
 const ListaGuardias: React.FC = () => {
     const [guardias, setGuardias] = useState<Guardia[]>([]);
-    const [selectedGuardia, setSelectedGuardia] = useState<Guardia | null>(null); // Estado para guardar el guardia seleccionado
+    const [selectedGuardia, setSelectedGuardia] = useState<Guardia | null>(null);
 
     useEffect(() => {
         fetchGuardias();
     }, []);
 
     const fetchGuardias = async () => {
-        const response = await getGuardias();
-        const validGuardias = response.filter((guardia: Guardia) => guardia._id !== undefined);
-        setGuardias(validGuardias);
+        try {
+            const response = await getGuardias();
+            if (Array.isArray(response)) {
+                const validGuardias = response.filter((guardia: Guardia) => guardia._id !== undefined);
+                setGuardias(validGuardias);
+            } else {
+                console.error('Unexpected response format:', response);
+                Alert.alert('Error', 'Formato de respuesta inesperado');
+            }
+        } catch (error) {
+            console.error('Error fetching guardias:', error);
+            Alert.alert('Error', 'No se pudo cargar la lista de guardias');
+        }
     };
 
     const handleDelete = async (id: string) => {
-        const response = await deleteGuardia(id);
-        if (response && response.success) {
-            fetchGuardias(); // Actualiza la lista de guardias después de eliminar uno
-            Alert.alert('Éxito', 'Guardia eliminado correctamente');
-        } else {
+        try {
+            const response = await deleteGuardia(id);
+            if (response && response.success) {
+                fetchGuardias();
+                Alert.alert('Éxito', 'Guardia eliminado correctamente');
+            } else {
+                Alert.alert('Error', 'No se pudo eliminar el guardia');
+            }
+        } catch (error) {
+            console.error('Error deleting guardia:', error);
             Alert.alert('Error', 'No se pudo eliminar el guardia');
         }
     };
@@ -46,7 +61,7 @@ const ListaGuardias: React.FC = () => {
     };
 
     const handleBackToList = () => {
-        setSelectedGuardia(null); // Vuelve a la lista, resetea el guardia seleccionado
+        setSelectedGuardia(null);
     };
 
     if (selectedGuardia) {
@@ -57,8 +72,6 @@ const ListaGuardias: React.FC = () => {
                     <Text style={styles.itemText}>Nombre: {selectedGuardia.nombre}</Text>
                     <Text style={styles.itemText}>Apellido: {selectedGuardia.apellido}</Text>
                     <Text style={styles.itemText}>Fono: {selectedGuardia.fono}</Text>
-                    <Text style={styles.itemText}>Rut: {selectedGuardia.rut}</Text>
-                    <Text style={styles.itemText}>Correo: {selectedGuardia.correo}</Text>
                     <Button title="Volver al Listado" onPress={handleBackToList} />
                 </View>
             </View>
