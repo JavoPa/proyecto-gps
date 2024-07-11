@@ -6,6 +6,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
+import { setAuthToken } from '@/services/root.service';
 
 
 
@@ -28,6 +29,8 @@ export default function GuardiasLayout() {
 
   if(!session) {
     return <Redirect href="/login" />;
+  }else{
+    setAuthToken(session);
   }
   console.log(session);
 
