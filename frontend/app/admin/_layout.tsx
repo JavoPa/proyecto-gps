@@ -54,7 +54,7 @@ export default function GuardiasLayout() {
         }}
       />
       <Tabs.Screen
-        name="CrearGuardia"
+        name="crearGuardia"
         options={{
           title: 'Agregar',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
