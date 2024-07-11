@@ -63,6 +63,14 @@ export default function GuardiasLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+            name="listaJaulas"
+            options={{
+                title: 'Jaulas',
+                tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+            }}
+        />
+
       <Tabs.Screen
         name="listaGuardias"
         options={{
