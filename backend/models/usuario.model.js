@@ -35,6 +35,9 @@ const usuarioSchema = new mongoose.Schema({
     bicicleta: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Bicicleta'
+    },
+    pushToken: {
+        type: String
     }
 });
 

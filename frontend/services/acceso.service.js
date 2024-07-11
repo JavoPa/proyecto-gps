@@ -41,3 +41,17 @@ export async function registrarIngreso() {
           }
       }
   }
+
+  export async function registrarSalida() {
+    try {
+        const response = await axios.put('/users/salir');
+        return response.data;
+      } catch (error) {
+        if (error.response) {
+            // La solicitud se realizó y el servidor respondió con un estado de error
+            return error.response.data;
+          } else {
+            return { message: 'Ocurrió un error en la api' };
+          }
+      }
+  }
