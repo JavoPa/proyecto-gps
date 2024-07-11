@@ -23,7 +23,7 @@ export default function login() {
           return router.replace('/tabs')
         }
         if(rol == "Guardia"){
-          return router.replace('/guardia')
+          return router.replace('/guardias')
         }
         if(rol == "Admin"){
           return router.replace('/admin')
