@@ -4,26 +4,35 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { getAllIncidentes } from '@/services/incidentes.service';
 import Colors from '@/constants/Colors';
 
-export default function IncidentesInfo() {
+export default function MostrarIncidentes() {
     interface Incidente {
-        id: number;
+        id: string;
         fecha: Date;
         hora: string;
         lugar: string;
         tipo: string;
         descripcion: string;
     }
+
     const [incidentes, setIncidentes] = useState<Incidente[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     useFocusEffect(
         React.useCallback(() => {
             getAllIncidentes().then((response) => {
-                if (response.status === 200) {
-                    setIncidentes(response.data.data);
-                    setError(null);
-                } else {
-                    setError(response.message || 'Hubo un error al cargar los incidentes 🛑');
+                switch (response.status) {
+                    case 200:
+                        const incidentesData = response.data.data.map((incidente: any) => ({
+                            ...incidente,
+                            fecha: new Date(incidente.fecha),
+                        }));
+                        setIncidentes(incidentesData);
+                        setError(null);
+                        break;
+
+                    default:
+                        setError(response.message || 'Hubo un error al cargar los incidentes 🛑');
+                        break;
                 }
             }).catch((error) => {
                 setError(error.message || 'Hubo un error al cargar los incidentes 🛑');
@@ -42,13 +51,14 @@ export default function IncidentesInfo() {
             {!error && incidentes.length > 0 && (
                 <View style={styles.table}>
                     <View style={styles.tableHeader}>
-                        <Text style={styles.tableHeaderText}>ID</Text>
-                        <Text style={styles.tableHeaderText}>Descripción</Text>
                         <Text style={styles.tableHeaderText}>Fecha</Text>
+                        <Text style={styles.tableHeaderText}>Hora</Text>
+                        <Text style={styles.tableHeaderText}>Lugar</Text>
+                        <Text style={styles.tableHeaderText}>Tipo</Text>
+                        <Text style={styles.tableHeaderText}>Descripción</Text>
                     </View>
-                    {incidentes.map((incidente) => (
-                        <View key={incidente.id} style={styles.tableRow}>
-                            <Text style={styles.tableCell}>{incidente.id}</Text>
+                    {incidentes.map((incidente, index) => (
+                        <View key={index} style={styles.tableRow}>
                             <Text style={styles.tableCell}>{incidente.fecha.toLocaleDateString()}</Text>
                             <Text style={styles.tableCell}>{incidente.hora}</Text>
                             <Text style={styles.tableCell}>{incidente.lugar}</Text>
@@ -86,14 +96,17 @@ const styles = StyleSheet.create({
         flex: 1,
         fontWeight: 'bold',
         color: 'white',
+        textAlign: 'center',
     },
     tableRow: {
         flexDirection: 'row',
-        padding: 10,
+        paddingVertical: 10,
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
     },
     tableCell: {
         flex: 1,
+        paddingHorizontal: 5,
+        textAlign: 'center',
     },
 });

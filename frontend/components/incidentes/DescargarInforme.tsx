@@ -9,9 +9,13 @@ const DescargarInforme: React.FC = () => {
   const downloadInforme = async () => {
     setLoading(true);
     try {
-      const response = await getIncidentesInforme();
+      const year = '2024';
+      const month = '5';
+      const response = await getIncidentesInforme(year, month); // Pass "fecha" as a parameter to the API call
+
       if (response.status === 200) {
-        const uri = FileSystem.documentDirectory + 'informe_incidentes.pdf';
+        const uri = FileSystem.documentDirectory + `informe_incidentes.pdf`;
+        console.log(uri);
         await FileSystem.writeAsStringAsync(uri, response.data, { encoding: FileSystem.EncodingType.Base64 });
         Alert.alert('Informe descargado', `El informe se ha descargado correctamente en ${uri}`);
       } else {

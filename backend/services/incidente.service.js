@@ -93,12 +93,13 @@ async function getIncidentesDia(date) {
  */
 async function crearIncidente(data) {
     try {
-        const incidente = new Incidente({
+        const incidente = await new Incidente({
             fecha: data.fecha,
             hora: data.hora,
             lugar: data.lugar,
             tipo: data.tipo,
-            descripcion: data.descripcion
+            descripcion: data.descripcion,
+            informante: data.informante
         }).save();
 
         return [incidente, null];
