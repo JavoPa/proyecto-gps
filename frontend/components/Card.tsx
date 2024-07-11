@@ -11,7 +11,7 @@ const Card: React.FC<CardProps> = ({ title, time }) => {
     return (
         <View style={styles.card}>
             <Text style={styles.cardTitle}>{title}</Text>
-            <Text style={styles.cardBody}>{time}</Text>
+            <Text style={styles.cardBody}>La {title} es {time}</Text>
         </View>
     );
 };
