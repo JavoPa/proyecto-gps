@@ -1,5 +1,5 @@
 import axios from 'axios'
-import API_URL from '../constants/constantes';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export async function Login(data) {
     try {
