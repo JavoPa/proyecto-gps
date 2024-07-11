@@ -6,7 +6,7 @@ import GestionarHorarios from '@/components/admin/gestionarHorarios';
 export default function HorariosScreen() {
   return (
       <View style={styles.container}>
-          <Text style={styles.title}>Horarios Activo Bicicletero</Text>
+          <Text style={styles.title}>Horarios Funcionamiento Bicicletero</Text>
           <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
           <GestionarHorarios/>
       </View>
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
         padding: 16,
         fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'center',
     },
     separator: {
       marginVertical: 30,
