@@ -25,7 +25,7 @@ export default function login() {
         if(rol == "Guardia"){
           return router.replace('/guardias')
         }
-        if(rol == "Admin"){
+        if(rol == "Administrador"){
           return router.replace('/admin')
         }
         Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
