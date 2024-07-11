@@ -1,9 +1,9 @@
 import axios from 'axios'
-import API_URL from '../constants/constantes';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export async function Login(data) {
     try {
-        const res = await axios.post(API_URL, data );
+        const res = await axios.post(`${API_URL}/auth/login`, data );
         return res.data.data;
     } catch (error) {
         //alert('Error al iniciar sesión, vulva a intentarlo');
