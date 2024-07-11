@@ -77,6 +77,12 @@ export default function GuardiasLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="horarios"
+        options={{
+          title: 'Horarios',
+          tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
+        }}/>
     </Tabs>
   );
 }

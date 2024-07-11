@@ -3,15 +3,14 @@ import { View, Text, StyleSheet } from 'react-native';
 
 interface CardProps {
     title: string;
-    time: string;
+    body: string;
 }
 
-const Card: React.FC<CardProps> = ({ title, time }) => {
-    console.log('Card render');
+const Card: React.FC<CardProps> = ({ title, body }) => {
     return (
         <View style={styles.card}>
             <Text style={styles.cardTitle}>{title}</Text>
-            <Text style={styles.cardBody}>La {title} es {time}</Text>
+            <Text style={styles.cardBody}>{body}</Text>
         </View>
     );
 };
@@ -28,6 +27,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         minWidth: 150,
         alignItems: 'center',
+        marginBottom: 30,
     },
     cardTitle: {
         fontSize: 18,
