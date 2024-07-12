@@ -7,6 +7,7 @@ async function listarJaulas(req, res) {
         const jaulas = await Jaula.find({}, 'ubicacion identificador capacidad situacion_actual')  
             .lean(); 
         const jaulasConEspaciosDisponibles = jaulas.map(jaula => ({
+            _id: jaula._id,
             identificador: jaula.identificador,
             ubicacion: jaula.ubicacion,
             espaciosDisponibles: jaula.capacidad - jaula.situacion_actual
@@ -31,6 +32,7 @@ async function getJaula(req, res) {
         const espaciosDisponibles = jaula.capacidad - jaula.situacion_actual;
         
         const response = {
+
             ubicacion: jaula.ubicacion,
             identificador: jaula.identificador,
             espaciosDisponibles: espaciosDisponibles,
