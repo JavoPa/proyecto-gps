@@ -23,7 +23,7 @@ export default function TabLayout() {
   const { session, isLoading } = useSession();
 
   if (isLoading) {
-    return <Text>Cagando..</Text>;
+    return <Text>Cargando..</Text>;
   }
 
   if(!session) {
