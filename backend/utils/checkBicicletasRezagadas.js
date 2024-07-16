@@ -15,12 +15,12 @@ async function checkBicicletasRezagadas() {
         for (registro of registros){
             // Se obtiene el usuario asociado al registro
             usuario = await Usuario.findById(registro.usuario);
-            console.log("Usuario: ", usuario.nombre, " ", usuario.apellido, "RUT: ", usuario.rut, "Correo: ", usuario.correo);
+            //console.log("Usuario: ", usuario.nombre, " ", usuario.apellido, "RUT: ", usuario.rut, "Correo: ", usuario.correo);
             // console.log("Bicicleta rezagada: ", registro);
 
             // Envío de notificación push al usuario
             if (usuario.pushToken){
-                message = `BICICLETERO CERRADO Tu bicicleta aún no ha sido retirada. Por favor, retírala lo antes posible.`;
+                message = `Tu bicicleta aún se encuentra en el bicicletero. Por favor, retírala lo antes posible. 🚴`;
                 await enviarPushNotification([usuario.pushToken], message);
             }
         }

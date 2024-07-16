@@ -14,7 +14,7 @@ async function enviarPushNotification(tokens, message) {
             messages.push({
                 to: pushToken,
                 sound: 'default',
-                title: 'Notificación de la aplicación',
+                title: '⏰ BICICLETERO CERRADO ⏰',
                 body: message,
                 data: { message }
             });
