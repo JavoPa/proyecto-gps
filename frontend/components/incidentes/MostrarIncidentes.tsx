@@ -100,8 +100,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     table: {
-        borderWidth: 1,
-        borderColor: 'gray',
         minWidth: 600, // Ensure the table is wide enough
     },
     tableHeader: {

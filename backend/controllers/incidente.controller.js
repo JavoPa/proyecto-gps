@@ -119,19 +119,22 @@ async function generarInforme(req, res) {
 
         // Call service function to get incidents for the specified month
         const [incidentes, error] = await IncidenteService.getIncidentesMes(date);
-
+        
         if (error) {
-            return res.status(500).json({ error });
+            return res.status(204).json({ error });
         }
 
         // Create a new PDF document
         const doc = new PDFDocument();
-        // Set response headers for PDF
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="incidentes_${year}_${month}.pdf"`);
-
-        // Pipe the PDF document to the response
-        doc.pipe(res);
+        let buffers = [];
+        
+        // Collect PDF data into buffers
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            const base64PDF = pdfData.toString('base64');
+            res.json({ pdf: base64PDF });
+        });
 
         // Add incident information to the PDF
         doc.fontSize(12).text(`Incidentes del mes ${month} del año ${year}`, { align: 'center' });

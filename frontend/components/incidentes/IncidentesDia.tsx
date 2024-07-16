@@ -152,8 +152,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   table: {
-    borderWidth: 1,
-    borderColor: 'gray',
     minWidth: 600,
   },
   tableHeader: {
