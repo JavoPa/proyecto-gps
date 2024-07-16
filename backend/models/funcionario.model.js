@@ -8,11 +8,11 @@ const funcionarioSchema = new mongoose.Schema({
     },
     departamento: {
         type: String,
-        required: true
+        required: false
     },
     cargo: {
         type: String,
-        required: true
+        required: false
     }
 });
 

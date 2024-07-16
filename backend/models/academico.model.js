@@ -4,11 +4,11 @@ const Usuario = require("./usuario.model.js");
 const academicoSchema = new mongoose.Schema({
     cargo: {
         type: String,
-        required: true
+        required: false
     },
     area: {
         type: String,
-        required: true
+        required: false
     },
     situacion_laboral: {
         type: String,

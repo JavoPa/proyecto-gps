@@ -11,7 +11,7 @@ export default function login() {
     const { signIn, session } = useSession();
     const router = useRouter();
 
-    const handleLogin =  () => {
+    const handleLogin = () => {
       try {
         const data = {
           correo: email.toLowerCase(),
@@ -21,14 +21,21 @@ export default function login() {
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
           return router.replace('/tabs')
+        }else{
+          if(rol == "Guardia"){
+            return router.replace('/guardias')
+          }else{
+            if(rol == "Administrador"){
+              return router.replace('/admin')
+            }else{
+              if(rol == null){
+                Alert.alert('Error de conexion', 'Contactese con su provedor' );
+              }else{
+                Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
+              }
+            }
+          }
         }
-        if(rol == "Guardia"){
-          return router.replace('/guardias')
-        }
-        if(rol == "Administrador"){
-          return router.replace('/admin')
-        }
-        Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
 
       } catch (error) {
         console.log(error);
@@ -45,13 +52,13 @@ export default function login() {
             source={require('../assets/images/ubb5.png')}
           />
         </View>
-        <Text style={styles.label}>Correo electrónico</Text>
-        <TextInput 
+        <TextInput
+          placeholder='Correo electrónico'
           style={styles.input}
           onChangeText={setEmail}
         />
-        <Text style={styles.label}>Contraseña</Text>
         <TextInput
+          placeholder='Contraseña'
           style={styles.input}
           onChangeText={setPassword}
           secureTextEntry
@@ -86,7 +93,7 @@ export default function login() {
       borderRadius: 5,
     },
     containeImage:{
-      padding: 40,
+      padding: 50,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -94,13 +101,14 @@ export default function login() {
       width: 500,//ancho
       height: 200,//alto
       resizeMode: 'contain',
-      backgroundColor: '#000'
     },
     boton: {
       backgroundColor: '#fff',
       borderRadius: 5,
       marginLeft: 60,
       marginRight: 60,
+      borderColor: '#000',
+      borderWidth: 1.5,
     },
     texto:{
       fontSize: 20,

@@ -55,6 +55,21 @@ async function verificarIntranet(req,res) {
 }
 
 
+/*
+data = {
+    "tipo": "Estudiante",
+    "rut": "12345678-9",
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "fono": "12345678",
+    "correo": "h@ubb.cl",
+    "password": "12345678",
+    "rol": "Estudiante",
+    ... datos especificos de cada tipo de usuario...
+
+}
+*/
+
 async function crearUsuario(req,res) {
     try {
         const { body } = req;

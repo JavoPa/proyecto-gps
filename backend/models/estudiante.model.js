@@ -4,7 +4,7 @@ const Usuario = require("./usuario.model.js");
 const estudianteSchema = new mongoose.Schema({
     carrera: {
         type: String,
-        required: true
+        required: false
     },
     situacion_academica: {
         type: String,

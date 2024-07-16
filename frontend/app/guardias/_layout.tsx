@@ -7,6 +7,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
 import { setAuthToken } from '@/services/root.service';
+import {rolesService} from '@/services/roles.service';
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -20,10 +21,16 @@ function TabBarIcon(props: {
 export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
-  const { session,isLoading } = useSession();
+  const { session,isLoading, signOut } = useSession();
   
   if (isLoading) {
     return <Text>Cagando..</Text>;
+  }
+
+  const rol = rolesService(session);
+  if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+    signOut();
+    return <Redirect href="/login" />;
   }
 
   if(!session) {
