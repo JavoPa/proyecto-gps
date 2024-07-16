@@ -8,7 +8,8 @@ export default function TabOneScreen() {
     const { signOut } = useSession();
     return (
       <View style={styles.container}>
-        <Text style={styles.title} >Tab Ones</Text>
+        <Text style={styles.title} >¡Bienvenido Admin!</Text>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <Button title="Salir" onPress={()=>signOut()} />
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <EditScreenInfo path="app/admin/index.tsx" />

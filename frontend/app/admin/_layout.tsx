@@ -63,6 +63,14 @@ export default function GuardiasLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+            name="listaJaulas"
+            options={{
+                title: 'Jaulas',
+                tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+            }}
+        />
+
       <Tabs.Screen
         name="listaGuardias"
         options={{
@@ -70,13 +78,26 @@ export default function GuardiasLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
+        <Tabs.Screen
+            name="crearJaula"
+            options={{
+                title: 'Agregar Jaula',
+                tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+            }}
+        />
       <Tabs.Screen
         name="crearGuardia"
         options={{
-          title: 'Agregar',
+          title: 'Agregar Guardia',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="horarios"
+        options={{
+          title: 'Horarios',
+          tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
+        }}/>
     </Tabs>
   );
 }
