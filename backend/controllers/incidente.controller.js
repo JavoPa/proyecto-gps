@@ -44,10 +44,13 @@ async function getIncidentesDia(req, res) {
         // Parsear la fecha
         const date = new Date(fecha + "T00:00:00Z");
         
-        const [incidentes, error] = await IncidenteService.getIncidentesDia(date);
-        if (error) { return res.status(500).json({ error: error }); }
+        //console.log(date);
 
-        respondSuccess(req, res, 200, incidentes);
+        const [incidentes, errorIncidentes] = await IncidenteService.getIncidentesDia(date);
+
+        incidentes.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, incidentes);
     } catch (error) {
         return res.status(500).json({ error: "Error al obtener incidentes del día" });
     }

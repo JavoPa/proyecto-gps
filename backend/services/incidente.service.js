@@ -60,13 +60,13 @@ async function getIncidentesDia(date) {
     try {
         // Asegurarse que la fecha se interpreta en UTC
         // Había un error donde daba los incidentes del día anterior debido a la diferencia de zona horaria
+        
         date.setUTCHours(0, 0, 0, 0);
 
         // Pescar el año, el mes y el día
         const year = date.getUTCFullYear();
         const month = date.getUTCMonth();
         const day = date.getUTCDate();
-
         // Marcar el comienzo y el fin del día
         const startOfDay = new Date(Date.UTC(year, month, day, 0, 0, 0));
         const endOfDay = new Date(Date.UTC(year, month, day, 23, 59, 59));
@@ -74,10 +74,6 @@ async function getIncidentesDia(date) {
         const incidentes = await Incidente.find({
             fecha: { $gte: startOfDay, $lte: endOfDay }
         });
-
-        if (!incidentes || incidentes.length === 0) {
-            return [null, "No hay incidentes en el día especificado"];
-        }
 
         return [incidentes, null];
     } catch (error) {

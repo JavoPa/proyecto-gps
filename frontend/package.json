@@ -15,6 +15,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
     "@react-native-community/datetimepicker": "^8.1.1",
+    "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/native": "^6.0.2",
     "axios": "^1.7.2",
     "expo": "^51.0.8",

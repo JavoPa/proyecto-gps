@@ -17,19 +17,19 @@ export default function IncidentesScreen() {
   
   switch (selectedComponent) {
     case "MostrarIncidentes":
-      content = <MostrarIncidentes />;
+      content = <MostrarIncidentes navigateTo={navigateTo} />;
     break;
 
     case "IncidentesDia":
-      content = <IncidentesDia />;
+      content = <IncidentesDia navigateTo={navigateTo}/>;
     break;
 
     case "DescargarInforme":
-      content = <DescargarInforme/>
+      content = <DescargarInforme navigateTo={navigateTo}/>
     break;
 
     case "RegistrarIncidente":
-      content = <RegistrarIncidente />;
+      content = <RegistrarIncidente navigateTo={navigateTo}/>;
     break;
 
     default:

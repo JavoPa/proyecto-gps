@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { getIncidentesDia } from '@/services/incidentes.service'; // Adjust the path accordingly
 import Colors from '@/constants/Colors';
+import { formatDate } from '../../Utils';
 
-const IncidentesDia: React.FC = () => {
+// Listo
+
+interface IncidentesDiaProps {
+  navigateTo: (component: string) => void;
+}
+
+const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [incidentes, setIncidentes] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -19,18 +26,27 @@ const IncidentesDia: React.FC = () => {
 
     setLoading(true);
     try {
-      const formattedDate = selectedDate.toISOString().split('T')[0]; // Format the date to YYYY-MM-DD
+      const formattedDate = formatDate(selectedDate);
       const response = await getIncidentesDia(formattedDate);
 
       switch (response.status) {
         case 200:
-          setIncidentes(response.data.data);
+          const incidentesData = response.data.data.map((incidente: any) => ({
+            ...incidente,
+            fecha: new Date(incidente.fecha),
+          }));
+          setIncidentes(incidentesData);
           setError(null);
-        break;
+          break;
+
+        case 204:
+          Alert.alert('Error', 'No hay incidentes en ese día');
+          setError('Seleccione una fecha diferente');
+          break;
 
         default:
           setError(response.message || 'No se pudieron obtener los incidentes');
-        break;
+          break;
       }
     } catch (error) {
       setError('Ocurrió un error al intentar obtener los incidentes');
@@ -50,13 +66,26 @@ const IncidentesDia: React.FC = () => {
     }
   };
 
+  const renderItem = ({ item }: { item: any }) => (
+    <View style={styles.tableRow}>
+      <Text style={styles.tableCell}>{formatDate(item.fecha)}</Text>
+      <Text style={styles.tableCell}>{item.hora}</Text>
+      <Text style={styles.tableCell}>{item.lugar}</Text>
+      <Text style={styles.tableCell}>{item.tipo}</Text>
+      <Text style={styles.tableCell}>{item.descripcion}</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
+      <View style={{ margin: 10 }}>
+        <Button title="Volver al menú de incidentes" onPress={() => navigateTo('IncidentesMenu')} />
+      </View>
       <Text style={styles.label}>Selecciona una fecha</Text>
       <TouchableOpacity onPress={showDatePicker}>
         <TextInput
           style={styles.input}
-          value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+          value={selectedDate ? formatDate(selectedDate) : ''}
           editable={false}
           placeholder="Seleccione la fecha"
         />
@@ -85,15 +114,11 @@ const IncidentesDia: React.FC = () => {
               <Text style={styles.tableHeaderText}>Tipo</Text>
               <Text style={styles.tableHeaderText}>Descripción</Text>
             </View>
-            {incidentes.map((incidente, index) => (
-              <View key={index} style={styles.tableRow}>
-                <Text style={styles.tableCell}>{incidente.fecha}</Text>
-                <Text style={styles.tableCell}>{incidente.hora}</Text>
-                <Text style={styles.tableCell}>{incidente.lugar}</Text>
-                <Text style={styles.tableCell}>{incidente.tipo}</Text>
-                <Text style={styles.tableCell}>{incidente.descripcion}</Text>
-              </View>
-            ))}
+            <FlatList
+              data={incidentes}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
           </View>
         </ScrollView>
       )}
@@ -138,6 +163,7 @@ const styles = StyleSheet.create({
   },
   tableHeaderText: {
     flex: 1,
+    width: '20%',
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
@@ -147,11 +173,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'gray',
+    alignItems: 'center', // Center items vertically in each row
   },
   tableCell: {
-    flex: 1,
+    width: '20%',
     paddingHorizontal: 5,
     textAlign: 'center',
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
+    height: '100%', // Make sure the cell takes the full height of the row
   },
 });
 

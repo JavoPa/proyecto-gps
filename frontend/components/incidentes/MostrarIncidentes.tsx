@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ScrollView, Button } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { getAllIncidentes } from '@/services/incidentes.service';
 import Colors from '@/constants/Colors';
+import { formatDate } from '../../Utils';
 
-export default function MostrarIncidentes() {
+// Listo
+
+interface MostrarIncidentesProps {
+    navigateTo: (component: string) => void;
+}
+
+const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => {
     interface Incidente {
         id: string;
         fecha: Date;
@@ -40,37 +47,46 @@ export default function MostrarIncidentes() {
         }, [])
     );
 
+    const renderItem = ({ item }: { item: Incidente }) => (
+        <View style={styles.tableRow}>
+            <Text style={styles.tableCell}>{formatDate(item.fecha)}</Text>
+            <Text style={styles.tableCell}>{item.hora}</Text>
+            <Text style={styles.tableCell}>{item.lugar}</Text>
+            <Text style={styles.tableCell}>{item.tipo}</Text>
+            <Text style={styles.tableCell}>{item.descripcion}</Text>
+        </View>
+    );
+
     return (
-        <ScrollView style={styles.container}>
-            {error && (
-                <View>
-                    <Text style={styles.errorText}>{error}</Text>
+        <ScrollView style={styles.container} horizontal>
+            <View style={styles.table}>
+                <View style={{ margin: 10 }}>
+                    <Button title="Volver al menú de incidentes" onPress={() => navigateTo('IncidentesMenu')} />
                 </View>
-            )}
-            {!error && incidentes.length === 0 && <Text>Cargando incidentes...</Text>}
-            {!error && incidentes.length > 0 && (
-                <View style={styles.table}>
-                    <View style={styles.tableHeader}>
-                        <Text style={styles.tableHeaderText}>Fecha</Text>
-                        <Text style={styles.tableHeaderText}>Hora</Text>
-                        <Text style={styles.tableHeaderText}>Lugar</Text>
-                        <Text style={styles.tableHeaderText}>Tipo</Text>
-                        <Text style={styles.tableHeaderText}>Descripción</Text>
+                <View style={styles.tableHeader}>
+                    <Text style={styles.tableHeaderText}>Fecha</Text>
+                    <Text style={styles.tableHeaderText}>Hora</Text>
+                    <Text style={styles.tableHeaderText}>Lugar</Text>
+                    <Text style={styles.tableHeaderText}>Tipo</Text>
+                    <Text style={styles.tableHeaderText}>Descripción</Text>
+                </View>
+                {error && (
+                    <View>
+                        <Text style={styles.errorText}>{error}</Text>
                     </View>
-                    {incidentes.map((incidente, index) => (
-                        <View key={index} style={styles.tableRow}>
-                            <Text style={styles.tableCell}>{incidente.fecha.toLocaleDateString()}</Text>
-                            <Text style={styles.tableCell}>{incidente.hora}</Text>
-                            <Text style={styles.tableCell}>{incidente.lugar}</Text>
-                            <Text style={styles.tableCell}>{incidente.tipo}</Text>
-                            <Text style={styles.tableCell}>{incidente.descripcion}</Text>
-                        </View>
-                    ))}
-                </View>
-            )}
+                )}
+                {!error && incidentes.length === 0 && <Text>Cargando incidentes...</Text>}
+                {!error && incidentes.length > 0 && (
+                    <FlatList
+                        data={incidentes}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                )}
+            </View>
         </ScrollView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -86,6 +102,7 @@ const styles = StyleSheet.create({
     table: {
         borderWidth: 1,
         borderColor: 'gray',
+        minWidth: 600, // Ensure the table is wide enough
     },
     tableHeader: {
         flexDirection: 'row',
@@ -94,6 +111,7 @@ const styles = StyleSheet.create({
     },
     tableHeaderText: {
         flex: 1,
+        width: '20%',
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
@@ -103,10 +121,16 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
+        alignItems: 'center', // Center items vertically in each row
     },
     tableCell: {
-        flex: 1,
+        width: '20%',
         paddingHorizontal: 5,
         textAlign: 'center',
+        justifyContent: 'center', // Center content vertically
+        alignItems: 'center', // Center content horizontally
+        height: '100%', // Make sure the cell takes the full height of the row
     },
 });
+
+export default MostrarIncidentes;
