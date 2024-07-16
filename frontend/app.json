@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "proyecto-gps",
-    "slug": "proyecto-gps",
+    "slug": "bicicletero",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.frenerizo.bicicletero"
     },
     "web": {
       "bundler": "metro",
@@ -43,6 +48,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2ad47d9f-4ad6-435e-a924-b24c19092dcf"
+      }
+    },
+    "owner": "frenerizo"
   }
 }

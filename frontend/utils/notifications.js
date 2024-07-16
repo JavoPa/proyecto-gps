@@ -2,7 +2,6 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
-import { handleError } from '../../backend/utils/errorHandler';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -17,7 +16,7 @@ function handleRegistrationError(errorMessage) {
     throw new Error(errorMessage);
 }
 
-async function registerForPushNotificationsAsync() {
+export async function registerForPushNotificationsAsync() {
     if(Platform.OS === 'android'){
         Notifications.setNotificationChannelAsync('default', {
             name: 'default',
@@ -39,19 +38,16 @@ async function registerForPushNotificationsAsync() {
             return;
         }
 
-        const projectID = Constants?.expoConfig?.extra?.projectID ?? Constants?.easConfig?.projectID;
-
-        if (!projectID) {
-            handleRegistrationError('FALLÓ OBTENER EL ID DEL PROYECTO');
-            return;
-        }
+        
 
         try{
-            const pushTokenString =(await Notifications.getExpoPushTokenAsync({projectId,})).data;
-            console.log("PUSH TOKEN STRING: ", pushTokenString);
-            return pushTokenString;
+            token = await Notifications.getExpoPushTokenAsync({
+                projectId: Constants.expoConfig.extra.eas.projectId,
+            });
+            console.log("TOKEN: ", token.data);
+            return token.data;
         } catch (error){
-            handleRegistrationError(`${e}`);
+            handleRegistrationError(`${error}`);
         }
     }else{
         handleRegistrationError('DEBES USAR UN DISPOSITIVO FÍSICO PARA RECIBIR NOTIFICACIONES');
