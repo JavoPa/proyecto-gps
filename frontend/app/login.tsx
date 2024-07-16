@@ -1,15 +1,26 @@
 import { StyleSheet, TextInput, Button, Alert } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Text, View } from '@/components/Themed';
 import { useSession } from '@/flo';
 import {rolesService} from '@/services/roles.service';
 import { useRouter } from 'expo-router';
+import { registerForPushNotificationsAsync } from '@/utils/notifications';
+import { putPushToken } from '@/services/pushToken.service';
 
 export default function login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { signIn, session } = useSession();
     const router = useRouter();
+    const [pushToken, setPushToken] = useState('');
+
+    useEffect(() => {
+        const getToken = async () => {
+            const tokenPush = await registerForPushNotificationsAsync();
+            setPushToken(tokenPush); // Guardar token en el estado
+        };
+        getToken();
+    }, []);
 
     const handleLogin =  () => {
       try {
@@ -20,6 +31,7 @@ export default function login() {
         signIn(data);
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+          putPushToken(session, pushToken);
           return router.replace('/tabs')
         }
         if(rol == "Guardia"){

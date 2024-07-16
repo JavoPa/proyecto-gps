@@ -1,11 +1,9 @@
 import { StyleSheet } from 'react-native';
-import { registerForPushNotificationsAsync } from '@/utils/notifications';
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { Button } from 'react-native';
 import { useSession } from '@/flo';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
 
 export default function TabOneScreen() {
   const { signOut, session, isLoading} = useSession();
@@ -14,10 +12,6 @@ export default function TabOneScreen() {
   const signIn = () => {
     return router.replace('/login');
   }
-
-  useEffect(() => {
-    registerForPushNotificationsAsync();
-  }, []);
 
   return (
     <View style={styles.container}>
