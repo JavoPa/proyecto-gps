@@ -215,7 +215,7 @@ async function generarInforme(req, res) {
             valign: 'center'
         });
 
-        doc.addPage(); // Add a new page for the next chart
+        doc.moveDown(20); // Add a new page for the next chart
 
         // Generate the incident places chart image
         const placeChartConfig = {
