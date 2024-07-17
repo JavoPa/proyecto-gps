@@ -48,10 +48,10 @@ export function SessionProvider(props: React.PropsWithChildren) {
             if(res == null) {
               setSession(null);
             }else{
-              setSession(`${res.accessToken}`);
+                setSession(`${res.accessToken}`);
             }
             /*
-            Login(data).then(res => {
+            await Login(data).then(res => {
                 if(res == null) {
                     setSession(null);
                 }else{

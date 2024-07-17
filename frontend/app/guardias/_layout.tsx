@@ -26,12 +26,13 @@ export default function GuardiasLayout() {
   if (isLoading) {
     return <Text>Cagando..</Text>;
   }
-
+  /*
   const rol = rolesService(session);
-  if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+  console.log(rol);
+  if(rol != "guardia"){
     signOut();
     return <Redirect href="/login" />;
-  }
+  }*/
 
   if(!session) {
     return <Redirect href="/login" />;

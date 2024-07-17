@@ -8,33 +8,40 @@ import { useRouter } from 'expo-router';
 export default function login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn, session } = useSession();
+    const { signIn, session, isLoading } = useSession();
     const router = useRouter();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
       try {
         const data = {
           correo: email.toLowerCase(),
           password: password
         }
         signIn(data);
-        const rol = rolesService(session);
-        if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
-          return router.replace('/tabs')
-        }else{
-          if(rol == "Guardia"){
-            return router.replace('/guardias')
+        if(session){
+          const rol = rolesService(session);
+          if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+            return router.replace('/tabs')
           }else{
-            if(rol == "Administrador"){
-              return router.replace('/admin')
+            if(rol == "Guardia"){
+              return router.replace('/guardias')
             }else{
-              if(rol == null){
-                Alert.alert('Error de conexion', 'Contactese con su provedor' );
+              if(rol == "Administrador"){
+                return router.replace('/admin')
               }else{
-                Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
+                if(rol == null){
+                  console.log(isLoading);
+                  if (!isLoading) {
+                    return <Text>Cargando..</Text>;
+                  }
+                  //Alert.alert('Error de conexion', 'Contactese con su provedor' );
+                }else{
+                  Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
+                }
               }
             }
           }
+
         }
 
       } catch (error) {

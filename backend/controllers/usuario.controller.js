@@ -9,6 +9,7 @@ const { userIdSchema } = require("../schema/usuario.schema");
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const usuarioService = require('../services/usuario.service');
+const INTRANET_API = require('../config/env.config');  
 const { get } = require('mongoose');
 
 const Usuario = require('../models/usuario.model');
@@ -32,7 +33,7 @@ async function verificarIntranet(req,res) {
         if(error) return res.status(400).json({message: "El rut no es valido"});
 
         // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
-        const aux = await axios.get('http://localhost:5000/api/users/obtener',{
+        const aux = await axios.get(INTRANET_API,{
             data:{
                 "rut": rut
             }

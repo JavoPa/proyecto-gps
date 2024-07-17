@@ -19,20 +19,20 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function GuardiasLayout() {
+export default function AdminLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
-  const { session,isLoading, signOut} = useSession();
+  const { session,isLoading} = useSession();
   
   if (isLoading) {
     return <Text>Cargando..</Text>;
   }
-
+  /*
   const rol = rolesService(session);
-  if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+  if(rol != "administrador"){
     signOut();
     return <Redirect href="/login" />;
-  }
+  }*/
 
   if(!session) {
     return <Redirect href="/login" />;

@@ -27,11 +27,16 @@ export default function TabLayout() {
     return <Text>Cargando..</Text>;
   }
   //validar consistencia de token dentro de cada vista
+  /*
   const rol = rolesService(session);
-  if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
-    signOut();
-    return <Redirect href="/login" />;
-  }
+  if(rol != "academico"){
+    if(rol != "funcionario"){
+      if(rol != "estudiante"){
+        signOut();
+        return <Redirect href="/login" />;
+      }
+    }
+  }*/
   
   if(!session) {
     return <Redirect href="/login" />;

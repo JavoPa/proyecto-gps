@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
-
-import Validar from '@/components/admin/validarUsuarios';
+import React from 'react';
 import Crear from '@/components/admin/crearUsuarios';
 import { Text, View } from '@/components/Themed';
 
@@ -9,7 +8,7 @@ export default function ListaScreen() {
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Text style={styles.title}>Crear Usuario</Text>
-      <Validar/>
+      <Crear/>
     </View>
   );
 }

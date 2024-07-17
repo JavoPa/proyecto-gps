@@ -7,32 +7,27 @@ import { Link, Redirect } from 'expo-router';
 const validarUsuarios:  React.FC = () =>{
   const [rut, setRut] = useState('');
 
-  const handleBuscar = () => {
-    setRut('123456789');
-
+  const handleBuscar = async () => {
     //si rut exite en la base de datos, enviar como props a crear usuario los datos para crearlo
     //si no, mostrar formulario para crear usuario
-    /*
-    const resp = validarRut(rut);
+    const resp = await validarRut(rut);
+    console.log(resp);
     if(resp != null){
-      setRut(rut);
-    }*/
+      //setRut(rut);
+    }else{
+      
+    }
   }
 
-  if(rut == ''){
-    return (
-      <View >
-        <TextInput placeholder='Rut'  inputMode= 'numeric' style={styles.input} onChangeText={setRut} ></TextInput>
-        <Pressable onPress={handleBuscar}>
-          <Text>Buscar</Text>
-        </Pressable>
-      </View>
-  )
-  }else{
-    return <CrearUsuarios/>
-  }
-
-  
+  return (
+    <View >
+      <TextInput placeholder='Rut'  inputMode= 'numeric' style={styles.input} onChangeText={setRut} ></TextInput>
+      <Pressable onPress={handleBuscar}>
+        <Text>Buscar</Text>
+      </Pressable>
+    </View>
+  );
+ 
 }
 
 
