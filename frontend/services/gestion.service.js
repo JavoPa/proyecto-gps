@@ -51,3 +51,16 @@ export async function getGuardiaById(id) {
         }
     }
 }
+
+export async function updateGuardia(id, data) {
+    try {
+        const response = await axios.put(`/Admin/guardias/${id}`, data);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            return error.response.data;
+        } else {
+            return { message: 'Ocurrió un error en la api' };
+        }
+    }
+}
