@@ -19,7 +19,7 @@ export default function login() {
         }
         signIn(data);
         const rol = rolesService(session);
-        if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
+        if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
           return router.replace('/tabs')
         }
         if(rol == "Guardia"){

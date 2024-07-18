@@ -53,6 +53,12 @@ const invitadoSchema = Joi.object({
         "string.base": "El teléfono debe ser de tipo string.",
         "string.pattern.base": "El teléfono solo puede contener números.",
       }),
+    correo: Joi.string()
+      .email({ tlds: { allow: false } })
+      .messages({
+        "string.empty": "El correo no puede estar vacío.",
+        "string.email": "El correo debe tener un formato válido.",
+      }),
 });
   
   module.exports = { tokenSchema, invitadoSchema};
