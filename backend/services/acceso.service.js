@@ -2,6 +2,7 @@
 const { handleError } = require("../utils/errorHandler");
 const Acceso = require("../models/acceso.model.js");
 const Invitado = require("../models/invitado.model.js");
+const Usuario = require("../models/usuario.model.js");
 
 /**
  * Crea un nuevo token de acceso en la base de datos para un usuario.
@@ -169,11 +170,24 @@ async function ingresoInvitado(body, guardiaId) {
         apellido: body.apellido,
         rut: body.rut,
         fono: body.fono,
+        correo: body.correo,
+        password: await Usuario.encryptPassword(body.rut), //Contraseña por defecto es el rut
         rol: 'invitado'
       });
       await invitado.save();
+    }else{
+      // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+      const accesoExistente = await Acceso.findOne({ usuario: invitado._id, entrada: { $ne: null }, salida: null });
+      if (accesoExistente) {
+        return [null, 'El usuario ya posee una bicicleta registrada en el sistema.'];
+      }
+      //Actualizar los datos del usuario
+      invitado.nombre = body.nombre;
+      invitado.apellido = body.apellido;
+      invitado.fono = body.fono;
+      invitado.correo = body.correo;
+      await invitado.save();
     }
-
     const acceso = new Acceso({
       usuario: invitado._id,
       guardia: guardiaId,
@@ -182,7 +196,7 @@ async function ingresoInvitado(body, guardiaId) {
     });
   
     await acceso.save();
-  
+    acceso.usuario = invitado;
     // Devolver el ACCESO
     return [acceso, null];
   } catch (error) {

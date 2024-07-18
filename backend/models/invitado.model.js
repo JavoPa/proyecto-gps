@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Usuario = require("./usuario.model");
 
 const invitadoSchema = new mongoose.Schema({
     rut: {
@@ -23,6 +24,6 @@ const invitadoSchema = new mongoose.Schema({
     }
 });
 
-const Invitado = mongoose.model("Invitado", invitadoSchema);
+const Invitado = Usuario.discriminator("Invitado", invitadoSchema);
 
 module.exports = Invitado;
