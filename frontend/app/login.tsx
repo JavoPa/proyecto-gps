@@ -1,5 +1,5 @@
-import { StyleSheet, TextInput, Alert, Image, TouchableOpacity } from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, TextInput, Alert, Image, TouchableOpacity, Modal, Pressable } from 'react-native';
+import React, {useState ,useEffect} from 'react';
 import { Text, View } from '@/components/Themed';
 import { useSession } from '@/flo';
 import {rolesService} from '@/services/roles.service';
@@ -8,50 +8,49 @@ import { useRouter } from 'expo-router';
 export default function login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn, session, isLoading } = useSession();
+    const [cargando, setCargando] = useState(false);
     const router = useRouter();
+    const { signIn, session, isLoading } = useSession();
 
     const handleLogin = async () => {
-      try {
-        const data = {
-          correo: email.toLowerCase(),
-          password: password
-        }
-        signIn(data);
-        if(session){
-          const rol = rolesService(session);
-          if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
-            return router.replace('/tabs')
+      const data = {
+        correo: email.toLowerCase(),
+        password: password
+      }
+      signIn(data);
+    };
+
+    useEffect(() => {
+      if(session){
+        const rol = rolesService(session);
+        if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
+          setCargando(false);
+          return router.replace('/tabs')
+        }else{
+          if(rol == "Guardia"){
+            return router.replace('/guardias')
           }else{
-            if(rol == "Guardia"){
-              return router.replace('/guardias')
+            if(rol == "Administrador"){
+              return router.replace('/admin')
             }else{
-              if(rol == "Administrador"){
-                return router.replace('/admin')
-              }else{
-                if(rol == null){
-                  console.log(isLoading);
-                  if (!isLoading) {
-                    return <Text>Cargando..</Text>;
-                  }
-                  //Alert.alert('Error de conexion', 'Contactese con su provedor' );
-                }else{
-                  Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
+              if(rol == null){
+                console.log(isLoading);
+                if (!isLoading) {
+                  console.log('Cargando..');
                 }
+                //Alert.alert('Error de conexion', 'Contactese con su provedor' );
+              }else{
+                Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
               }
             }
           }
-
         }
-
-      } catch (error) {
-        console.log(error);
-        Alert.alert('Error', 'Error al iniciar sesión, vuelva a intentarlo');
       }
-    };
+      return undefined;
+    }, [session]);
+
 
     return (
-      
       <View style={styles.container}>
         <View style={styles.containeImage}>
           <Image 
@@ -70,10 +69,20 @@ export default function login() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity onPress={handleLogin} style={styles.boton}>
+        <Pressable onPress={handleLogin} style={styles.boton}>
             <Text style={styles.texto}>Iniciar</Text>
-        </TouchableOpacity>
+        </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={cargando}
+        >
+          <View style={styles.vistaCargando}>
+                  <Text>Cargando...</Text>
+                  <Text>Espera Un Segundo..</Text>
 
+                </View>
+        </Modal>
       </View>
     );
   }
@@ -122,5 +131,14 @@ export default function login() {
       color: '#000',
       textAlign: 'center',
       padding: 10,
+    },
+    vistaCargando: {
+      backgroundColor: '#f15',
+      padding: 40,
+      marginTop: '80%',
+      marginLeft: '20%',
+      marginRight: '20%',
+      alignItems: 'center',
+      borderRadius: 10,
     }
   });

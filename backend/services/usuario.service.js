@@ -9,7 +9,7 @@ const Administrador = require("../models/administrador.model.js");
 const Guardia = require("../models/guardia.model.js");
 
 
-async function crearUsuario(aux) {
+async function crearUser(aux) {
     try {
         //validar formato de los campos no obligatorios
         if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
@@ -47,8 +47,7 @@ async function crearGuardia(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            cargo: aux.cargo,
-            situacion_laboral: aux.situacion_laboral
+            situacion: aux.situacion_laboral
         }).save();
 
         return usuarioNuevo;
@@ -71,8 +70,7 @@ async function crearAdministrador(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            cargo: aux.cargo,
-            departamento: aux.departamento
+            situacion: aux.situacion,
         }).save();
         return usuarioNuevo;
 
@@ -81,7 +79,7 @@ async function crearAdministrador(aux) {
     }
 }
 
-/* deprecado
+
 async function crearEstudiante(aux) {
     try {
         //validar formato de los campos no obligatorios
@@ -97,7 +95,7 @@ async function crearEstudiante(aux) {
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
             carrera: aux.carrera,
-            situacion_academica: aux.situacion_academica
+            situacion: aux.situacion_academica
         }).save();
 
         return usuarioNuevo;
@@ -106,7 +104,7 @@ async function crearEstudiante(aux) {
         console.log(error);
     }
 }
-
+/*deprecado
 async function crearAcademico(aux) {
     try {
         //validar formato de los campos no obligatorios
@@ -201,7 +199,7 @@ async function getUserById(id) {
 module.exports = {
     getUsers,
     getUserById,
-    crearUsuario,
+    crearUser,
     crearGuardia,
     crearAdministrador
 };

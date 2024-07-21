@@ -20,32 +20,60 @@ async function getIncidentes() {
 }
 
 /**
+ * Obtiene todos los incidentes que ocurrieron en cierto mes y año
+ * @param {Date} date La fecha en la que ocurrieron los incidentes (considerando sólo mes y año)
+ * @returns {Promise} Promesa con el objeto de incidentes
+ */
+async function getIncidentesMes(date) {
+    try {
+        // Obtener el mes y el año de la fecha
+        const year = date.getUTCFullYear();
+        const month = date.getUTCMonth();
+
+        // Comienzo del mes
+        const startOfMonth = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+
+        // Se calcula el fin del mes
+        const endOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+        const incidentes = await Incidente.find({
+            fecha: { $gte: startOfMonth, $lte: endOfMonth }
+        });
+
+        if (!incidentes || incidentes.length === 0) {
+            return [null, "No hay incidentes en el mes especificado"];
+        }
+
+        return [incidentes, null];
+    } catch (error) {
+        handleError(error, "incidente.service -> getIncidentesMes");
+        return [null, "Error al obtener incidentes del mes"];
+    }
+}
+
+/**
  * Obtiene todos los incidentes que ocurrieron en cierto día
  * @param {Date} date La fecha en la que ocurrieron los incidentes
  * @returns {Promise} Promesa con el objeto de incidentes
  */
 async function getIncidentesDia(date) {
     try {
-        // Ensure date is interpreted as UTC
+        // Asegurarse que la fecha se interpreta en UTC
+        // Había un error donde daba los incidentes del día anterior debido a la diferencia de zona horaria
+        
         date.setUTCHours(0, 0, 0, 0);
 
-        // Get the year, month, and day of the specified date
+        // Pescar el año, el mes y el día
         const year = date.getUTCFullYear();
         const month = date.getUTCMonth();
         const day = date.getUTCDate();
-
-        // Set the start and end of the day in UTC
+        // Marcar el comienzo y el fin del día
         const startOfDay = new Date(Date.UTC(year, month, day, 0, 0, 0));
         const endOfDay = new Date(Date.UTC(year, month, day, 23, 59, 59));
 
-        // Find incidents that occurred between the start and end of the day
         const incidentes = await Incidente.find({
             fecha: { $gte: startOfDay, $lte: endOfDay }
         });
-
-        if (!incidentes || incidentes.length === 0) {
-            return [null, "No hay incidentes en el día especificado"];
-        }
 
         return [incidentes, null];
     } catch (error) {
@@ -61,12 +89,13 @@ async function getIncidentesDia(date) {
  */
 async function crearIncidente(data) {
     try {
-        const incidente = new Incidente({
+        const incidente = await new Incidente({
             fecha: data.fecha,
             hora: data.hora,
             lugar: data.lugar,
             tipo: data.tipo,
-            descripcion: data.descripcion
+            descripcion: data.descripcion,
+            informante: data.informante
         }).save();
 
         return [incidente, null];
@@ -78,6 +107,7 @@ async function crearIncidente(data) {
 
 module.exports = {
     getIncidentes,
+    getIncidentesMes,
     getIncidentesDia,
     crearIncidente
 };

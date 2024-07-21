@@ -6,7 +6,7 @@ const estudianteSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    situacion_academica: {
+    situacion: {
         type: String,
         required: true
     }

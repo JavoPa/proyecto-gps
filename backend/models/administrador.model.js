@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Usuario = require("./usuario.model.js");
 
 const administradorSchema = new mongoose.Schema({
-    situacion_laboral: {
+    situacion: {
         type: String,
         required: true
     }

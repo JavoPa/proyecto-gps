@@ -5,6 +5,7 @@ const Invitado = require("../models/invitado.model.js");
 const Horas = require("../models/horas.model.js");
 const Usuario = require("../models/usuario.model.js");
 const errorHandler = require("../utils/errorHandler.js");
+const { enviarPushNotification } = require("../utils/notifHandler.js");
 
 async function checkBicicletasRezagadas() {
     console.log("Revisando bicicletas rezagadas...");
@@ -16,6 +17,12 @@ async function checkBicicletasRezagadas() {
             usuario = await Usuario.findById(registro.usuario);
             console.log("Usuario: ", usuario.nombre, " ", usuario.apellido, "RUT: ", usuario.rut, "Correo: ", usuario.correo);
             // console.log("Bicicleta rezagada: ", registro);
+
+            // Envío de notificación push al usuario
+            if (usuario.pushToken){
+                message = `BICICLETERO CERRADO Tu bicicleta aún no ha sido retirada. Por favor, retírala lo antes posible.`;
+                await enviarPushNotification([usuario.pushToken], message);
+            }
         }
         console.log("Revisión de bicicletas rezagadas finalizada");
     } catch (error) {

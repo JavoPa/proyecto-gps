@@ -5,15 +5,18 @@ import Colors from '@/constants/Colors';
 interface AccesoModalProps {
     modalVisible: boolean;
     setModalVisible: (visible: boolean) => void;
-    handleFieldChange: (field: string, value: string) => void;
+    handleFieldChangeIngreso: (field: string, value: string) => void;
     handleActualizar: () => void;
-    fields: {
-      marca: string;
-      color: string;
+    fieldsIngreso: {
+      nombre: string;
+      apellido: string;
+      rut: string;
+      fono: string;
+      correo: string;
     };
   }
 
-const AccesoManualModal: React.FC<AccesoModalProps> = ({ modalVisible, setModalVisible, handleFieldChange, fields, handleActualizar }) => {
+const AccesoManualModal: React.FC<AccesoModalProps> = ({ modalVisible, setModalVisible, handleFieldChangeIngreso, fieldsIngreso, handleActualizar }) => {
   return (
     <Modal
         animationType="fade"
@@ -25,28 +28,64 @@ const AccesoManualModal: React.FC<AccesoModalProps> = ({ modalVisible, setModalV
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.titleContainer}>Ingreso Maual</Text>
+            <Text style={styles.titleContainer}>Ingreso Manual</Text>
 
             <View style={styles.inputRow}>
-              <Text style={styles.title}>Marca: </Text>
+              <Text style={styles.title}>Nombre: </Text>
               <TextInput 
                 style={styles.input} 
-                onChangeText={(value) => handleFieldChange('marca', value)}
-                value={fields.marca}
+                onChangeText={(value) => handleFieldChangeIngreso('nombre', value)}
+                value={fieldsIngreso.nombre}
                 maxLength={20}
-                placeholder="Ej: Oxford"
+                placeholder="Ej: Juan"
                 placeholderTextColor='gray'
                 textAlign="left"
               />
             </View>
             <View style={styles.inputRow}>
-              <Text style={styles.title}>Modelo: </Text>
+              <Text style={styles.title}>Apellido: </Text>
+              <TextInput 
+                style={styles.input} 
+                onChangeText={(value) => handleFieldChangeIngreso('apellido', value)}
+                value={fieldsIngreso.apellido}
+                maxLength={20}
+                placeholder="Ej: Ramírez"
+                placeholderTextColor='gray'
+                textAlign="left"
+              />
+            </View>
+            <View style={styles.inputRow}>
+              <Text style={styles.title}>Rut: </Text>
               <TextInput
                 style={styles.input} 
-                onChangeText={(value) => handleFieldChange('color', value)}
-                value={fields.color}
-                maxLength={20}
-                placeholder="Ej: Azul"
+                onChangeText={(value) => handleFieldChangeIngreso('rut', value)}
+                value={fieldsIngreso.rut}
+                maxLength={10}
+                placeholder="Ej: 20123456-0"
+                placeholderTextColor='gray'
+                textAlign="left"
+              />
+            </View>
+            <View style={styles.inputRow}>
+              <Text style={styles.title}>Correo: </Text>
+              <TextInput
+                style={styles.input} 
+                onChangeText={(value) => handleFieldChangeIngreso('correo', value)}
+                value={fieldsIngreso.correo}
+                maxLength={40}
+                placeholder="Ej: juan@gmail.com"
+                placeholderTextColor='gray'
+                textAlign="left"
+              />
+            </View>
+            <View style={styles.inputRow}>
+              <Text style={styles.title}>Fono: </Text>
+              <TextInput
+                style={styles.input} 
+                onChangeText={(value) => handleFieldChangeIngreso('fono', value)}
+                value={fieldsIngreso.fono}
+                maxLength={11}
+                placeholder="Ej: 56912345678"
                 placeholderTextColor='gray'
                 textAlign="left"
               />
@@ -54,7 +93,7 @@ const AccesoManualModal: React.FC<AccesoModalProps> = ({ modalVisible, setModalV
             <View style={styles.buttonContainer}>
               <View style={styles.button}>
                 <Button
-                  title="Guardar"
+                  title="Ingresar"
                   onPress={handleActualizar}
                   color='green'
                 />

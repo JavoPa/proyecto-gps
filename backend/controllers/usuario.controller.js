@@ -15,9 +15,8 @@ const { get } = require('mongoose');
 const Usuario = require('../models/usuario.model');
 const {
     crearEstudiante,
-    crearAcademico,
+    crearUser,
     crearAdministrador,
-    crearFuncionario,
     crearGuardia
 } = require('../services/usuario.service');
 
@@ -95,7 +94,23 @@ async function crearUsuario(req,res) {
 
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoEstudiante);
         }
+        if(body.tipo == "Administrador"){
 
+            const {error} = administradorSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
+            const nuevoAdministrador = crearAdministrador(body);
+            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
+        }else{
+            //modificar para que se cree el usuario con el tipo de usuario que corresponda
+            const {error} = administradorSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+            const nuevoUsuario = crearUsuario(body);
+            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoUsuario);
+        }
+        /*deprecado
         if(body.tipo == "Guardia"){
 
             const {error} = guardiaSchema.validate(body);
@@ -124,17 +139,8 @@ async function crearUsuario(req,res) {
 
             const nuevoFuncionario = crearFuncionario(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoFuncionario);
-        }
+        }*/
 
-        if(body.tipo == "Administrador"){
-
-            const {error} = administradorSchema.validate(body);
-            console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
-
-            const nuevoAdministrador = crearAdministrador(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
-        }
 
         return res.status(400).json({message: "Tipo de usuario no encontrado, verifique los datos ingresados"});
         

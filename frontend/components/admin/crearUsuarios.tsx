@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
+import { useRouter } from 'expo-router';
 
 const data = [
     {label: 'Academico', value: 'Academico'},
@@ -13,6 +14,11 @@ const data = [
 const data2 = [
     {label: 'Regular', value: 'Regular'},
     {label: 'Irregular', value: 'Irregular'},
+];
+
+const data3 = [
+  {label: 'ICINF', value: 'Ingenieria Civil Informatica'},
+  {label: 'IECI', value: 'Ingenieria En Ejecucion Informatica'},
 ];
 
 
@@ -32,7 +38,7 @@ const CrearUsuarios: React.FC = () =>{
     const [password,setPassword] = useState('Contraseña');
     const [password2,setPassword2] = useState('Contraseña');
     const [Tipo, setTipo] = useState('Tipo');
-    //const [Tipo2, setTipo2] = useState('Tipo');
+    const [carrera, setCarrera] = useState('Carrera');
     const [situacion, setSituacion] = useState('Situacion');
     //const [situacion2, setSituacion2] = useState('Situacion');
     const [isFocus, setIsFocus] = useState(false);
@@ -40,6 +46,7 @@ const CrearUsuarios: React.FC = () =>{
     const [encontrado, setencontrado] = useState(false);
     const [cargando, setCargando] = useState(false);
 
+    const router = useRouter();
 
     
 
@@ -53,21 +60,27 @@ const CrearUsuarios: React.FC = () =>{
         }
         return null;
     };
-    /*
-    const situacionLabel = () => {
-        if (situacion || isFocus2) {
-          return (
-            <Text>
-              Situacion acutal
-            </Text>
-          );
-        }
-        return null;
-    };*/
 
     const handleCrear = () => {
+        
         if(encontrado){
           //crear usuario con los datos encontrados
+          if(Tipo == 'Estudiante'){
+            const datos = {
+              rut: rut2,
+              nombre: nombre2,
+              apellido: apellido2,
+              telefono: numero2,
+              correo: correo2,
+              contraseña: password,
+              tipo: Tipo,
+              situacion: situacion,
+              carrera: carrera,
+            }
+            //madar datos a funcion de crear usuario
+            console.log(datos);
+            return router.replace('/admin');
+          }
           const datos = {
             rut: rut2,
             nombre: nombre2,
@@ -78,9 +91,27 @@ const CrearUsuarios: React.FC = () =>{
             tipo: Tipo,
             situacion: situacion,
           }
+          //madar datos a funcion de crear usuario
           console.log(datos);
+          return router.replace('/admin');
         }else{
           //crear usuario con los datos ingresados
+          if(Tipo == 'Estudiante'){
+            const datos = {
+              rut: rut,
+              nombre: nombre,
+              apellido: apellido,
+              telefono: numero,
+              correo: correo,
+              contraseña: password,
+              tipo: Tipo,
+              situacion: situacion,
+              carrera: carrera,
+            }
+            //madar datos a funcion de crear usuario
+            console.log(datos);
+            return router.replace('/admin');
+          }
           const datos = {
             rut: rut,
             nombre: nombre,
@@ -91,19 +122,10 @@ const CrearUsuarios: React.FC = () =>{
             tipo: Tipo,
             situacion: situacion,
           }
+          //madar datos a funcion de crear usuario
           console.log(datos);
+          return router.replace('/admin');
         }
-        const datos = {
-            rut: rut,
-            nombre: nombre,
-            apellido: apellido,
-            telefono: numero,
-            correo: correo,
-            contraseña: password,
-            tipo: Tipo,
-            situacion: situacion,
-        }
-        console.log(datos);
     }
   
     const handleVerificar = async () => {
@@ -172,6 +194,7 @@ const CrearUsuarios: React.FC = () =>{
                     setIsFocus(false);
                 }}
             />
+            {}
             <Dropdown
                 data={data2}
                 style={styles.input}
@@ -203,6 +226,34 @@ const CrearUsuarios: React.FC = () =>{
                   <Text>Espera Un Segundo..</Text>
 
                 </View>
+            </Modal>
+             {/*Seleccion adicionales de datos para estudiante */}
+            <Modal
+              visible={Tipo == 'Estudiante'}
+              animationType="slide"
+              transparent={false}
+              onRequestClose={() => {}} //para que no se cierre con el boton de atras
+            >
+              <View style={styles.modalEstudiante}>
+                <Text style={styles.texto}>Datos Adicionales Estudiante</Text>
+                <Dropdown
+                  data={data3}
+                  style={styles.input}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={carrera}
+                  value={carrera}
+                  onFocus={() => setIsFocus2(true)}
+                  onBlur={() => setIsFocus2(false)}
+                  onChange={item => {
+                      setCarrera(item.value);
+                      setIsFocus2(false);
+                  }}
+                />
+                <Pressable style={styles.botonCrear} onPress={handleCrear}>
+                  <Text>Crear Estudiante</Text>
+                </Pressable>
+              </View>
             </Modal>
             
         </ScrollView>
@@ -269,6 +320,14 @@ const styles = StyleSheet.create({
       marginLeft: '20%',
       marginRight: '20%',
       alignItems: 'center',
+      borderRadius: 10,
+    },
+    modalEstudiante: {
+      backgroundColor: '#a25',
+      marginTop: '60%',
+      padding: 40,
+      marginLeft: '5%',
+      marginRight: '5%',
       borderRadius: 10,
     }
   });
