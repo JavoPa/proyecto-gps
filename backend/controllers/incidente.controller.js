@@ -4,6 +4,7 @@ const { respondSuccess, respondError } = require("../utils/resHandler");
 const IncidenteService = require("../services/incidente.service.js");
 const { handleError } = require("../utils/errorHandler");
 const PDFDocument = require('pdfkit');
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 /**
  * Controlador para obtener todos los incidentes
@@ -44,10 +45,13 @@ async function getIncidentesDia(req, res) {
         // Parsear la fecha
         const date = new Date(fecha + "T00:00:00Z");
         
-        const [incidentes, error] = await IncidenteService.getIncidentesDia(date);
-        if (error) { return res.status(500).json({ error: error }); }
+        //console.log(date);
 
-        respondSuccess(req, res, 200, incidentes);
+        const [incidentes, errorIncidentes] = await IncidenteService.getIncidentesDia(date);
+
+        incidentes.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, incidentes);
     } catch (error) {
         return res.status(500).json({ error: "Error al obtener incidentes del día" });
     }
@@ -116,35 +120,140 @@ async function generarInforme(req, res) {
 
         // Call service function to get incidents for the specified month
         const [incidentes, error] = await IncidenteService.getIncidentesMes(date);
-
+        
         if (error) {
-            return res.status(500).json({ error });
+            return res.status(204).json({ error });
         }
+
+        // Count incident types
+        const incidentTypes = {
+            'Robo': 0,
+            'Desaparición': 0,
+            'Otro': 0
+        };
+
+        incidentes.forEach(incidente => {
+            if (incidentTypes[incidente.tipo] !== undefined) {
+                incidentTypes[incidente.tipo]++;
+            } else {
+                incidentTypes['Otro']++;
+            }
+        });
+
+        // Count incident places
+        const incidentPlaces = {
+            'Entrada': 0,
+            'Gantes': 0,
+            'Edificio AC': 0,
+            'Edificio AB': 0,
+            'Salas AA': 0,
+            'FACE': 0,
+            'exIM': 0,
+            'Otro': 0
+        };
+
+        incidentes.forEach(incidente => {
+            if (incidentPlaces[incidente.lugar] !== undefined) {
+                incidentPlaces[incidente.lugar]++;
+            } else {
+                incidentPlaces['Otro']++;
+            }
+        });
 
         // Create a new PDF document
         const doc = new PDFDocument();
-        // Set response headers for PDF
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="incidentes_${year}_${month}.pdf"`);
-
-        // Pipe the PDF document to the response
-        doc.pipe(res);
+        let buffers = [];
+        
+        // Collect PDF data into buffers
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            const base64PDF = pdfData.toString('base64');
+            res.json({ pdf: base64PDF });
+        });
 
         // Add incident information to the PDF
-        doc.fontSize(12).text(`Incidentes del mes ${month} del año ${year}`, { align: 'center' });
+        doc.fontSize(12).text(`Informe de incidentes del mes ${month} del año ${year}`, { align: 'center' });
         doc.moveDown();
-        if (incidentes && incidentes.length > 0) {
-            incidentes.forEach(incidente => {
-                doc.text(`Fecha: ${incidente.fecha.toISOString()}`);
-                doc.text(`Hora: ${incidente.hora}`);
-                doc.text(`Lugar: ${incidente.lugar}`);
-                doc.text(`Tipo: ${incidente.tipo}`);
-                doc.text(`Descripción: ${incidente.descripcion}`);
-                doc.moveDown();
-            });
-        } else {
-            doc.text('No hay incidentes en el mes especificado');
-        }
+
+        // Generate the incident type chart image
+        const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 400, height: 200 });
+        const typeChartConfig = {
+            type: 'bar',
+            data: {
+                labels: Object.keys(incidentTypes),
+                datasets: [{
+                    label: 'Frecuencia',
+                    data: Object.values(incidentTypes),
+                    backgroundColor: ['red', 'blue', 'green', 'orange']
+                }]
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tipos de incidentes'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Frecuencia'
+                        }
+                    }
+                }
+            }
+        };
+        const typeChartImage = await chartJSNodeCanvas.renderToBuffer(typeChartConfig);
+
+        // Embed the incident type chart image in the PDF
+        doc.image(typeChartImage, {
+            fit: [500, 300],
+            align: 'center',
+            valign: 'center'
+        });
+
+        doc.moveDown(20); // Add a new page for the next chart
+
+        // Generate the incident places chart image
+        const placeChartConfig = {
+            type: 'bar',
+            data: {
+                labels: Object.keys(incidentPlaces),
+                datasets: [{
+                    label: 'Frecuencia',
+                    data: Object.values(incidentPlaces),
+                    backgroundColor: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'cyan', 'grey']
+                }]
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Lugares de incidentes'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Frecuencia'
+                        }
+                    }
+                }
+            }
+        };
+        const placeChartImage = await chartJSNodeCanvas.renderToBuffer(placeChartConfig);
+
+        // Embed the incident places chart image in the PDF
+        doc.image(placeChartImage, {
+            fit: [500, 300],
+            align: 'center',
+            valign: 'center'
+        });
 
         // Finalize the PDF document
         doc.end();
