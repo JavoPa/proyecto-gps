@@ -44,20 +44,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
       <AuthContext.Provider
         value={{
           signIn: async (data) => {
-            const res = await Login(data);
-            if(res == null) {
-              setSession(null);
-            }else{
-                setSession(`${res.accessToken}`);
-            }
-            /*
-            await Login(data).then(res => {
+            Login(data).then((res) => {
                 if(res == null) {
                     setSession(null);
                 }else{
                     setSession(`${res.accessToken}`);
                 }
-            });*/
+            });
           },
           signOut: () => {
             setSession(null);

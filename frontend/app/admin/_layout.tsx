@@ -39,7 +39,6 @@ export default function AdminLayout() {
   }else{
     setAuthToken(session);
   }
-  console.log(session);
 
   return (
     <Tabs

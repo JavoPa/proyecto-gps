@@ -3,7 +3,7 @@ import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { Button } from 'react-native';
 import { useSession } from '@/flo';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import {rolesService} from '@/services/roles.service';
 
 export default function TabOneScreen() {
@@ -16,13 +16,13 @@ export default function TabOneScreen() {
   //verificar token renvia
   const rol = rolesService(session);
   if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
-    return router.replace('/tabs')
+    return <Redirect href={('/tabs')}/> // router.replace('/tabs')modificar la rediccion
   }else{
     if(rol == "Guardia"){
-      return router.replace('/guardias')
+      return <Redirect href={('/guardias')}/> //router.replace('/guardias')
     }else{
       if(rol == "Administrador"){
-        return router.replace('/admin')
+        return <Redirect href={('/admin')}/> //router.replace('/admin')
       }
     }
   }

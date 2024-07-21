@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert} from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
 
@@ -38,6 +38,8 @@ const CrearUsuarios: React.FC = () =>{
     const [isFocus, setIsFocus] = useState(false);
     const [isFocus2, setIsFocus2] = useState(false);
     const [encontrado, setencontrado] = useState(false);
+    const [cargando, setCargando] = useState(false);
+
 
     
 
@@ -105,9 +107,15 @@ const CrearUsuarios: React.FC = () =>{
     }
   
     const handleVerificar = async () => {
-      //formatear rut para enviarlo bien
+      //no permite entrada vacia
+      if(rut == 'rut'){
+        Alert.alert('No se admite Rut vacio', 'Ingrese un rut valido para buscar');
+      }
+      setCargando(true);
       const resp = await validarRut(rut);
+      console.log(resp);
       if(resp != null){
+        setCargando(false);
         setencontrado(true);
         setRut2(resp.rut);
         setNombre2(resp.nombre);
@@ -122,6 +130,7 @@ const CrearUsuarios: React.FC = () =>{
           setSituacion(resp.situacion);
         }
       }else{
+        setCargando(false);
         setNombre2('Nombre');
         setApellido2('Apellido');
         setNumero2('Numero de telefono');
@@ -129,16 +138,20 @@ const CrearUsuarios: React.FC = () =>{
         setPassword2('Contraseña');
         setTipo('Tipo');
         setSituacion('Situacion');
-        Alert.alert('Usuario no encontrado', 'Desea crear un nuevo usuario?');
       }
+      setCargando(false);
     }
    
 
     return(
-        <ScrollView style={styles.a}>
+        <ScrollView style={styles.vistaScroll}>
             <Text style={styles.texto} >Crear Usuarios</Text>
-            <TextInput style={styles.input} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
-            <Button title= 'Buscar Intranet' onPress={handleVerificar}></Button>
+            <View style={styles.vistaRutIntranet}>
+              <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
+              <Pressable onPress={handleVerificar} style={styles.boton}>
+                  <Text>Buscar Intranet</Text>
+              </Pressable>
+            </View>
             <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
             <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
             <TextInput style={styles.input} placeholder={numero2}  onChangeText={setNumero} ></TextInput>
@@ -173,16 +186,32 @@ const CrearUsuarios: React.FC = () =>{
                     setIsFocus2(false);
                 }}
             />
-            <Button title= 'Crear' onPress={handleCrear}></Button>
+            <Pressable style={styles.botonCrear} onPress={handleCrear}>
+                <Text>Crear</Text>
+            </Pressable>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={cargando}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setCargando(!cargando);
+                }}
+            >
+                <View style={styles.vistaCargando}>
+                  <Text>Cargando...</Text>
+                  <Text>Espera Un Segundo..</Text>
+
+                </View>
+            </Modal>
             
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    a: {
+    vistaScroll: {
         width: "80%",
-        
     },
     input: {
       height: 40,
@@ -193,19 +222,54 @@ const styles = StyleSheet.create({
       borderRadius: 5,
     },
     boton: {
-        marginRight: 60,
-        marginLeft: 60,
         backgroundColor: '#fff',
         borderRadius: 5,
         padding: 10,
         borderColor: '#000',
-        borderWidth: 1.5,
-        textAlign: 'center',
+        borderWidth: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '40%',
+        margin: 5,
     },
     texto:{
       fontSize: 20,
       color: '#000',
       padding: 10,
+    },
+    vistaRutIntranet:{
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginBottom: 20,
+    },
+    rut:{
+      width: '58%',
+      padding: 10,
+      margin:5,
+      borderWidth: 2,
+      backgroundColor: '#fff',
+      borderRadius: 5,
+      paddingHorizontal: 10,
+    },
+    botonCrear: {
+      backgroundColor: '#fff',
+      borderRadius: 5,
+      borderColor: '#000',
+      borderWidth: 2,
+      padding: 10,
+      marginLeft:50,
+      marginRight:50,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    vistaCargando: {
+      backgroundColor: '#f15',
+      padding: 40,
+      marginTop: '80%',
+      marginLeft: '20%',
+      marginRight: '20%',
+      alignItems: 'center',
+      borderRadius: 10,
     }
   });
 
