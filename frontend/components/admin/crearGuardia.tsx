@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { postGuardia } from '@/services/gestion.service';
+import { postGuardia, getGuardias } from '@/services/gestion.service';
 import { useNavigation } from '@react-navigation/native';
 
 const GuardiaForm: React.FC = () => {
@@ -35,6 +35,7 @@ const GuardiaForm: React.FC = () => {
         const response = await postGuardia(newGuardia);
 
         if (response && response._id) {
+            getGuardias();
             Alert.alert('Éxito', 'Guardia creado correctamente');
             navigation.goBack();
         } else {

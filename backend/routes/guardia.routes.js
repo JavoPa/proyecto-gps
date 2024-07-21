@@ -6,7 +6,7 @@ const express = require("express");
 const accesoController = require("../controllers/acceso.controller.js");
 const bicicletaController = require("../controllers/bicicleta.controller.js");
 const userController = require("../controllers/usuario.controller.js");
-
+const historialController = require("../controllers/historial.controller.js")
 const usuarioController = require("../controllers/usuario.controller.js"); 
 
 /** Middlewares de autorización */
@@ -26,7 +26,7 @@ router.post("/accesoInvitado", authorizationMiddleware.esGuardia, accesoControll
 router.get("/bicicleta/:id", authorizationMiddleware.esGuardia, bicicletaController.getBicicletaById); //Ver detalles de la bicicleta del estudiante por id
 router.get("/estudiante/:id", authorizationMiddleware.esGuardia, userController.getUserById); //Ver detalles del estudiante por id
 router.post("/bicicleta/:id", authorizationMiddleware.esGuardia, bicicletaController.updateBicicletaUsuario); //Registrar bicicleta de un estudiante
-
+router.get("/historial/:usuarioId", authorizationMiddleware.esGuardia, historialController.getHistorialByUsuarioId);
 router.post("/accesoGuardia", authorizationMiddleware.esGuardia, accesoController.ingresoGuardia); //Registrar acceso del guardia a una jaula   
 router.post('/salidaGuardia', authorizationMiddleware.esGuardia, accesoController.salidaGuardia); //Registrar salida del guardia de una jaula
 

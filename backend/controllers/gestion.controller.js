@@ -1,6 +1,6 @@
 "use strict";
 const guardiaService = require("../services/gestion.service");
-
+const {guardiaIdSchema, guardiaSchema} = require("../schema/guardia.schema");
 
 /**
  * Obtener todos los guardias
@@ -39,15 +39,42 @@ async function getGuardiaById(req, res) {
  */
 async function createGuardia(req, res) {
     try {
-        const guardiaData = req.body;
-        const [guardia, error] = await guardiaService.createGuardia(guardiaData);
-        if (error) return res.status(400).json({ message: error });
+        const { error, value } = guardiaSchema.validate(req.body);        
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+        const guardiaData = value;
+        const [guardia, serviceError] = await guardiaService.createGuardia(guardiaData);
+        if (serviceError) {
+            return res.status(400).json({ message: serviceError });
+        }
         return res.status(201).json(guardia);
     } catch (error) {
         return res.status(500).json({ message: "Error al crear el guardia", error: error.message });
     }
 }
 
+async function createBeca(req, res) {
+    try {  
+      const { body } = req;
+      const { error: bodyError } = becaSchema.validate(body);
+      if (bodyError) return respondError(req, res, 400, bodyError.message);
+
+      body.fecha_inicio = moment(body.fecha_inicio, "DD-MM-YYYY").toDate();
+      body.fecha_fin = moment(body.fecha_fin, "DD-MM-YYYY").toDate();
+      
+      const [newBeca, BecaError] = await BecaService.createBeca(body);  
+      if (BecaError) return respondError(req, res, 400, BecaError);
+      if (!newBeca) {
+        return respondError(req, res, 400, "No se creo la Beca");
+      }
+  
+      respondSuccess(req, res, 201, newBeca);
+    } catch (error) {
+      handleError(error, "beca.controller -> createBeca");
+      respondError(req, res, 500, "No se creo la beca");
+    }
+  }
 /**
  * Actualizar un guardia por ID
  * @param {Object} req
