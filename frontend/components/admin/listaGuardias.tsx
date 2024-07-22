@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Button, Alert, TextInput } from 'react-native';
 import { getGuardias, deleteGuardia ,getGuardiaById, updateGuardia} from '@/services/gestion.service';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 interface Guardia {
@@ -20,9 +21,11 @@ const ListaGuardias: React.FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        fetchGuardias();
-    }, [guardias]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchGuardias();
+        }, [])
+    );
 
     const fetchGuardias = useCallback(async () => {
         try {
@@ -44,7 +47,7 @@ const ListaGuardias: React.FC = () => {
     const handleDelete = async (id: string) => {
         try {
             const response = await deleteGuardia(id);
-            if (response && response.success) {
+            if (response.message === 'Guardia eliminado') {
                 fetchGuardias();
                 Alert.alert('Éxito', 'Guardia eliminado correctamente');
             } else {
@@ -84,7 +87,7 @@ const ListaGuardias: React.FC = () => {
             };
             try {
                 const response = await updateGuardia(selectedGuardia._id, updatedGuardia);
-                if (response && response.success) {
+                if (response.state === "Success") {
                     Alert.alert('Éxito', 'Guardia actualizado correctamente');
                     setIsEditing(false);
                     fetchGuardias();

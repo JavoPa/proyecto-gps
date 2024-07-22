@@ -122,7 +122,7 @@ async function deleteGuardia(id) {
         const guardia = await Guardia.findById({ _id: id });
         if (!guardia) return [null, "El guardia no existe"];
         await Guardia.findByIdAndDelete(id);
-        return [null, "Guardia eliminado"];
+        return ["Guardia eliminado", null];
     } catch (error) {
         handleError(error, "guardia.service -> deleteGuardia");
         throw error;
