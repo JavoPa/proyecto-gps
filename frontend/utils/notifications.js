@@ -17,6 +17,11 @@ function handleRegistrationError(errorMessage) {
 }
 
 export async function registerForPushNotificationsAsync() {
+    if (Platform.OS === 'web') {
+        console.log('Este dispositivo es una versión web, no se necesitan notificaciones push.');
+        return;
+    }
+
     if(Platform.OS === 'android'){
         Notifications.setNotificationChannelAsync('default', {
             name: 'default',
@@ -47,7 +52,7 @@ export async function registerForPushNotificationsAsync() {
             console.log("TOKEN: ", token.data);
             return token.data;
         } catch (error){
-            handleRegistrationError(`${error}`);
+            handleRegistrationError('FALLÓ OBTENER EL TOKEN DE NOTIFICACIONES');
         }
     }else{
         handleRegistrationError('DEBES USAR UN DISPOSITIVO FÍSICO PARA RECIBIR NOTIFICACIONES');
