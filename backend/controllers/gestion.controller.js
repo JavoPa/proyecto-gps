@@ -1,5 +1,6 @@
 "use strict";
 const guardiaService = require("../services/gestion.service");
+const { respondSuccess, respondError } = require("../utils/resHandler");
 const {guardiaIdSchema, guardiaSchema} = require("../schema/guardia.schema");
 
 /**
@@ -65,7 +66,7 @@ async function updateGuardia(req, res) {
         const guardiaData = req.body;
         const [guardia, error] = await guardiaService.updateGuardia(id, guardiaData);
         if (error) return res.status(400).json({ message: error });
-        return res.status(200).json(guardia);
+        respondSuccess(req, res, 201, guardia);
     } catch (error) {
         return res.status(500).json({ message: "Error al actualizar el guardia", error: error.message });
     }
