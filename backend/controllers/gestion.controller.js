@@ -1,5 +1,6 @@
 "use strict";
 const guardiaService = require("../services/gestion.service");
+const { respondSuccess, respondError } = require("../utils/resHandler");
 const {guardiaIdSchema, guardiaSchema} = require("../schema/guardia.schema");
 
 /**
@@ -54,27 +55,6 @@ async function createGuardia(req, res) {
     }
 }
 
-async function createBeca(req, res) {
-    try {  
-      const { body } = req;
-      const { error: bodyError } = becaSchema.validate(body);
-      if (bodyError) return respondError(req, res, 400, bodyError.message);
-
-      body.fecha_inicio = moment(body.fecha_inicio, "DD-MM-YYYY").toDate();
-      body.fecha_fin = moment(body.fecha_fin, "DD-MM-YYYY").toDate();
-      
-      const [newBeca, BecaError] = await BecaService.createBeca(body);  
-      if (BecaError) return respondError(req, res, 400, BecaError);
-      if (!newBeca) {
-        return respondError(req, res, 400, "No se creo la Beca");
-      }
-  
-      respondSuccess(req, res, 201, newBeca);
-    } catch (error) {
-      handleError(error, "beca.controller -> createBeca");
-      respondError(req, res, 500, "No se creo la beca");
-    }
-  }
 /**
  * Actualizar un guardia por ID
  * @param {Object} req
@@ -86,7 +66,7 @@ async function updateGuardia(req, res) {
         const guardiaData = req.body;
         const [guardia, error] = await guardiaService.updateGuardia(id, guardiaData);
         if (error) return res.status(400).json({ message: error });
-        return res.status(200).json(guardia);
+        respondSuccess(req, res, 201, guardia);
     } catch (error) {
         return res.status(500).json({ message: "Error al actualizar el guardia", error: error.message });
     }
