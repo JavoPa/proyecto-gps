@@ -54,27 +54,6 @@ async function createGuardia(req, res) {
     }
 }
 
-async function createBeca(req, res) {
-    try {  
-      const { body } = req;
-      const { error: bodyError } = becaSchema.validate(body);
-      if (bodyError) return respondError(req, res, 400, bodyError.message);
-
-      body.fecha_inicio = moment(body.fecha_inicio, "DD-MM-YYYY").toDate();
-      body.fecha_fin = moment(body.fecha_fin, "DD-MM-YYYY").toDate();
-      
-      const [newBeca, BecaError] = await BecaService.createBeca(body);  
-      if (BecaError) return respondError(req, res, 400, BecaError);
-      if (!newBeca) {
-        return respondError(req, res, 400, "No se creo la Beca");
-      }
-  
-      respondSuccess(req, res, 201, newBeca);
-    } catch (error) {
-      handleError(error, "beca.controller -> createBeca");
-      respondError(req, res, 500, "No se creo la beca");
-    }
-  }
 /**
  * Actualizar un guardia por ID
  * @param {Object} req
