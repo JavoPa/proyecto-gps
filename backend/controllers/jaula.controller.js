@@ -1,5 +1,6 @@
 // jaula.controller.js
 const Jaula = require('../models/jaula.model');
+const Guardia = require('../models/guardia.model');
 
 
 async function listarJaulas(req, res) {
@@ -95,5 +96,17 @@ async function eliminarJaula(req, res) {
     }
 }
 
+async function getGuardiaAsignado(req, res) {
+    try {
+        const jaulaId = req.params.id;
+        const jaula = await Jaula.findById(jaulaId);
+        const guardiaRes = await Guardia.findById(jaula.guardiaAsignado).select('-password');
 
-module.exports = { listarJaulas, getJaula, crearJaula, eliminarJaula };
+        res.status(200).json(guardiaRes);
+    } catch (error) {
+        console.error('Error al listar las jaulas', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+module.exports = { listarJaulas, getJaula, crearJaula, eliminarJaula, getGuardiaAsignado };
