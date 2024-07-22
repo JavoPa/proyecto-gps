@@ -7,7 +7,7 @@ export async function Login(data) {
         return res.data.data;
     } catch (error) {
         //alert('Error al iniciar sesión, vulva a intentarlo');
-        console.log(error);
+        console.log(error.response);
         return null;
     }
 }
