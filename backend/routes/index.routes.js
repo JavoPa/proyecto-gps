@@ -17,8 +17,7 @@ const jaulaRoutes = require("./jaula.routes.js");
 
 /** Enrutador gestion guardias */
 const gestionRoutes = require("./gestion.routes.js");
-/** Enrutador historial */
-const historialRoutes = require("./historial.routes.js");
+
 
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
@@ -35,8 +34,6 @@ router.use("/guardias", authenticationMiddleware, guardiaRoutes);
 router.use("/jaulas", authenticationMiddleware, jaulaRoutes);
 // Define las rutas para los horarios /api/horarios
 router.use("/horarios", authenticationMiddleware, horasRoutes);
-// Define las rutas para el historia
-router.use("/historial", authenticationMiddleware, historialRoutes);
 // Define las rutas para ver a los guardias /api/admin/
 router.use("/Admin", authenticationMiddleware, gestionRoutes);
 module.exports = router;

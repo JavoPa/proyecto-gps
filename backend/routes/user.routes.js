@@ -9,6 +9,8 @@ const usuarioController = require("../controllers/usuario.controller.js");
 
 const bicicletaController = require("../controllers/bicicleta.controller.js");
 
+const historialController = require("../controllers/historial.controller.js")
+
 /** Middlewares de autorización */
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 
@@ -43,5 +45,8 @@ router.put("/salir", accesoController.registrarSalida); //Generar token para sal
 router.get("/bicicleta", bicicletaController.getBicicleta); //Ver detalles de la bicicleta del estudiante
 router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detalles de la bicicleta del estudiante
 router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
+
+router.get("/historial" , historialController.getHistorialUsuario);
+
 
 module.exports = router;
