@@ -1,9 +1,9 @@
-import { StyleSheet, Pressable, ScrollView,useColorScheme ,ActivityIndicator, Button, Modal, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Pressable, ScrollView ,ActivityIndicator, Button, Modal, TextInput, FlatList, Alert } from 'react-native';
 import { useSession } from '@/flo';
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { obtenerUsuarios } from '@/services/busqueda.user';
 
 
 export default function TabOneScreen() {
@@ -15,18 +15,16 @@ export default function TabOneScreen() {
     const [consulta,setConsulta] = useState(); // busqueda de usuarios
     const [modalVisible, setModalVisible] = useState(false); // estado para mostrar el modal
 
-    //funcion para obtener los datos de los usuarios y setearlos en el estado
-    const obtenerdatos = async function getUser(a) {
-      try {
-        const user = await axios.get('http://192.168.1.3:4000/api/users/allUsers',{headers: {Authorization: `Bearer ${a}`}});
-        setUsuarios(user.data);
-        setUsuarios3(user.data);
+    const sacarDatos = () => {
+      obtenerUsuarios(session).then((data) => {
+        if(!data) Alert.alert('Error al obtener los usuarios');
+        setUsuarios(data.data);
+        setUsuarios3(data.data);
         setCargando(false);
-      } catch (error) {
-        console.log(error.response);
-      }
+      });
     }
-
+ 
+    //funcion para buscar usuarios por rut
     const handleSearch = () => {
       if(consulta == undefined) {
         setUsuarios3(usuarios);
@@ -44,8 +42,8 @@ export default function TabOneScreen() {
 
     //obtener usuarios por nombre mandando la session a la funcion
     useEffect(() => {
-      obtenerdatos(session);
       handleSearch();
+      sacarDatos();
     }, []);
 
     if(cargando){
@@ -70,6 +68,7 @@ export default function TabOneScreen() {
           onChange={handleSearch}
         />
         <ScrollView >
+           {/* renderiza botones Preseables que al tocarlos activan el modal que muestra detalle*/}
         {usuarios3.map((user) => (
         <Pressable
           style={styles.vistaUsuario}
@@ -104,45 +103,6 @@ export default function TabOneScreen() {
       </View>
 
     );
-/*
-    return (
-      <View style={styles.container}>
-          <FlatList
-            data={usuarios}
-            keyExtractor={(item) => item._id.toString()}
-            style={styles.a}
-            renderItem={({item}) => (
-              
-              <View style={styles.vistaUsuario} >
-                <Text style={styles.usuarios}>{item.nombre}</Text>
-                <Text style={styles.usuarios}>{item.rut}</Text>
-                <Text style={styles.usuarios}>{item.rol}</Text>
-                <View style={styles.bo}>
-                  <Pressable onPress={handleModal} >
-                    <Text>Editar</Text>
-                  </Pressable>
-                </View>
-                <Modal
-                  visible={modalVisible}
-                  animationType="slide"
-                  onRequestClose={()=>setModalVisible(false)}
-                >
-                  <View>
-                    <Text>{item.rut}</Text>
-                    <Text>{item.nombre}</Text>
-                    <Text>{item.apellido}</Text>
-                    <Text>{item.fono}</Text>
-                    <Text>{item.correo}</Text>
-                    <Text>{item.rol}</Text>
-                    <Button title="Cerrar" onPress={()=>setModalVisible(false)} />
-                  </View>
-                </Modal>
-              </View>
-            )}
-          />
-        <Button style={styles.bo} title="Salir" onPress={()=>signOut()} />
-      </View>
-    );*/
   }
 
 const styles = StyleSheet.create({

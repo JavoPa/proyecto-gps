@@ -4,6 +4,7 @@ import { Text, View } from '@/components/Themed';
 import { useSession } from '@/flo';
 import {rolesService} from '@/services/roles.service';
 import { useRouter } from 'expo-router';
+import { set } from 'react-datepicker/dist/date_utils';
 
 export default function login() {
     const [email, setEmail] = useState('');
@@ -18,9 +19,11 @@ export default function login() {
         password: password
       }
       signIn(data);
+      setCargando(true);
     };
 
     useEffect(() => {
+      setCargando(false);
       if(session){
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
