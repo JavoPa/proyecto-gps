@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { postGuardia } from '@/services/gestion.service';
+import { postGuardia, getGuardias } from '@/services/gestion.service';
 import { useNavigation } from '@react-navigation/native';
 
 const GuardiaForm: React.FC = () => {
@@ -11,12 +11,13 @@ const GuardiaForm: React.FC = () => {
     const [correo, setCorreo] = useState('');
     const [password, setPassword] = useState('');
     const [situacionLaboral, setSituacionLaboral] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const navigation = useNavigation();
 
     const handleSubmit = async () => {
         if (rut === '' || nombre === '' || apellido === '' || fono === '' || correo === '' || password === '' || situacionLaboral === '') {
-            Alert.alert('Error', 'Todos los campos son obligatorios.');
+            setErrorMessage('Todos los campos son obligatorios.');
             return;
         }
 
@@ -35,16 +36,18 @@ const GuardiaForm: React.FC = () => {
         const response = await postGuardia(newGuardia);
 
         if (response && response._id) {
+            getGuardias();
             Alert.alert('Éxito', 'Guardia creado correctamente');
             navigation.goBack();
         } else {
-            Alert.alert('Error', 'Hubo un problema al crear el guardia');
+            setErrorMessage(response.message || 'No se pudo crear el guardia');
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Crear Nuevo Guardia</Text>
+            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
             <TextInput
                 style={styles.input}
                 placeholder="RUT"
@@ -95,6 +98,8 @@ const GuardiaForm: React.FC = () => {
     );
 };
 
+export default GuardiaForm;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -113,6 +118,9 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         marginBottom: 16,
     },
+    errorText: {
+        color: 'red',
+        marginBottom: 16,
+    },
 });
 
-export default GuardiaForm;

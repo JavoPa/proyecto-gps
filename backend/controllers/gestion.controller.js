@@ -1,6 +1,7 @@
 "use strict";
 const guardiaService = require("../services/gestion.service");
-
+const { respondSuccess, respondError } = require("../utils/resHandler");
+const {guardiaIdSchema, guardiaSchema} = require("../schema/guardia.schema");
 
 /**
  * Obtener todos los guardias
@@ -39,9 +40,15 @@ async function getGuardiaById(req, res) {
  */
 async function createGuardia(req, res) {
     try {
-        const guardiaData = req.body;
-        const [guardia, error] = await guardiaService.createGuardia(guardiaData);
-        if (error) return res.status(400).json({ message: error });
+        const { error, value } = guardiaSchema.validate(req.body);        
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+        const guardiaData = value;
+        const [guardia, serviceError] = await guardiaService.createGuardia(guardiaData);
+        if (serviceError) {
+            return res.status(400).json({ message: serviceError });
+        }
         return res.status(201).json(guardia);
     } catch (error) {
         return res.status(500).json({ message: "Error al crear el guardia", error: error.message });
@@ -59,7 +66,7 @@ async function updateGuardia(req, res) {
         const guardiaData = req.body;
         const [guardia, error] = await guardiaService.updateGuardia(id, guardiaData);
         if (error) return res.status(400).json({ message: error });
-        return res.status(200).json(guardia);
+        respondSuccess(req, res, 201, guardia);
     } catch (error) {
         return res.status(500).json({ message: "Error al actualizar el guardia", error: error.message });
     }

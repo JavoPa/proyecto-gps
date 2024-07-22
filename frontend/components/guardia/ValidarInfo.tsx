@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Button, TextInput} from 'react-native';
-import { validar } from '@/services/acceso.service';
+import { validar, ingresoInvitado } from '@/services/acceso.service';
 import { Alert } from 'react-native';
 import ColorTheme from '@/components/ColorTheme';
 import { Text, View } from '../Themed';
 import BicicletaModal from '../BicicletaModal';
 import Colors from '@/constants/Colors';
 import { updateBicicletaUsuario } from '@/services/bicicleta.service';
+import AccesoManualModal from './AccesoManualModal';
 
 export default function ValidarInfo() {
       interface Acceso {
@@ -34,6 +35,7 @@ export default function ValidarInfo() {
       const [bicicleta, setBicicleta] = useState<Bicicleta | null>(null);
       const [token, setToken] = useState('');
       const [modalActualizarVisible, setModalActualizarVisible] = useState(false);
+      const [modalIngresoManual, setModalIngresoManual] = useState(false);
       const [bicicletaNotExists, setBicicletaNotExists] = useState(false);
       const handleTokenChange = (value: string) => {
         if (value.length <= 4) {
@@ -52,7 +54,6 @@ export default function ValidarInfo() {
       const [fields, setFields] = useState({
         marca: '',
         color: '',
-        // Agrega más campos según sea necesario
       });
       const [acceso, setAcceso] = useState<Acceso | null>(null);
       const [error, setError] = useState<string | null>(null);
@@ -93,7 +94,7 @@ export default function ValidarInfo() {
                 "Error",
                 response.message || "Hubo un error al registrar el ingreso",
                 [
-                  { text: 'OK', onPress: () => setError(response.message || "Hubo un error al registrar el ingreso") }
+                  { text: 'OK'}
                 ]
               );
               setError(response.message || "Hubo un error al registrar el ingreso");
@@ -115,16 +116,58 @@ export default function ValidarInfo() {
               setError(null);
               setBicicletaNotExists(false);
               setFields({marca: '',color: '',});
+              setBicicleta(response.data)
               Alert.alert(
                 "Bicicleta Registrada",
                 "Datos de la bicicleta guardados correctamente\n",
                 [
-                  { text: 'OK', onPress: () => setBicicleta(response.data)}
+                  { text: 'OK'}
                 ]
               );
             }else{
               //setBicicleta(null);
               alert(response.message || 'Hubo un error al registrar los datos de la bicicleta 🥺');
+            }
+          });
+        };
+        //Ingreso Manual de bicicleta
+        const handleFieldChangeIngreso = (field: string, value: string) => {
+          if (value.length <= 40) {
+            setFieldsIngreso({
+              ...fieldsIngreso,
+              [field]: value,
+            });
+          }
+        };
+        // Datos de la bicicleta
+        const [fieldsIngreso, setFieldsIngreso] = useState({
+          nombre: '',
+          apellido: '',
+          rut: '',
+          fono: '',
+          correo: '',
+        });
+        const handleIngresoManual = () => {
+          if(fieldsIngreso.rut === '') {
+            alert('Debes indicar el RUT');
+            return;
+          }
+          ingresoInvitado(fieldsIngreso).then((response) => {
+            if(response.state === "Success") {
+              setModalIngresoManual(false);
+              setError(null);
+              setFieldsIngreso({rut: '',nombre: '',apellido: '',fono: '',correo: '',});
+              setAcceso(response.data)
+              setBicicleta(null);
+              Alert.alert(
+                "Ingreso Manual Registrado",
+                "Datos de ingreso registrado de forma manual correctamente\n",
+                [
+                  { text: 'OK'}
+                ]
+              );
+            }else{
+              alert(response.message || 'Hubo un error al ingresar manualmente 🥺');
             }
           });
         };
@@ -150,6 +193,13 @@ export default function ValidarInfo() {
               onPress={handleIngresar}
             />
           </View>
+          <View style={styles.registrarButton}>
+            <Button
+              title="Ingreso manual"
+              onPress={() => setModalIngresoManual(true)}
+              color={'green'}
+            />
+          </View>
         </View>
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
       {acceso && (
@@ -161,6 +211,10 @@ export default function ValidarInfo() {
           <Text style={styles.text}>Bicicleta: {bicicleta ? `${bicicleta.marca} ${bicicleta.color}` : 'No registrada'}</Text>
           <Text style={styles.text}>Fecha: {new Date(acceso.entrada).toLocaleDateString()}</Text>
           <Text style={styles.text}>Hora: {new Date(acceso.entrada).toLocaleTimeString()}</Text>
+          <Button
+            title="Modificar bicicleta"
+            onPress={() => setModalActualizarVisible(true)}
+          />
         </View>
       )}
       <BicicletaModal 
@@ -171,6 +225,13 @@ export default function ValidarInfo() {
         handleActualizar={handleActualizar}
         fields={fields} 
       ></BicicletaModal>
+      <AccesoManualModal
+        modalVisible={modalIngresoManual} 
+        setModalVisible={setModalIngresoManual} 
+        handleFieldChangeIngreso={handleFieldChangeIngreso} 
+        handleActualizar={handleIngresoManual}
+        fieldsIngreso={fieldsIngreso} 
+      ></AccesoManualModal>
     </View>
   );
 }

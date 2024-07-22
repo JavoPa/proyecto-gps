@@ -51,7 +51,9 @@ async function createGuardia(guardiaData) {
     try {
         const { rut, nombre, apellido, fono, correo, password, rol, cargo, situacion_laboral } = guardiaData;
         const guardiaFound = await Guardia.findOne({ rut });
-        if (guardiaFound) return [null, "El guardia ya existe"];
+        if (guardiaFound) return [null, "El guardia con ese rut ya existe"];
+        const guardiaFound2 = await Guardia.findOne({ correo });
+        if (guardiaFound2) return [null, "El guardia con ese correo ya existe"];
         const newGuardia = new Guardia({
             rut,
             nombre,
@@ -63,6 +65,9 @@ async function createGuardia(guardiaData) {
             cargo,
             situacion_laboral
         });
+        if (newGuardia.nombre.includes('  ') || newGuardia.nombre.includes(' ')  ) {
+            return [null, "El nombre del guardia no puede estar vacio"];
+          }
         await newGuardia.save();
         return [newGuardia, null];
     } catch (error) {
@@ -117,7 +122,7 @@ async function deleteGuardia(id) {
         const guardia = await Guardia.findById({ _id: id });
         if (!guardia) return [null, "El guardia no existe"];
         await Guardia.findByIdAndDelete(id);
-        return [null, "Guardia eliminado"];
+        return ["Guardia eliminado", null];
     } catch (error) {
         handleError(error, "guardia.service -> deleteGuardia");
         throw error;
