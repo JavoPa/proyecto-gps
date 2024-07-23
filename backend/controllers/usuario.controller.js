@@ -21,7 +21,8 @@ const {
 } = require('../services/usuario.service');
 
 const axios = require('axios');
-const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema')
+const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema');
+const { enviarPushNotification } = require("../utils/notifHandler.js");
 
 
 async function verificarIntranet(req,res) {
@@ -211,6 +212,17 @@ async function getUsuarios(req, res) {
     }
 }
 
+async function enviarNotif(req, res) {
+    const { tokens, message } = req.body;
+    try {
+        const tickets = await enviarPushNotification(tokens, message);
+        res.status(200).json({ tickets });
+    } catch (error) {
+        console.error('Error al enviar notificación push:', error);
+        res.status(500).json({ message: 'No se pudo enviar la notificación' });
+    }
+}
+
 module.exports = {
     crearUsuario,
     getUserById,
@@ -218,5 +230,6 @@ module.exports = {
     getUsuario,
     getUsuarios,
     crearUsuario,
-    verificarIntranet
+    verificarIntranet,
+    enviarNotif
 };
