@@ -4,6 +4,8 @@ import { Text, View } from '@/components/Themed';
 import { useSession } from '@/flo';
 import {rolesService} from '@/services/roles.service';
 import { useRouter } from 'expo-router';
+import { registerForPushNotificationsAsync } from '@/utils/notifications';
+import { putPushToken } from '@/services/pushToken.service';
 import { set } from 'react-datepicker/dist/date_utils';
 
 export default function login() {
@@ -11,6 +13,15 @@ export default function login() {
     const [password, setPassword] = useState('');
     const [cargando, setCargando] = useState(false);
     const router = useRouter();
+    const [pushToken, setPushToken] = useState('');
+
+    useEffect(() => {
+        const getToken = async () => {
+            const tokenPush = await registerForPushNotificationsAsync();
+            setPushToken(tokenPush); // Guardar token en el estado
+        };
+        getToken();
+    }, []);
     const { signIn, session, isLoading } = useSession();
 
     const handleLogin = async () => {
@@ -28,6 +39,7 @@ export default function login() {
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
           setCargando(false);
+          putPushToken(session, pushToken);
           return router.replace('/tabs')
         }else{
           if(rol == "Guardia"){
