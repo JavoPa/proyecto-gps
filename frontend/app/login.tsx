@@ -33,7 +33,7 @@ export default function login() {
       setCargando(true);
       if(session == undefined){
         setCargando(false);
-        Alert.alert('Error', 'Vulva a intentar' );
+        //Alert.alert('Error', 'Vulva a intentar' );
       }
     };
 
@@ -54,7 +54,7 @@ export default function login() {
               return router.replace('/admin')
             }else{
               if(rol == null){
-                Alert.alert('Error', 'Vulva a intentar' );
+                Alert.alert('Error', 'Vuelva a intentar' );
               }else{
                 Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
               }
