@@ -18,6 +18,8 @@ const jaulaRoutes = require("./jaula.routes.js");
 /** Enrutador gestion guardias */
 const gestionRoutes = require("./gestion.routes.js");
 
+/** Enrutador actualizar pushToken */
+const pushTokenRoutes = require("./pushToken.routes.js");
 
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
@@ -36,4 +38,6 @@ router.use("/jaulas", authenticationMiddleware, jaulaRoutes);
 router.use("/horarios", authenticationMiddleware, horasRoutes);
 // Define las rutas para ver a los guardias /api/admin/
 router.use("/Admin", authenticationMiddleware, gestionRoutes);
+// Define las rutas para actualizar el pushToken
+router.use("/pushToken", authenticationMiddleware, pushTokenRoutes);
 module.exports = router;
