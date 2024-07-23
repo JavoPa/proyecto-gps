@@ -13,8 +13,8 @@ async function actualizarPushToken(req, res) {
     id = info.id;
     pT = info.pushToken;
     
-    console.log("req: ", req.body);
-    console.log("pushToken: ", pT);
+    // console.log("req: ", req.body);
+    // console.log("pushToken: ", pT);
     try {
         const usuario = await Usuario.findById(id);
         if (!usuario) return respondError(req, res, 400, 'Usuario no encontrado');

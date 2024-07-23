@@ -7,10 +7,10 @@ export async function putPushToken(token, pushToken){
             setAuthToken(token);
             const decoded = jwtDecode(token);
             id = decoded.id;
-            console.log("decoded: ", decoded);
+            // console.log("decoded: ", decoded);
             await axiosInstance.put("/pushToken/update", {id, pushToken});
 
-            console.log("PushToken actualizado");
+            // console.log("PushToken actualizado");
         }catch(error){
             console.error("Error al actualizar el pushToken", error);
         }
@@ -26,10 +26,10 @@ export async function clearPushToken(token){
             setAuthToken(token);
             const decoded = jwtDecode(token);
             id = decoded.id;
-            console.log("decoded: ", decoded);
+            // console.log("decoded: ", decoded);
             await axiosInstance.put("/pushToken/clear", {id});
 
-            console.log("PushToken eliminado");
+            // console.log("PushToken eliminado");
         }catch(error){
             console.error("Error al eliminar el pushToken", error);
         }
