@@ -26,6 +26,27 @@ async function actualizarPushToken(req, res) {
     }
 }
 
+/**
+ * Limpia el pushToken de un usuario
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+
+async function limpiarPushToken(req, res) {
+    const info = req.body;
+    id = info.id;
+    try {
+        const usuario = await Usuario.findById(id);
+        if (!usuario) return respondError(req, res, 400, 'Usuario no encontrado');
+        await Usuario.findByIdAndUpdate(id, { pushToken: '' }, { new: true });
+        respondSuccess(req, res, 200, 'PushToken eliminado');
+    } catch (error) {
+        handleError(error, "pushToken.controller -> limpiarPushToken");
+        respondError(req, res, 500, "No se eliminó el pushToken");
+    }
+}
+
 module.exports = {
-    actualizarPushToken
+    actualizarPushToken,
+    limpiarPushToken
 };
