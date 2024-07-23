@@ -43,6 +43,7 @@ export default function login() {
           return router.replace('/tabs')
         }else{
           if(rol == "Guardia"){
+            putPushToken(session, pushToken);
             return router.replace('/guardias')
           }else{
             if(rol == "Administrador"){
