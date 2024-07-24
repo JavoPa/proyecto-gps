@@ -81,9 +81,7 @@ async function modificarJaula(req, res) {
 
         jaula.ubicacion = ubicacion || jaula.ubicacion;
         jaula.capacidad = capacidad || jaula.capacidad;
-        jaula.situacion_actual = situacion_actual || jaula.situacion_actual;
         jaula.identificador = identificador || jaula.identificador;
-        jaula.guardiaAsignado = guardiaAsignado || jaula.guardiaAsignado;
 
         const jaulaModificada = await jaula.save();
         res.status(200).send({ message: 'Jaula modificada con éxito', jaula: jaulaModificada });

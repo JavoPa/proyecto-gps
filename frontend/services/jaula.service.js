@@ -2,7 +2,7 @@ import axios from './root.service';
 
 export async function getJaulas() {
   try {
-    const response = await axios.get('/jaulas/');
+    const response = await axios.get('/jaulas');
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -15,7 +15,7 @@ export async function getJaulas() {
 
 export async function postJaula(data) {
   try {
-    const response = await axios.post('/jaulas/', data);
+    const response = await axios.post('/jaulas', data);
     return response.data;
   } catch (error) {
     if (error.response) {

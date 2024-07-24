@@ -1,7 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { getJaulas, deleteJaula, getJaulaById, updateJaula } from '@/services/jaula.service';
+import { getGuardias } from '@/services/gestion.service'; // Importa el servicio de guardias
 import { useFocusEffect } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker'; // Importa el Picker
+
+interface Guardia {
+    _id: string;
+    nombre: string;
+    apellido: string;
+}
 
 interface Jaula {
     _id: string;
@@ -9,12 +17,13 @@ interface Jaula {
     capacidad: number;
     situacion_actual: number;
     identificador: string;
-    guardiaAsignado: { nombre: string, apellido: string } | null;
+    guardiaAsignado: { _id: string, nombre: string, apellido: string } | null;
 }
 
 const ListaJaulas: React.FC = () => {
     const [jaulas, setJaulas] = useState<Jaula[]>([]);
     const [filteredJaulas, setFilteredJaulas] = useState<Jaula[]>([]);
+    const [guardias, setGuardias] = useState<Guardia[]>([]); // Estado para la lista de guardias
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedJaula, setSelectedJaula] = useState<Jaula | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -24,6 +33,7 @@ const ListaJaulas: React.FC = () => {
     useFocusEffect(
         useCallback(() => {
             fetchJaulas();
+            fetchGuardias(); // Obtén la lista de guardias cuando el componente tenga foco
         }, [])
     );
 
@@ -42,6 +52,21 @@ const ListaJaulas: React.FC = () => {
             Alert.alert('Error', 'No se pudo cargar la lista de jaulas');
         } finally {
             setLoading(false);
+        }
+    }, []);
+
+    const fetchGuardias = useCallback(async () => {
+        try {
+            const response = await getGuardias();
+            if (Array.isArray(response)) {
+                setGuardias(response);
+            } else {
+                console.error('Unexpected response format:', response);
+                Alert.alert('Error', 'Formato de respuesta inesperado');
+            }
+        } catch (error) {
+            console.error('Error fetching guardias:', error);
+            Alert.alert('Error', 'No se pudo cargar la lista de guardias');
         }
     }, []);
 
@@ -92,15 +117,15 @@ const ListaJaulas: React.FC = () => {
                 ubicacion: selectedJaula.ubicacion,
                 capacidad: selectedJaula.capacidad,
                 identificador: selectedJaula.identificador,
-                guardiaAsignado: selectedJaula.guardiaAsignado
+                guardiaAsignado: selectedJaula.guardiaAsignado?._id || null // Enviar solo el ID del guardia asignado
             };
             try {
                 const response = await updateJaula(selectedJaula._id, updatedJaula);
                 if (response.state === "Success") {
                     Alert.alert('Éxito', 'Jaula actualizada correctamente');
                     setIsEditing(false);
-                    fetchJaulas();
-                    handleViewDetails(selectedJaula._id); // Volver a la vista de detalles después de actualizar
+                    setModalVisible(false);  // Cerrar el modal
+                    fetchJaulas();  // Actualizar la lista de jaulas
                 } else {
                     Alert.alert('Error', 'No se pudo actualizar la jaula');
                 }
@@ -193,6 +218,15 @@ const ListaJaulas: React.FC = () => {
                                     onChangeText={identificador => setSelectedJaula(prev => prev ? { ...prev, identificador } : null)}
                                     placeholder="Identificador"
                                 />
+                                <Picker
+                                    selectedValue={selectedJaula?.guardiaAsignado?._id || null}
+                                    onValueChange={(itemValue) => setSelectedJaula(prev => prev ? { ...prev, guardiaAsignado: guardias.find(guardia => guardia._id === itemValue) || null } : null)}
+                                >
+                                    <Picker.Item label="Ninguno" value={null} />
+                                    {guardias.map(guardia => (
+                                        <Picker.Item key={guardia._id} label={`${guardia.nombre} ${guardia.apellido}`} value={guardia._id} />
+                                    ))}
+                                </Picker>
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleUpdate}>
                                         <Text style={styles.modalButtonText}>Guardar Cambios</Text>
