@@ -14,6 +14,7 @@ export default function login() {
     const [cargando, setCargando] = useState(false);
     const router = useRouter();
     const [pushToken, setPushToken] = useState('');
+    const { signIn, session, isLoading } = useSession();
 
     useEffect(() => {
         const getToken = async () => {
@@ -22,7 +23,7 @@ export default function login() {
         };
         getToken();
     }, []);
-    const { signIn, session, isLoading } = useSession();
+   
 
     const handleLogin = async () => {
       const data = {
@@ -39,6 +40,7 @@ export default function login() {
 
     useEffect(() => {
       setCargando(false);
+      console.log('la session es',session);
       if(session){
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
