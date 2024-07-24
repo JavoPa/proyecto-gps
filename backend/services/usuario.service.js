@@ -9,8 +9,7 @@ const Administrador = require("../models/administrador.model.js");
 const Guardia = require("../models/guardia.model.js");
 
 
-
-async function crearEstudiante(aux) {
+async function crearUser(aux) {
     try {
         //validar formato de los campos no obligatorios
         if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
@@ -48,8 +47,7 @@ async function crearGuardia(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            cargo: aux.cargo,
-            situacion_laboral: aux.situacion_laboral
+            situacion: aux.situacion_laboral
         }).save();
 
         return usuarioNuevo;
@@ -59,6 +57,54 @@ async function crearGuardia(aux) {
     }
 }
 
+
+async function crearAdministrador(aux) {
+    try {
+        //validar formato de los campos no obligatorios
+        if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
+        const usuarioNuevo = await new Administrador({
+            rut: aux.rut,
+            nombre: aux.nombre,
+            apellido: aux.apellido,
+            fono: aux.fono,
+            correo: aux.correo,
+            password: await Usuario.encryptPassword(aux.password),
+            rol: aux.rol,
+            situacion: aux.situacion,
+        }).save();
+        return usuarioNuevo;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+async function crearEstudiante(aux) {
+    try {
+        //validar formato de los campos no obligatorios
+        if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
+
+        //crear Estudiante
+        const usuarioNuevo = await new Estudiante({
+            rut: aux.rut,
+            nombre: aux.nombre,
+            apellido: aux.apellido,
+            fono: aux.fono,
+            correo: aux.correo,
+            password: await Usuario.encryptPassword(aux.password),
+            rol: aux.rol,
+            carrera: aux.carrera,
+            situacion: aux.situacion_academica
+        }).save();
+
+        return usuarioNuevo;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+/*deprecado
 async function crearAcademico(aux) {
     try {
         //validar formato de los campos no obligatorios
@@ -110,27 +156,7 @@ async function crearFuncionario(aux) {
     }
 }
 
-async function crearAdministrador(aux) {
-    try {
-        //validar formato de los campos no obligatorios
-        if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
-        const usuarioNuevo = await new Administrador({
-            rut: aux.rut,
-            nombre: aux.nombre,
-            apellido: aux.apellido,
-            fono: aux.fono,
-            correo: aux.correo,
-            password: await Usuario.encryptPassword(aux.password),
-            rol: aux.rol,
-            cargo: aux.cargo,
-            departamento: aux.departamento
-        }).save();
-        return usuarioNuevo;
-
-    } catch (error) {
-        console.log(error);
-    }
-}
+*/
 
 
 /**
@@ -173,9 +199,7 @@ async function getUserById(id) {
 module.exports = {
     getUsers,
     getUserById,
-    crearEstudiante,
+    crearUser,
     crearGuardia,
-    crearAcademico,
-    crearFuncionario,
     crearAdministrador
 };
