@@ -13,9 +13,9 @@ interface Jaula {
     _id: string;
     ubicacion: string;
     capacidad: number;
-    situacion_actual: number;
     identificador: string;
     guardiaAsignado: { _id: string, nombre: string, apellido: string } | null;
+    situacion_actual?: number;  // Añadimos el campo para la situación actual
 }
 
 const ListaJaulas: React.FC = () => {
@@ -106,7 +106,6 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.itemText}>Identificador: {item.identificador}</Text>
                         <Text style={styles.itemText}>Ubicación: {item.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {item.capacidad}</Text>
-                        <Text style={styles.itemText}>Situación Actual: {item.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {item.guardiaAsignado ? `${item.guardiaAsignado.nombre} ${item.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(item._id)}>
@@ -128,7 +127,7 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
-                        <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
+                        <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
