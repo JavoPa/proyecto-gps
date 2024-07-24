@@ -7,6 +7,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
 import { setAuthToken } from '@/services/root.service';
+import {rolesService} from '@/services/roles.service';
 
 
 
@@ -18,21 +19,26 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function GuardiasLayout() {
+export default function AdminLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
-  const { session,isLoading } = useSession();
+  const { session,isLoading} = useSession();
   
   if (isLoading) {
-    return <Text>Cagando..</Text>;
+    return <Text>Cargando..</Text>;
   }
+  /*
+  const rol = rolesService(session);
+  if(rol != "administrador"){
+    signOut();
+    return <Redirect href="/login" />;
+  }*/
 
   if(!session) {
     return <Redirect href="/login" />;
   }else{
     setAuthToken(session);
   }
-  console.log(session);
 
   return (
     <Tabs
@@ -93,11 +99,19 @@ export default function GuardiasLayout() {
         }}
       />
       <Tabs.Screen
+        name="crearUsuarios"
+        options={{
+          title: 'Crear User',
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="horarios"
         options={{
-          title: 'Horarios',
-          tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
-        }}/>
+         title: 'Horarios',
+         tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

@@ -17,5 +17,7 @@ const MONGO_URI = process.env.DB_URL;
 const ACCESS_JWT_SECRET = process.env.ACCESS_JWT_SECRET;
 /** Secreto para el token de refresco */
 const REFRESH_JWT_SECRET = process.env.REFRESH_JWT_SECRET;
+/*Consulta a API que simula intranet */
+const INTRANET_API = process.env.INTRANET_API;
 
-module.exports = { PORT, HOST, MONGO_URI, ACCESS_JWT_SECRET, REFRESH_JWT_SECRET };
+module.exports = { PORT, HOST, MONGO_URI, ACCESS_JWT_SECRET, REFRESH_JWT_SECRET, INTRANET_API };

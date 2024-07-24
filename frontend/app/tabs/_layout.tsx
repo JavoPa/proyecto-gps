@@ -6,6 +6,7 @@ import { setAuthToken } from '@/services/root.service';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import {rolesService} from '@/services/roles.service';
 
 import { useSession } from '@/flo';
 
@@ -20,12 +21,23 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true); 
-  const { session, isLoading } = useSession();
+  const { session, isLoading, signOut } = useSession();
 
   if (isLoading) {
-    return <Text>Cagando..</Text>;
+    return <Text>Cargando..</Text>;
   }
-
+  //validar consistencia de token dentro de cada vista
+  /*
+  const rol = rolesService(session);
+  if(rol != "academico"){
+    if(rol != "funcionario"){
+      if(rol != "estudiante"){
+        signOut();
+        return <Redirect href="/login" />;
+      }
+    }
+  }*/
+  
   if(!session) {
     return <Redirect href="/login" />;
   }else{

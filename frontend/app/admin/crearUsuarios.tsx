@@ -1,19 +1,14 @@
-
 import { StyleSheet } from 'react-native';
-
-import HomeScreen from '@/components/usuario/HomeScreen';
+import React from 'react';
+import Crear from '@/components/admin/crearUsuarios';
 import { Text, View } from '@/components/Themed';
-import { useSession } from '@/flo';
-import { Button } from 'react-native';
 
-export default function TabOneScreen() {
-  const { signOut } = useSession();
+export default function ListaScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title} onPress={()=>signOut()}>BIENVENIDO AL BICICLETERO UBB</Text>
-      <Button title="Salir" onPress={()=>signOut()} />
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <HomeScreen />
+      <Text style={styles.title}>Crear Usuario</Text>
+      <Crear/>
     </View>
   );
 }
@@ -27,7 +22,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    margin: 20,
+    color: 'white',
   },
   separator: {
     marginVertical: 30,

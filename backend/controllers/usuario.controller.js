@@ -9,14 +9,14 @@ const { userIdSchema } = require("../schema/usuario.schema");
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const usuarioService = require('../services/usuario.service');
+const INTRANET_API = require('../config/env.config');  
 const { get } = require('mongoose');
 
 const Usuario = require('../models/usuario.model');
 const {
     crearEstudiante,
-    crearAcademico,
+    crearUser,
     crearAdministrador,
-    crearFuncionario,
     crearGuardia
 } = require('../services/usuario.service');
 
@@ -32,7 +32,7 @@ async function verificarIntranet(req,res) {
         if(error) return res.status(400).json({message: "El rut no es valido"});
 
         // conectar con la api validar que el usuario este creado y obtener los datos para crearlo
-        const aux = await axios.get('http://localhost:5000/api/users/obtener',{
+        const aux = await axios.get(INTRANET_API,{
             data:{
                 "rut": rut
             }
@@ -54,6 +54,21 @@ async function verificarIntranet(req,res) {
     }
 }
 
+
+/*
+data = {
+    "tipo": "Estudiante",
+    "rut": "12345678-9",
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "fono": "12345678",
+    "correo": "h@ubb.cl",
+    "password": "12345678",
+    "rol": "Estudiante",
+    ... datos especificos de cada tipo de usuario...
+
+}
+*/
 
 async function crearUsuario(req,res) {
     try {
@@ -79,7 +94,23 @@ async function crearUsuario(req,res) {
 
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoEstudiante);
         }
+        if(body.tipo == "Administrador"){
 
+            const {error} = administradorSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+
+            const nuevoAdministrador = crearAdministrador(body);
+            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
+        }else{
+            //modificar para que se cree el usuario con el tipo de usuario que corresponda
+            const {error} = administradorSchema.validate(body);
+            console.log(error);
+            if(error) return res.status(400).json({message: "Campos no validos"});
+            const nuevoUsuario = crearUsuario(body);
+            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoUsuario);
+        }
+        /*deprecado
         if(body.tipo == "Guardia"){
 
             const {error} = guardiaSchema.validate(body);
@@ -108,17 +139,8 @@ async function crearUsuario(req,res) {
 
             const nuevoFuncionario = crearFuncionario(body);
             return res.status(200).json({message: "Usuario creado correctamente"}, nuevoFuncionario);
-        }
+        }*/
 
-        if(body.tipo == "Administrador"){
-
-            const {error} = administradorSchema.validate(body);
-            console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
-
-            const nuevoAdministrador = crearAdministrador(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
-        }
 
         return res.status(400).json({message: "Tipo de usuario no encontrado, verifique los datos ingresados"});
         

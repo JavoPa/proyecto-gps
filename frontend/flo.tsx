@@ -1,15 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useStorageState } from './useStorageState';
 import { Login } from './services/login.service'
+import { set } from 'react-datepicker/dist/date_utils';
+import { clearPushToken } from './services/pushToken.service';
+
 
 
 const AuthContext = React.createContext<{
-    signIn: (data: {correo:string,password:string}) => void;
+    signIn: (data: {correo:string,password:string}) =>  Promise<string | null>;
     signOut: () => void;
     session?: string | null;
     isLoading: boolean;
 }>({
-    signIn: () => null,
+    signIn: () => Promise.resolve(null),
     signOut: () => null,
     session: null,
     isLoading: false,
@@ -39,20 +42,25 @@ async function Login(data: {correo: string, password: string}) {
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
+    
   
     return (
       <AuthContext.Provider
         value={{
-          signIn: (data) => {
-            Login(data).then(res => {
-                if(res == null) {
-                    setSession(null);
-                }else{
-                    setSession(`${res.accessToken}`);
-                }
-            });
+          signIn: async (data) => {
+            const res = await Login(data);
+            if(res == null) {
+              setSession(null);
+              return null;
+            }else{
+              setSession(`${res.accessToken}`);
+              return session;
+            }
           },
-          signOut: () => {
+          signOut: async () => {
+            if (session) {
+              await clearPushToken(session);
+            }
             setSession(null);
           },
           session,

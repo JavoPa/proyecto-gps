@@ -40,3 +40,10 @@
 * Si suben algo al main corroboren que en el main este funcionando bien
 
 * Si ocurre un conflicto entre main y su branch avisen y sean cuidadosos al resolver conflictos para no borrar codigo de los demas o entorpecer funcionalidades
+
+
+## Generar build APK
+
+### Android
+
+`eas build -p android --profile android`
