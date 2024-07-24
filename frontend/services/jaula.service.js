@@ -51,3 +51,16 @@ export async function getJaulaById(id) {
     }
   }
 }
+
+export async function updateJaula(id, data) {
+  try {
+    const response = await axios.put(`/jaulas/${id}`, data);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}

@@ -1,40 +1,43 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { postJaula } from '@/services/jaula.service';
+import { postJaula, getJaulas } from '@/services/jaula.service';
 import { useNavigation } from '@react-navigation/native';
 
-const CrearJaula: React.FC = () => {
+const JaulaForm: React.FC = () => {
     const [ubicacion, setUbicacion] = useState('');
     const [capacidad, setCapacidad] = useState('');
     const [identificador, setIdentificador] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const navigation = useNavigation();
 
     const handleSubmit = async () => {
         if (ubicacion === '' || capacidad === '' || identificador === '') {
-            Alert.alert('Error', 'Todos los campos son obligatorios.');
+            setErrorMessage('Todos los campos son obligatorios.');
             return;
         }
 
-        const nuevaJaula = {
+        const newJaula = {
             ubicacion,
-            capacidad: parseInt(capacidad),
-            identificador,
+            capacidad: parseInt(capacidad, 10),
+            identificador
         };
 
-        const response = await postJaula(nuevaJaula);
+        const response = await postJaula(newJaula);
 
-        if (response && response._id) {
+        if (response && response.message === "Jaula creada exitosamente") {
+            getJaulas();
             Alert.alert('Éxito', 'Jaula creada correctamente');
             navigation.goBack();
         } else {
-            Alert.alert('Error', 'Hubo un problema al crear la jaula');
+            setErrorMessage(response.message || 'No se pudo crear la jaula');
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Crear Nueva Jaula</Text>
+            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
             <TextInput
                 style={styles.input}
                 placeholder="Ubicación"
@@ -59,6 +62,8 @@ const CrearJaula: React.FC = () => {
     );
 };
 
+export default JaulaForm;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -77,6 +82,8 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         marginBottom: 16,
     },
+    errorText: {
+        color: 'red',
+        marginBottom: 16,
+    },
 });
-
-export default CrearJaula;

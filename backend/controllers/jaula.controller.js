@@ -1,16 +1,15 @@
-// jaula.controller.js
 const Jaula = require('../models/jaula.model');
-
 
 async function listarJaulas(req, res) {
     try {
-        const jaulas = await Jaula.find({}, 'ubicacion identificador capacidad situacion_actual')  
-            .lean(); 
+        const jaulas = await Jaula.find().populate('guardiaAsignado', 'nombre apellido').lean();
         const jaulasConEspaciosDisponibles = jaulas.map(jaula => ({
             _id: jaula._id,
             identificador: jaula.identificador,
             ubicacion: jaula.ubicacion,
-            espaciosDisponibles: jaula.capacidad - jaula.situacion_actual
+            capacidad: jaula.capacidad,
+            situacion_actual: jaula.situacion_actual,
+            guardiaAsignado: jaula.guardiaAsignado ? `${jaula.guardiaAsignado.nombre} ${jaula.guardiaAsignado.apellido}` : 'No asignado'
         }));
 
         res.status(200).json(jaulasConEspaciosDisponibles);
@@ -23,20 +22,22 @@ async function listarJaulas(req, res) {
 async function getJaula(req, res) {
     try {
         const jaula = await Jaula.findById(req.params.id)
-            .populate('guardiaAsignado', 'nombre apellido'); 
+            .populate('guardiaAsignado', 'nombre apellido');
 
         if (!jaula) {
             return res.status(404).send({ message: 'Jaula no encontrada.' });
         }
 
         const espaciosDisponibles = jaula.capacidad - jaula.situacion_actual;
-        
-        const response = {
 
+        const response = {
+            _id: jaula._id,
             ubicacion: jaula.ubicacion,
+            capacidad: jaula.capacidad,
+            situacion_actual: jaula.situacion_actual,
             identificador: jaula.identificador,
             espaciosDisponibles: espaciosDisponibles,
-            guardia: jaula.guardiaAsignado ? {
+            guardiaAsignado: jaula.guardiaAsignado ? {
                 nombre: jaula.guardiaAsignado.nombre,
                 apellido: jaula.guardiaAsignado.apellido
             } : null
@@ -49,17 +50,15 @@ async function getJaula(req, res) {
     }
 }
 
-
 async function crearJaula(req, res) {
     const { ubicacion, capacidad, identificador } = req.body;
-
 
     try {
         const nuevaJaula = new Jaula({
             ubicacion,
             capacidad,
             identificador,
-            situacion_actual: 0, 
+            situacion_actual: 0,
             guardiaAsignado: null
         });
 
@@ -70,12 +69,34 @@ async function crearJaula(req, res) {
         res.status(500).send({ message: 'Error al procesar la solicitud' });
     }
 }
+async function modificarJaula(req, res) {
+    try {
+        const { id } = req.params;
+        const { ubicacion, capacidad, situacion_actual, identificador, guardiaAsignado } = req.body;
+
+        const jaula = await Jaula.findById(id);
+        if (!jaula) {
+            return res.status(404).send({ message: 'Jaula no encontrada' });
+        }
+
+        jaula.ubicacion = ubicacion || jaula.ubicacion;
+        jaula.capacidad = capacidad || jaula.capacidad;
+        jaula.situacion_actual = situacion_actual || jaula.situacion_actual;
+        jaula.identificador = identificador || jaula.identificador;
+        jaula.guardiaAsignado = guardiaAsignado || jaula.guardiaAsignado;
+
+        const jaulaModificada = await jaula.save();
+        res.status(200).send({ message: 'Jaula modificada con éxito', jaula: jaulaModificada });
+    } catch (error) {
+        console.error('Error al modificar la jaula', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
 
 
 async function eliminarJaula(req, res) {
     try {
         const jaulaId = req.params.id;
-
 
         const jaula = await Jaula.findById(jaulaId);
         if (!jaula) {
@@ -87,7 +108,7 @@ async function eliminarJaula(req, res) {
         }
 
         await jaula.deleteOne();
-        
+
         res.status(200).send({ message: 'Jaula eliminada con éxito' });
     } catch (error) {
         console.error('Error al eliminar la jaula', error);
@@ -95,5 +116,4 @@ async function eliminarJaula(req, res) {
     }
 }
 
-
-module.exports = { listarJaulas, getJaula, crearJaula, eliminarJaula };
+module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula };
