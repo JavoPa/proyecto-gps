@@ -1,9 +1,11 @@
 const Jaula = require('../models/jaula.model');
+const Acceso = require('../models/acceso.model');
+
 
 async function listarJaulas(req, res) {
     try {
         const jaulas = await Jaula.find({})
-            .populate('guardiaAsignado', 'nombre apellido') // Incluye la información del guardia asignado
+            .populate('guardiaAsignado', 'nombre apellido')
             .lean();
 
         const jaulasConEspaciosDisponibles = jaulas.map(jaula => ({
@@ -11,7 +13,6 @@ async function listarJaulas(req, res) {
             identificador: jaula.identificador,
             ubicacion: jaula.ubicacion,
             capacidad: jaula.capacidad,
-            situacion_actual: jaula.situacion_actual,
             guardiaAsignado: jaula.guardiaAsignado ? {
                 nombre: jaula.guardiaAsignado.nombre,
                 apellido: jaula.guardiaAsignado.apellido
@@ -34,15 +35,20 @@ async function getJaula(req, res) {
             return res.status(404).send({ message: 'Jaula no encontrada.' });
         }
 
-        const espaciosDisponibles = jaula.capacidad - jaula.situacion_actual;
+        let situacion_actual = 0;
+        if (jaula.guardiaAsignado) {
+            const accesos = await Acceso.countDocuments({ guardia: jaula.guardiaAsignado._id });
+            situacion_actual = jaula.capacidad - accesos;
+        } else {
+            situacion_actual = jaula.capacidad;  // Asume que la jaula está vacía si no hay guardia asignado
+        }
 
         const response = {
             _id: jaula._id,
             ubicacion: jaula.ubicacion,
             capacidad: jaula.capacidad,
-            situacion_actual: jaula.situacion_actual,
+            situacion_actual: situacion_actual,
             identificador: jaula.identificador,
-            espaciosDisponibles: espaciosDisponibles,
             guardiaAsignado: jaula.guardiaAsignado ? {
                 nombre: jaula.guardiaAsignado.nombre,
                 apellido: jaula.guardiaAsignado.apellido
