@@ -57,7 +57,7 @@ const JaulaForm: React.FC = () => {
                 value={identificador}
                 onChangeText={setIdentificador}
             />
-            <Button title="Guardar" onPress={handleSubmit} />
+            <Button title="Guardar" onPress={handleSubmit} color="#2A628F" />
         </View>
     );
 };
@@ -68,11 +68,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#EDF2F4', // Fondo de la app
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: '#13293D', // Color de texto principal
     },
     input: {
         height: 40,
@@ -81,9 +83,22 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         paddingLeft: 8,
         marginBottom: 16,
+        backgroundColor: '#FFFFFF', // Fondo del input
     },
     errorText: {
         color: 'red',
         marginBottom: 16,
+    },
+    button: {
+        backgroundColor: '#2A628F', // Color de los botones
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#FFFFFF', // Color del texto de los botones
+        fontSize: 16,
     },
 });
