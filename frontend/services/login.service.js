@@ -6,10 +6,10 @@ export async function Login(data) {
         setAuthToken(res.data.data.accessToken); // Configura el token de autorización
         return res.data.data;
     } catch (error) {
-        if (error.response.data.message) {
+        if (error.response && error.response.data && error.response.data.message) {
             alert(error.response.data.message);
-        }else{
-            alert('Ocurrión un error')
+        } else {
+            alert('Ocurrió un error de conexión');
         }
         return null;
     }
