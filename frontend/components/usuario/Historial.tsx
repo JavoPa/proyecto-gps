@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { getHistorialUsuario } from '@/services/historial.service'; // Asegúrate de que la ruta sea correcta
+import { useFocusEffect } from '@react-navigation/native';
 
 interface HistorialItem {
     _id: string;
@@ -16,21 +17,25 @@ const Historial: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchHistorial = async () => {
-            try {
-                const data = await getHistorialUsuario();
-                setHistorial(data);
-            } catch (error) {
-                setError('No se pudo cargar el historial');
-                Alert.alert('Error', 'No se pudo cargar el historial');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchHistorial();
+    const fetchHistorial = useCallback(async () => {
+        setLoading(true);
+        setError(null); 
+        try {
+            const data = await getHistorialUsuario();
+            setHistorial(data);
+        } catch (error) {
+            setError('No se pudo cargar el historial');
+            Alert.alert('Error', 'No se pudo cargar el historial');
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchHistorial();
+        }, [fetchHistorial])
+    );
 
     const formatDate = (date: string | null) => {
         return date ? new Date(date).toLocaleString() : 'null';
@@ -48,7 +53,7 @@ const Historial: React.FC = () => {
         <View style={styles.container}>
             <FlatList
                 data={historial}
-                keyExtractor={(item) => item._id} // Usa _id como clave única
+                keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.item}>
                         <Text>Entrada: {formatDate(item.entrada)}</Text>
@@ -57,7 +62,6 @@ const Historial: React.FC = () => {
                     </View>
                 )}
                 ListEmptyComponent={<Text>No hay historial disponible.</Text>}
-                // Puedes agregar un estilo adicional si deseas
                 contentContainerStyle={styles.listContent}
             />
         </View>
@@ -76,7 +80,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     listContent: {
-        paddingBottom: 20, // Ajusta según sea necesario para el padding en la parte inferior
+        paddingBottom: 20,
     },
 });
 
