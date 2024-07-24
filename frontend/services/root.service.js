@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.3:4000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://146.83.198.35:1264/api';
 
 // Crea una instancia de Axios con configuraciones por defecto
 const axiosInstance = axios.create({
