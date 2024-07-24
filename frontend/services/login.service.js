@@ -6,8 +6,11 @@ export async function Login(data) {
         setAuthToken(res.data.data.accessToken); // Configura el token de autorización
         return res.data.data;
     } catch (error) {
-        //alert('Error al iniciar sesión, vulva a intentarlo');
-        console.log(error.response);
+        if (error.response && error.response.data && error.response.data.message) {
+            alert(error.response.data.message);
+        } else {
+            alert('Ocurrió un error de conexión');
+        }
         return null;
     }
 }

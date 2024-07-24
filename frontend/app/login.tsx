@@ -31,6 +31,10 @@ export default function login() {
       }
       signIn(data);
       setCargando(true);
+      if(session == undefined){
+        setCargando(false);
+        //Alert.alert('Error', 'Vulva a intentar' );
+      }
     };
 
     useEffect(() => {
@@ -50,11 +54,7 @@ export default function login() {
               return router.replace('/admin')
             }else{
               if(rol == null){
-                console.log(isLoading);
-                if (!isLoading) {
-                  console.log('Cargando..');
-                }
-                //Alert.alert('Error de conexion', 'Contactese con su provedor' );
+                Alert.alert('Error', 'Vuelva a intentar' );
               }else{
                 Alert.alert('Usuario no autorizado', 'No tiene permisos para acceder a la aplicación' );
               }
