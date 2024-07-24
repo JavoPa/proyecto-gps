@@ -27,7 +27,8 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.frenerizo.bicicletero"
+      "package": "com.frenerizo.bicicletero",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
