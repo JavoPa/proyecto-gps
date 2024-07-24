@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { getJaulas, deleteJaula, getJaulaById, updateJaula } from '@/services/jaula.service';
 import { getGuardias } from '@/services/gestion.service'; // Importa el servicio de guardias
 import { useFocusEffect } from '@react-navigation/native';
@@ -23,7 +23,7 @@ interface Jaula {
 const ListaJaulas: React.FC = () => {
     const [jaulas, setJaulas] = useState<Jaula[]>([]);
     const [filteredJaulas, setFilteredJaulas] = useState<Jaula[]>([]);
-    const [guardias, setGuardias] = useState<Guardia[]>([]); // Estado para la lista de guardias
+    const [guardias, setGuardias] = useState<Guardia[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedJaula, setSelectedJaula] = useState<Jaula | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -45,11 +45,11 @@ const ListaJaulas: React.FC = () => {
                 setFilteredJaulas(response);
             } else {
                 console.error('Unexpected response format:', response);
-                Alert.alert('Error', 'Formato de respuesta inesperado');
+                alert('Formato de respuesta inesperado');
             }
         } catch (error) {
             console.error('Error fetching jaulas:', error);
-            Alert.alert('Error', 'No se pudo cargar la lista de jaulas');
+            alert('No se pudo cargar la lista de jaulas');
         } finally {
             setLoading(false);
         }
@@ -62,11 +62,11 @@ const ListaJaulas: React.FC = () => {
                 setGuardias(response);
             } else {
                 console.error('Unexpected response format:', response);
-                Alert.alert('Error', 'Formato de respuesta inesperado');
+                alert('Formato de respuesta inesperado');
             }
         } catch (error) {
             console.error('Error fetching guardias:', error);
-            Alert.alert('Error', 'No se pudo cargar la lista de guardias');
+            alert('No se pudo cargar la lista de guardias');
         }
     }, []);
 
@@ -87,13 +87,13 @@ const ListaJaulas: React.FC = () => {
             const response = await deleteJaula(id);
             if (response.message === 'Jaula eliminada con éxito') {
                 fetchJaulas();
-                Alert.alert('Éxito', 'Jaula eliminada correctamente');
+                alert('Jaula eliminada correctamente');
             } else {
-                Alert.alert('Error', 'No se pudo eliminar la jaula');
+                alert('No se pudo eliminar la jaula');
             }
         } catch (error) {
             console.error('Error deleting jaula:', error);
-            Alert.alert('Error', 'No se pudo eliminar la jaula');
+            alert('No se pudo eliminar la jaula');
         }
     };
 
@@ -105,7 +105,7 @@ const ListaJaulas: React.FC = () => {
             setModalVisible(true);
         } catch (error) {
             console.error('Error fetching jaula details:', error);
-            Alert.alert('Error', 'No se pudo cargar los detalles de la jaula');
+            alert('No se pudo cargar los detalles de la jaula');
         } finally {
             setLoading(false);
         }
@@ -122,16 +122,16 @@ const ListaJaulas: React.FC = () => {
             try {
                 const response = await updateJaula(selectedJaula._id, updatedJaula);
                 if (response.state === "Success") {
-                    Alert.alert('Éxito', 'Jaula actualizada correctamente');
+                    alert('Jaula actualizada correctamente');
                     setIsEditing(false);
                     setModalVisible(false);  // Cerrar el modal
                     fetchJaulas();  // Actualizar la lista de jaulas
                 } else {
-                    Alert.alert('Error', 'No se pudo actualizar la jaula');
+                    alert('No se pudo actualizar la jaula');
                 }
             } catch (error) {
                 console.error('Error updating jaula:', error);
-                Alert.alert('Error', 'No se pudo actualizar la jaula');
+                alert('No se pudo actualizar la jaula');
             }
         }
     };
@@ -265,11 +265,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#EDF2F4', // Fondo de la app
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: '#13293D', // Color de texto principal
     },
     searchInput: {
         height: 40,
@@ -278,6 +280,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 8,
         marginBottom: 16,
+        backgroundColor: '#FFFFFF', // Fondo del input
     },
     itemContainer: {
         marginBottom: 16,
@@ -285,9 +288,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         borderColor: '#ccc',
+        backgroundColor: '#FFFFFF', // Fondo del item
     },
     itemText: {
         fontSize: 18,
+        color: '#16324F', // Color del texto de los items
     },
     buttonContainer: {
         marginTop: 8,
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     button: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#2A628F', // Color de los botones
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
@@ -303,7 +308,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonDelete: {
-        backgroundColor: '#FF0000',
+        backgroundColor: '#DB2B39', // Color de los botones de eliminar
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
@@ -311,7 +316,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: '#fff',
+        color: '#FFFFFF', // Color del texto de los botones
         fontSize: 16,
     },
     input: {
@@ -321,6 +326,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         padding: 8,
         borderRadius: 4,
+        backgroundColor: '#FFFFFF', // Fondo del input
     },
     modalContainer: {
         flex: 1,
@@ -332,7 +338,7 @@ const styles = StyleSheet.create({
     modalContent: {
         width: '90%',
         maxWidth: 600,
-        backgroundColor: '#fff',
+        backgroundColor: '#EDF2F4', // Fondo del modal
         padding: 16,
         borderRadius: 12,
         shadowColor: '#000',
@@ -346,6 +352,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 16,
+        color: '#13293D', // Color del título del modal
     },
     modalButtonContainer: {
         marginTop: 16,
@@ -353,7 +360,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     modalButton: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#2A628F', // Color de los botones del modal
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
@@ -362,7 +369,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalButtonText: {
-        color: '#fff',
+        color: '#FFFFFF', // Color del texto de los botones del modal
         fontSize: 16,
     },
 });

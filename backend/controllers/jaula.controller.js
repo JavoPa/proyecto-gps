@@ -2,14 +2,20 @@ const Jaula = require('../models/jaula.model');
 
 async function listarJaulas(req, res) {
     try {
-        const jaulas = await Jaula.find().populate('guardiaAsignado', 'nombre apellido').lean();
+        const jaulas = await Jaula.find({})
+            .populate('guardiaAsignado', 'nombre apellido') // Incluye la información del guardia asignado
+            .lean();
+
         const jaulasConEspaciosDisponibles = jaulas.map(jaula => ({
             _id: jaula._id,
             identificador: jaula.identificador,
             ubicacion: jaula.ubicacion,
             capacidad: jaula.capacidad,
             situacion_actual: jaula.situacion_actual,
-            guardiaAsignado: jaula.guardiaAsignado ? `${jaula.guardiaAsignado.nombre} ${jaula.guardiaAsignado.apellido}` : 'No asignado'
+            guardiaAsignado: jaula.guardiaAsignado ? {
+                nombre: jaula.guardiaAsignado.nombre,
+                apellido: jaula.guardiaAsignado.apellido
+            } : null
         }));
 
         res.status(200).json(jaulasConEspaciosDisponibles);
@@ -81,7 +87,9 @@ async function modificarJaula(req, res) {
 
         jaula.ubicacion = ubicacion || jaula.ubicacion;
         jaula.capacidad = capacidad || jaula.capacidad;
+        jaula.situacion_actual = situacion_actual || jaula.situacion_actual;
         jaula.identificador = identificador || jaula.identificador;
+        jaula.guardiaAsignado = guardiaAsignado !== undefined ? guardiaAsignado : jaula.guardiaAsignado;
 
         const jaulaModificada = await jaula.save();
         res.status(200).send({ message: 'Jaula modificada con éxito', jaula: jaulaModificada });
@@ -90,6 +98,7 @@ async function modificarJaula(req, res) {
         res.status(500).send({ message: 'Error al procesar la solicitud' });
     }
 }
+
 
 
 async function eliminarJaula(req, res) {
