@@ -22,7 +22,7 @@ router.post('/', authorizationMiddleware.esAdmin, jaulaController.crearJaula);
 router.get('/', jaulaController.listarJaulas);  
 router.get('/:id', jaulaController.getJaula);
 router.get('/:id/guardia', jaulaController.getGuardiaAsignado);
-//router.put('/:id', authorizationMiddleware.esAdmin, jaulaController.modificarJaula); // Nueva ruta para modificar jaula
+router.put('/:id', authorizationMiddleware.esAdmin, jaulaController.modificarJaula); // Nueva ruta para modificar jaula
 router.delete('/:id', authorizationMiddleware.esAdmin, jaulaController.eliminarJaula);
 router.post('/salidaGuardia', authorizationMiddleware.esAdmin, accesoController.salidaGuardiaAdmin);
 
