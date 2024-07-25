@@ -3,6 +3,7 @@ const { handleError } = require("../utils/errorHandler");
 const Acceso = require("../models/acceso.model.js");
 const Invitado = require("../models/invitado.model.js");
 const Usuario = require("../models/usuario.model.js");
+const Jaula = require("../models/jaula.model.js");
 
 /**
  * Crea un nuevo token de acceso en la base de datos para un usuario.
@@ -142,6 +143,13 @@ async function validarToken(token, guardiaId) {
     if(acceso.entrada){
       acceso.salida = new Date();
     }else{
+      const jaula = await Jaula.findOne({ guardiaAsignado: guardiaId }); //Buscar la jaula asignada al guardia
+      if (jaula) {
+        if(jaula.capacidad <= jaula.situacion_actual){
+          return [null, 'La jaula está llena'];
+        }
+        acceso.jaula = jaula._id;
+      }
       acceso.entrada = new Date();
     }
     acceso.expiryDate = new Date(); // Establece la fecha de expiración a la fecha y hora actual
@@ -151,7 +159,7 @@ async function validarToken(token, guardiaId) {
     await acceso.save();
     return [acceso, null];
   } catch (error) {
-    handleError(error, "user.service -> validarToken");
+    handleError(error, "acceso.service -> validarToken");
     return [null, error];
   }
 }
@@ -188,9 +196,16 @@ async function ingresoInvitado(body, guardiaId) {
       invitado.correo = body.correo;
       await invitado.save();
     }
+    //Validacion de capacidad jaula
+    const jaula = await Jaula.findOne({ guardiaAsignado: guardiaId }); //Buscar la jaula asignada al guardia
+    if(jaula && (jaula.capacidad <= jaula.situacion_actual)){
+      return [null, 'La jaula está llena'];
+    }
+    //Crear el acceso
     const acceso = new Acceso({
       usuario: invitado._id,
       guardia: guardiaId,
+      jaula: jaula ? jaula._id : null,
       entrada: new Date(),
       salida: null
     });
