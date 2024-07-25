@@ -153,6 +153,11 @@ const ListaJaulas: React.FC = () => {
                     <Text style={styles.itemText}>Ubicación: {jaulaAsignada.ubicacion}</Text>
                     <Text style={styles.itemText}>Capacidad: {jaulaAsignada.capacidad}</Text>
                     <Text style={styles.itemText}>Situación Actual: {jaulaAsignada.situacion_actual}</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(jaulaAsignada._id)}>
+                            <Text style={styles.buttonText}>Ver</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
             <Text style={styles.title}>Listado de Jaulas</Text>
