@@ -3,19 +3,30 @@ import { StyleSheet } from 'react-native';
 import { MonoText } from '../StyledText';
 import { Text, View } from '../Themed';
 import { getAcceso } from '@/services/acceso.service';
-import Colors from '@/constants/Colors';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const [estado, setEstado] = useState<string | null>(null);
-  useEffect(() => {
-    getAcceso().then((response) => {
-      if(response.state === "Success") {
-        setEstado(response.data);
-      }else{
-        setEstado('Hubo un problema al obtener tu estado');
-      }
-    });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchAcceso = async () => {
+        try {
+          const response = await getAcceso();
+          if (response.state === "Success") {
+            setEstado(response.data);
+          } else {
+            setEstado('Hubo un problema al obtener tu estado');
+          }
+        } catch (error) {
+          setEstado('Hubo un problema al obtener tu estado');
+        }
+      };
+
+      fetchAcceso();
+      return () => {
+      };
+    }, [])
+  );
   return (
     <View>
       <View style={styles.getStartedContainer}>
