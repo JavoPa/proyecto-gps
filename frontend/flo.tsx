@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { useStorageState } from './useStorageState';
 import { Login } from './services/login.service'
 import { set } from 'react-datepicker/dist/date_utils';
+import { clearPushToken } from './services/pushToken.service';
 
 
 
@@ -56,7 +57,10 @@ export function SessionProvider(props: React.PropsWithChildren) {
               return session;
             }
           },
-          signOut: () => {
+          signOut: async () => {
+            if (session) {
+              await clearPushToken(session);
+            }
             setSession(null);
           },
           session,

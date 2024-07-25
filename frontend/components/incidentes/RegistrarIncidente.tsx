@@ -82,12 +82,9 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior='padding'
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView>
-        <View style={{ margin: 10 }}>
-          <Button title="Volver al menú de incidentes" onPress={() => navigateTo('IncidentesMenu')} />
-        </View>
         <Text style={styles.label}>Fecha</Text>
         <TouchableOpacity onPress={showDatePicker}>
           <TextInput
@@ -127,6 +124,7 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
           <Picker
             selectedValue={lugar}
             onValueChange={(itemValue) => setLugar(itemValue)}
+            style={styles.picker}
           >
             <Picker.Item label="Seleccione un lugar" value="" />
             <Picker.Item label="Entrada" value="Entrada" />
@@ -146,6 +144,7 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
           <Picker
             selectedValue={tipo}
             onValueChange={(itemValue) => setTipo(itemValue)}
+            style={styles.picker}
           >
             <Picker.Item label="Seleccione un tipo" value="" />
             <Picker.Item label="Robo" value="Robo" />
@@ -157,14 +156,19 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
 
         <Text style={styles.label}>Descripción</Text>
         <TextInput
-          style={styles.input}
+          style={styles.textArea}
           value={descripcion}
           onChangeText={setDescripcion}
           placeholder="Descripción del incidente"
           multiline
         />
 
-        <Button title="Crear Incidente" onPress={handleSubmit} />
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Crear Incidente</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
+                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
+            </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -173,25 +177,67 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 16,
+    backgroundColor: '#EDF2F4',
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#13293D',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
     marginBottom: 20,
-    paddingHorizontal: 10,
+    backgroundColor: '#FFFFFF',
   },
   pickerContainer: {
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 4,
     marginBottom: 20,
+    backgroundColor: '#FFFFFF',
   },
+  picker: {
+    height: 40,
+    width: '100%',
+  },
+  textArea: {
+    height: 100,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    textAlignVertical: 'top',
+  },
+  button: {
+    backgroundColor: '#2A628F',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  bo: {
+    backgroundColor: '#2A628F',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+},
 });
 
 export default RegistrarIncidente;

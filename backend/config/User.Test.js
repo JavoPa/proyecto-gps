@@ -28,7 +28,7 @@ async function createUser() {
                 rol: "Academico",
                 cargo: "Academico",
                 area: "x",
-                situacion_laboral: "Contrato"
+                situacion: "Contrato"
             }).save();
             console.log("Academico inicial creado Exitosamente!!");
         }
@@ -42,7 +42,7 @@ async function createUser() {
                 password: await Usuario.encryptPassword("Estudiante123"), 
                 rol: "Estudiante",
                 carrera: "Informatica",
-                situacion_academica: "Regular"
+                situacion: "Regular"
             }).save();
             console.log("Estudiante inicial creado Exitosamente!!");
         }
@@ -55,7 +55,7 @@ async function createUser() {
                 correo: "funcionario@ubb.cl", 
                 password: await Usuario.encryptPassword("Funcionario123"), 
                 rol: "funcionario",
-                situacion_laboral: "Contrato",
+                situacion: "Contrato",
                 departamento: "Y",
                 cargo: "X"
             }).save();

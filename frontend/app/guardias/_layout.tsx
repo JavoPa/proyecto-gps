@@ -69,6 +69,13 @@ export default function GuardiasLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+            name="ListaUsuarios"
+            options={{
+                title: 'Usuarios',
+                tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+            }}
+        />
       <Tabs.Screen
         name="ingreso"
         options={{
@@ -83,6 +90,14 @@ export default function GuardiasLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
+        <Tabs.Screen
+            name="listaJaulas"
+            options={{
+                title: 'Jaulas',
+                tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+            }}
+        />
+
     </Tabs>
   );
 }

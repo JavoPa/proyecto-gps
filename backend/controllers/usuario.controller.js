@@ -22,7 +22,8 @@ const {
 } = require('../services/usuario.service');
 
 const axios = require('axios');
-const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema')
+const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema');
+const { enviarPushNotification, enviarNotifSingular } = require("../utils/notifHandler.js");
 
 
 async function verificarIntranet(req,res) {
@@ -196,6 +197,7 @@ async function indexUsuariosConBicicleta(req, res) {
 async function getUsuario(req, res) {
     try {
         const usuario = await Usuario.findById(req.params.id)
+            .select('-password') // Excluir el campo de contraseña
             .populate('bicicleta');
         if (!usuario) {
             return res.status(404).send({ message: 'Usuario no encontrado.' });
@@ -220,6 +222,17 @@ async function getUsuarios(req, res) {
     }
 }
 
+async function enviarNotif(req, res) {
+    const { tokens, message } = req.body;
+    try {
+        const tickets = await enviarNotifSingular(tokens, message);
+        res.status(200).json({ tickets });
+    } catch (error) {
+        console.error('Error al enviar notificación push:', error);
+        res.status(500).json({ message: 'No se pudo enviar la notificación' });
+    }
+}
+
 module.exports = {
     crearUsuario,
     getUserById,
@@ -228,5 +241,9 @@ module.exports = {
     getUsuarios,
     crearUsuario,
     verificarIntranet,
+<<<<<<< HEAD
     eliminarUsuario
+=======
+    enviarNotif
+>>>>>>> ca2d483a2754012605ed1b85637c2937fff27132
 };

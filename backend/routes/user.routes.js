@@ -49,5 +49,8 @@ router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar deta
 
 router.get("/historial" , historialController.getHistorialUsuario);
 
+// Ruta para las notificaciones
+router.post("/notif", usuarioController.enviarNotif);
+
 
 module.exports = router;

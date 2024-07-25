@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Alert, Platform, Linking, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, Button, Alert, Platform, Linking, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as FileSystem from 'expo-file-system';
 import * as IntentLauncher from 'expo-intent-launcher';
@@ -76,14 +76,12 @@ const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ margin: 10 }}>
-        <Button title="Volver al menú de incidentes" onPress={() => navigateTo('IncidentesMenu')} />
-      </View>
       <Text style={styles.label}>Año</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={selectedYear}
           onValueChange={(itemValue) => setSelectedYear(itemValue)}
+          style={styles.picker}
         >
           {years.map((year) => (
             <Picker.Item key={year} label={year} value={year} />
@@ -95,33 +93,72 @@ const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
         <Picker
           selectedValue={selectedMonth}
           onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+          style={styles.picker}
         >
           {months.map((month) => (
             <Picker.Item key={month.value} label={month.label} value={month.value} />
           ))}
         </Picker>
       </View>
-      <Button title="Descargar y Abrir Informe" onPress={downloadAndOpenInforme} disabled={loading} />
+      <TouchableOpacity style={styles.button} onPress={downloadAndOpenInforme} disabled={loading}>
+        <Text style={styles.buttonText}>Descargar y Abrir Informe</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
+                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
+            </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#EDF2F4',
     flexGrow: 1,
     justifyContent: 'center',
     padding: 16,
   },
+  buttonWrapper: {
+    marginBottom: 16,
+  },
   label: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#13293D',
   },
   pickerContainer: {
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 4,
     marginBottom: 20,
+    backgroundColor: '#FFFFFF',
   },
+  picker: {
+    height: 40,
+    width: '100%',
+  },
+  button: {
+    backgroundColor: '#2A628F',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  bo: {
+    backgroundColor: '#2A628F',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+},
 });
 
 export default DescargarInforme;

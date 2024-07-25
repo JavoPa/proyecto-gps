@@ -56,7 +56,7 @@ const GestionarHorarios: React.FC = () => {
 
     const handleSubmit = async () => {
         if (!validateTime(newLimiteEntrada) || !validateTime(newLimiteSalida)) {
-            Alert.alert('Error', 'Por favor, ingresa una hora válida en el formato HH:mm.');
+            Alert.alert('Error', 'Por favor, ingresa una hora válida en el formato HH:mm');
             return;
         }
         
@@ -70,7 +70,7 @@ const GestionarHorarios: React.FC = () => {
                 await putHorarios(updatedHorario);
                 setIsEditing(false);
                 fetchHorarios(); // Refresh the list
-                Alert.alert('Success', 'Horario actualizado correctamente');
+                Alert.alert('Guardado', 'Horario actualizado correctamente');
             } catch (error) {
                 console.error('Error updating horario:', error);
                 Alert.alert('Error', 'No se pudo actualizar el horario');
@@ -87,7 +87,7 @@ const GestionarHorarios: React.FC = () => {
                         <Text style={styles.txtInput}>Hora de Apertura:</Text>
                         <TextInput
                         style={styles.input}
-                        placeholder="8:00"
+                        placeholder="08:00"
                         value={newLimiteEntrada}
                         onChangeText={setNewLimiteEntrada}
                         />

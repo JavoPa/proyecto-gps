@@ -2,9 +2,6 @@ import React, {useEffect, useState} from 'react';
 import { StyleSheet, Button} from 'react-native';
 import { registrarIngreso, getAcceso } from '@/services/acceso.service';
 import QRCode from 'react-native-qrcode-svg';
-
-import { ExternalLink } from '../ExternalLink';
-import { MonoText } from '../StyledText';
 import { Text, View } from '../Themed';
 
 import Colors from '@/constants/Colors';
@@ -15,21 +12,21 @@ export default function TokenInfo() {
       }
       const [acceso, setAcceso] = useState<Acceso | null>(null);
       const [error, setError] = useState<string | null>(null);
-      const [timeLeft, setTimeLeft] = useState<number | null>(null); // Inicia el temporizador en 60 segundos
-        // useEffect(() => {
-        //   getAcceso().then((response) => {
-        //     if(response.state === "Success") {
-        //       setAcceso(response.data);
-        //       setTimeLeft(getSecondsUntilExpiry(response.data.expiryDate)); // Inicia el temporizador en base a la fecha de expiración
-        //       setError(null);
-        //     }
-        //   });
-        // }, []);
+      const [timeLeft, setTimeLeft] = useState<number | null>(null); // Inicia el temporizador 
         useEffect(() => {
               // Salir antes si llega a 0
             if(!timeLeft) {
               setAcceso(null); 
               return;
+             }else{
+              getAcceso().then((response) => {
+                if(response.state === "Success" && response.data === "Bicicleta registrada") {
+                  setAcceso(null);
+                  setTimeLeft(null);
+                  setError(null);
+                  alert('Tu acceso ha sido validado 🎉');
+                }
+              });
              }
 
             // Guardar el intervalId para limpiarlo más tarde
@@ -71,6 +68,8 @@ export default function TokenInfo() {
         };
         const handleCancelar = () => {
           setAcceso(null);
+          setTimeLeft(null);
+          setError(null);
         };
   return (
     <View>

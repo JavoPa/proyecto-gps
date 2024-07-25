@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "proyecto-gps",
-    "slug": "proyecto-gps",
+    "slug": "bicicletero",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.frenerizo.bicicletero",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -34,15 +40,29 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "cameraPermission": "Permite a $(PRODUCT_NAME) acceder a la cámara",
+          "microphonePermission": "Permite a $(PRODUCT_NAME) acceder al micrófono",
           "recordAudioAndroid": true
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      ["expo-build-properties", {
+        "android": {
+          "usesCleartextTraffic": true
+        }
+      }]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2ad47d9f-4ad6-435e-a924-b24c19092dcf"
+      }
+    },
+    "owner": "frenerizo"
   }
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { View } from '@/components/Themed';
 import IncidentesMenu from '../../components/incidentes/IncidentesMenu';
 import MostrarIncidentes from '../../components/incidentes/MostrarIncidentes';
 import DescargarInforme from '../../components/incidentes/DescargarInforme';
@@ -17,7 +18,8 @@ export default function IncidentesScreen() {
   
   switch (selectedComponent) {
     case "MostrarIncidentes":
-      content = <MostrarIncidentes navigateTo={navigateTo} />;
+      content = 
+      <MostrarIncidentes navigateTo={navigateTo} />;
     break;
 
     case "IncidentesDia":

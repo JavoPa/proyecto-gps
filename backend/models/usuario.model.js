@@ -37,7 +37,8 @@ const usuarioSchema = new mongoose.Schema({
         ref: 'Bicicleta'
     },
     pushToken: {
-        type: String
+        type: String,
+        default: ""
     }
 });
 
