@@ -26,6 +26,19 @@ async function listarJaulas(req, res) {
     }
 }
 
+async function listarJaulas(req, res) {
+    try {
+        const jaulas = await Jaula.find({})
+            .populate('guardiaAsignado', 'nombre apellido') // Incluye la información del guardia asignado
+            .lean();
+
+        res.status(200).json(jaulas);
+    } catch (error) {
+        console.error('Error al listar las jaulas', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
 async function getJaula(req, res) {
     try {
         const jaula = await Jaula.findById(req.params.id)
@@ -35,13 +48,8 @@ async function getJaula(req, res) {
             return res.status(404).send({ message: 'Jaula no encontrada.' });
         }
 
-        let situacion_actual = 0;
-        if (jaula.guardiaAsignado) {
-            const accesos = await Acceso.countDocuments({ guardia: jaula.guardiaAsignado._id });
-            situacion_actual = jaula.capacidad - accesos;
-        } else {
-            situacion_actual = jaula.capacidad;  // Asume que la jaula está vacía si no hay guardia asignado
-        }
+        const countAccesos = await Acceso.countDocuments({ guardia: jaula.guardiaAsignado?._id });
+        const situacion_actual = jaula.capacidad - countAccesos;
 
         const response = {
             _id: jaula._id,
@@ -62,6 +70,9 @@ async function getJaula(req, res) {
     }
 }
 
+
+
+
 async function crearJaula(req, res) {
     const { ubicacion, capacidad, identificador } = req.body;
 
@@ -81,6 +92,10 @@ async function crearJaula(req, res) {
         res.status(500).send({ message: 'Error al procesar la solicitud' });
     }
 }
+
+
+
+
 async function modificarJaula(req, res) {
     try {
         const { id } = req.params;
@@ -129,4 +144,38 @@ async function eliminarJaula(req, res) {
     }
 }
 
-module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula };
+async function getJaulaAsignada(req, res) {
+    try {
+        const guardiaId = req.id;
+
+        const jaulaAsignada = await Jaula.findOne({ guardiaAsignado: guardiaId })
+            .populate('guardiaAsignado', 'nombre apellido');
+
+        if (!jaulaAsignada) {
+            return res.status(200).send({ message: 'El guardia no está asignado a ninguna jaula.' });
+        }
+
+        const countAccesos = await Acceso.countDocuments({ guardia: jaulaAsignada.guardiaAsignado?._id });
+        const situacion_actual = jaulaAsignada.capacidad - countAccesos;
+
+        const response = {
+            _id: jaulaAsignada._id,
+            ubicacion: jaulaAsignada.ubicacion,
+            capacidad: jaulaAsignada.capacidad,
+            situacion_actual: situacion_actual,
+            identificador: jaulaAsignada.identificador,
+            guardiaAsignado: jaulaAsignada.guardiaAsignado ? {
+                nombre: jaulaAsignada.guardiaAsignado.nombre,
+                apellido: jaulaAsignada.guardiaAsignado.apellido
+            } : null
+        };
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error al obtener la jaula asignada al guardia', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
+
+module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula, getJaulaAsignada };

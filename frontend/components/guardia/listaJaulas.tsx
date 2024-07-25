@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
-import { getJaulas, getJaulaById } from '@/services/jaula.service';
+import { getJaulas, getJaulaById, asignarGuardia, salirGuardia, getJaulaAsignada } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
 
 interface Guardia {
@@ -16,11 +16,13 @@ interface Jaula {
     situacion_actual: number;
     identificador: string;
     guardiaAsignado: { _id: string, nombre: string, apellido: string } | null;
+    puedeAsignarse?: boolean;
 }
 
 const ListaJaulas: React.FC = () => {
     const [jaulas, setJaulas] = useState<Jaula[]>([]);
     const [filteredJaulas, setFilteredJaulas] = useState<Jaula[]>([]);
+    const [jaulaAsignada, setJaulaAsignada] = useState<Jaula | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedJaula, setSelectedJaula] = useState<Jaula | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -29,6 +31,7 @@ const ListaJaulas: React.FC = () => {
     useFocusEffect(
         useCallback(() => {
             fetchJaulas();
+            fetchJaulaAsignada();
         }, [])
     );
 
@@ -47,6 +50,20 @@ const ListaJaulas: React.FC = () => {
             alert('No se pudo cargar la lista de jaulas');
         } finally {
             setLoading(false);
+        }
+    }, []);
+
+    const fetchJaulaAsignada = useCallback(async () => {
+        try {
+            const response = await getJaulaAsignada();
+            if (response.message) {
+                setJaulaAsignada(null);
+            } else {
+                setJaulaAsignada(response);
+            }
+        } catch (error) {
+            console.error('Error fetching jaula asignada:', error);
+            alert('No se pudo cargar la jaula asignada');
         }
     }, []);
 
@@ -76,6 +93,44 @@ const ListaJaulas: React.FC = () => {
         }
     };
 
+    const handleAsignarGuardia = async () => {
+        if (selectedJaula) {
+            try {
+                const response = await asignarGuardia(selectedJaula._id);
+                if (response.state === "Success") {
+                    alert('Ingreso registrado con éxito');
+                    fetchJaulas();
+                    fetchJaulaAsignada();
+                    handleViewDetails(selectedJaula._id);
+                } else {
+                    alert('No se pudo registrar su entrada');
+                }
+            } catch (error) {
+                console.error('Error asignando guardia:', error);
+                alert('No se pudo registrar su entrada');
+            }
+        }
+    };
+
+    const handleSalirGuardia = async () => {
+        if (selectedJaula) {
+            try {
+                const response = await salirGuardia(selectedJaula._id);
+                if (response.state === "Success") {
+                    alert('Fue retirado de la jaula con éxito');
+                    fetchJaulas();
+                    fetchJaulaAsignada();
+                    handleViewDetails(selectedJaula._id);
+                } else {
+                    alert('No se pudo registrar su salida');
+                }
+            } catch (error) {
+                console.error('Error registrando salida del guardia:', error);
+                alert('No se pudo registrar su salida');
+            }
+        }
+    };
+
     const handleBackToList = () => {
         setSelectedJaula(null);
         setModalVisible(false);
@@ -91,6 +146,20 @@ const ListaJaulas: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            {jaulaAsignada && (
+                <View style={styles.assignedContainer}>
+                    <Text style={styles.assignedTitle}>Jaula Asignada</Text>
+                    <Text style={styles.itemText}>Identificador: {jaulaAsignada.identificador}</Text>
+                    <Text style={styles.itemText}>Ubicación: {jaulaAsignada.ubicacion}</Text>
+                    <Text style={styles.itemText}>Capacidad: {jaulaAsignada.capacidad}</Text>
+                    <Text style={styles.itemText}>Situación Actual: {jaulaAsignada.situacion_actual}</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(jaulaAsignada._id)}>
+                            <Text style={styles.buttonText}>Ver</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
             <Text style={styles.title}>Listado de Jaulas</Text>
             <TextInput
                 style={styles.searchInput}
@@ -127,9 +196,19 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
-                        <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
+                        <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.modalButtonContainer}>
+                            {selectedJaula && !selectedJaula.guardiaAsignado && !jaulaAsignada && (
+                                <TouchableOpacity style={styles.modalButton} onPress={handleAsignarGuardia}>
+                                    <Text style={styles.modalButtonText}>Ingresar como guardia</Text>
+                                </TouchableOpacity>
+                            )}
+                            {selectedJaula && jaulaAsignada && selectedJaula._id === jaulaAsignada._id && (
+                                <TouchableOpacity style={styles.modalButton} onPress={handleSalirGuardia}>
+                                    <Text style={styles.modalButtonText}>Salir de la Jaula</Text>
+                                </TouchableOpacity>
+                            )}
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
                             </TouchableOpacity>
@@ -234,6 +313,20 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: '#FFFFFF',
         fontSize: 16,
+    },
+    assignedContainer: {
+        padding: 16,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ccc',
+        backgroundColor: '#FFFFFF',
+        marginBottom: 16,
+    },
+    assignedTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        color: '#13293D',
     },
 });
 
