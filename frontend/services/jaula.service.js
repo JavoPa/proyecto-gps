@@ -2,7 +2,7 @@ import axios from './root.service';
 
 export async function getJaulas() {
   try {
-    const response = await axios.get('/jaulas/');
+    const response = await axios.get('/jaulas');
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -15,7 +15,7 @@ export async function getJaulas() {
 
 export async function postJaula(data) {
   try {
-    const response = await axios.post('/jaulas/', data);
+    const response = await axios.post('/jaulas', data);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -42,6 +42,19 @@ export async function deleteJaula(id) {
 export async function getJaulaById(id) {
   try {
     const response = await axios.get(`/jaulas/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}
+
+export async function updateJaula(id, data) {
+  try {
+    const response = await axios.put(`/jaulas/${id}`, data);
     return response.data;
   } catch (error) {
     if (error.response) {
