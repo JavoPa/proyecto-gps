@@ -262,9 +262,13 @@ const ListaJaulas: React.FC = () => {
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                         <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                         <Text style={styles.modalButtonText}>Volver al Listado</Text>
                                     </TouchableOpacity>
