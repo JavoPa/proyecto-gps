@@ -14,17 +14,16 @@ async function crearUser(aux) {
         //validar formato de los campos no obligatorios
         if (aux == undefined) return res.status(400).json({ message: "El cuerpo de la solicitud no puede estar vacío" });
 
-        //crear Estudiante
-        const usuarioNuevo = await new Estudiante({
+        //crear usuario
+        const usuarioNuevo = await new Usuario({
             rut: aux.rut,
             nombre: aux.nombre,
             apellido: aux.apellido,
             fono: aux.fono,
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
-            rol: aux.rol,
-            carrera: aux.carrera,
-            situacion_academica: aux.situacion_academica
+            rol: aux.tipo,
+            situacion_academica: aux.situacion
         }).save();
 
         return usuarioNuevo;
@@ -69,7 +68,7 @@ async function crearAdministrador(aux) {
             fono: aux.fono,
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
-            rol: aux.rol,
+            rol: aux.tipo,
             situacion: aux.situacion,
         }).save();
         return usuarioNuevo;
@@ -95,7 +94,7 @@ async function crearEstudiante(aux) {
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
             carrera: aux.carrera,
-            situacion: aux.situacion_academica
+            situacion: aux.situacion
         }).save();
 
         return usuarioNuevo;
@@ -104,7 +103,7 @@ async function crearEstudiante(aux) {
         console.log(error);
     }
 }
-/*deprecado
+
 async function crearAcademico(aux) {
     try {
         //validar formato de los campos no obligatorios
@@ -119,9 +118,7 @@ async function crearAcademico(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            cargo: aux.cargo,
-            area: aux.area,
-            situacion_laboral: aux.situacion_laboral
+            situacion: aux.situacion
         }).save();
 
         return usuarioNuevo;
@@ -144,9 +141,7 @@ async function crearFuncionario(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            situacion_laboral: aux.situacion_laboral,
-            departamento: aux.departamento,
-            cargo: aux.cargo
+            situacion_laboral: aux.situacion,
         }).save();
 
         return usuarioNuevo;
@@ -156,7 +151,7 @@ async function crearFuncionario(aux) {
     }
 }
 
-*/
+
 
 
 /**
@@ -201,5 +196,8 @@ module.exports = {
     getUserById,
     crearUser,
     crearGuardia,
-    crearAdministrador
+    crearAdministrador,
+    crearEstudiante,
+    crearFuncionario,
+    crearAcademico
 };
