@@ -187,6 +187,7 @@ async function indexUsuariosConBicicleta(req, res) {
 async function getUsuario(req, res) {
     try {
         const usuario = await Usuario.findById(req.params.id)
+            .select('-password') // Excluir el campo de contraseña
             .populate('bicicleta');
         if (!usuario) {
             return res.status(404).send({ message: 'Usuario no encontrado.' });
@@ -217,6 +218,5 @@ module.exports = {
     indexUsuariosConBicicleta,
     getUsuario,
     getUsuarios,
-    crearUsuario,
     verificarIntranet
 };
