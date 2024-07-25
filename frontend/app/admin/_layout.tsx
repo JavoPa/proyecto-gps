@@ -8,6 +8,8 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
 import { setAuthToken } from '@/services/root.service';
 import {rolesService} from '@/services/roles.service';
+import { useRouter } from 'expo-router';
+
 
 
 
@@ -23,16 +25,11 @@ export default function AdminLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading} = useSession();
-  
+
   if (isLoading) {
     return <Text>Cargando..</Text>;
   }
-  /*
-  const rol = rolesService(session);
-  if(rol != "administrador"){
-    signOut();
-    return <Redirect href="/login" />;
-  }*/
+
 
   if(!session) {
     return <Redirect href="/login" />;
@@ -51,14 +48,14 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: '',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/modal.usuarios" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="reorder"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}

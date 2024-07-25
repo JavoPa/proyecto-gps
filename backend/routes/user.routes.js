@@ -33,8 +33,10 @@ router.use(authenticationMiddleware);
 // creacion de usuarios
 
 router.get("/verificar",authorizationMiddleware.esAcademico, usuarioController.verificarIntranet); // valida con api externa si es estuidante academico o funcionario
-router.post("/crear", authorizationMiddleware.esAcademico ,usuarioController.crearUsuario); //Crear un usuario
+router.post("/crear", authorizationMiddleware.esAdmin ,usuarioController.crearUsuario); //Crear un usuario
 router.get("/allUsers", usuarioController.getUsuarios); // Obtener todos los usuarios
+router.delete("/delete/:id", authorizationMiddleware.esAdmin, usuarioController.eliminarUsuario); // Eliminar un usuario
+router.put("/update/:id", authorizationMiddleware.esAdmin, usuarioController.editarUsuario); // Actualizar un usuario
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula
@@ -47,6 +49,9 @@ router.post("/bicicleta", bicicletaController.createBicicleta); //Definir detall
 router.put("/bicicleta", bicicletaController.updateBicicleta); //Actualizar detalles de la bicicleta del estudiante
 
 router.get("/historial" , historialController.getHistorialUsuario);
+
+// Ruta para las notificaciones
+router.post("/notif", usuarioController.enviarNotif);
 
 
 module.exports = router;
