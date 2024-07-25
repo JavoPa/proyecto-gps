@@ -64,3 +64,42 @@ export async function updateJaula(id, data) {
     }
   }
 }
+
+export async function asignarGuardia(jaulaId) {
+  try {
+    const response = await axios.post('/guardias/accesoGuardia', { jaulaId });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}
+
+export async function salirGuardia(jaulaId) {
+  try {
+    const response = await axios.post('/guardias/salidaGuardia', { jaulaId });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}
+
+export async function getJaulaAsignada() {
+  try {
+    const response = await axios.get('/guardias/jaulaAsignada');
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}
