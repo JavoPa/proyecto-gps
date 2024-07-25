@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import { SessionProvider } from '@/flo';
 import { useSession } from '@/flo';
 import { useColorScheme } from '@/components/useColorScheme';
+import {rolesService} from '@/services/roles.service';
+import { useRouter } from 'expo-router';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -24,6 +26,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const {signOut, session} = useSession(); 
+  const router = useRouter();
   
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -47,6 +50,21 @@ export default function RootLayout() {
   //console.log(`session _layout ${session}`);
   if(session){
     signOut();
+  }
+
+  if(session){
+    const rol = rolesService(session);
+    if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
+      return router.replace('/tabs')
+    }else{
+      if(rol == "Guardia"){
+        return router.replace('/guardias')
+      }else{
+        if(rol == "Administrador"){
+          return router.replace('/admin')
+        }
+      }
+    }
   }
   return (
     <SessionProvider>

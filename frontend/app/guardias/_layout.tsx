@@ -8,6 +8,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
 import { setAuthToken } from '@/services/root.service';
 import {rolesService} from '@/services/roles.service';
+import { useRouter } from 'expo-router';
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -21,18 +22,27 @@ function TabBarIcon(props: {
 export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
-  const { session,isLoading, signOut } = useSession();
+  const { session,isLoading } = useSession();
+  const router = useRouter();
   
   if (isLoading) {
     return <Text>Cagando..</Text>;
   }
-  /*
-  const rol = rolesService(session);
-  console.log(rol);
-  if(rol != "guardia"){
-    signOut();
-    return <Redirect href="/login" />;
-  }*/
+  if(session){
+    const rol = rolesService(session);
+    if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
+      return router.replace('/tabs')
+    }else{
+      if(rol == "Guardia"){
+        return router.replace('/guardias')
+      }else{
+        if(rol == "Administrador"){
+          return router.replace('/admin')
+        }
+      }
+    }
+  }
+
 
   if(!session) {
     return <Redirect href="/login" />;

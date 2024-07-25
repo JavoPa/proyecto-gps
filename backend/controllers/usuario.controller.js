@@ -233,6 +233,23 @@ async function enviarNotif(req, res) {
     }
 }
 
+async function editarUsuario(req, res) {
+    try {
+        const { id } = req.params;
+        const { body } = req;
+        console.log(body);
+        console.log(id);
+        const usuario = await Usuario.findByIdAndUpdate(id, body,   { new: true });
+        if (!usuario) {
+            return res.status(404).send({ message: 'Usuario no encontrado.' });
+        }
+        res.status(200).json(usuario);
+    }catch (error) {
+        console.error('Error al editar usuario', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
 module.exports = {
     crearUsuario,
     getUserById,
@@ -241,9 +258,7 @@ module.exports = {
     getUsuarios,
     crearUsuario,
     verificarIntranet,
-<<<<<<< HEAD
-    eliminarUsuario
-=======
-    enviarNotif
->>>>>>> ca2d483a2754012605ed1b85637c2937fff27132
+    eliminarUsuario,
+    enviarNotif,
+    editarUsuario
 };

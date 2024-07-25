@@ -3,7 +3,8 @@ import { useSession } from '@/flo';
 import { Text, View } from '@/components/Themed';
 import React, { useState, useEffect } from 'react';
 import { obtenerUsuarios } from '@/services/busqueda.user';
-import { eliminarUsuario } from '@/services/crear.Usuarios';
+import { eliminarUsuario, editarUsuario } from '@/services/crear.Usuarios';
+import { useRouter } from 'expo-router';
 
 
 export default function TabOneScreen() {
@@ -23,6 +24,8 @@ export default function TabOneScreen() {
     const [correo, setCorreo] = useState(''); // estado para mostrar el modal
     const [fono, setFono] = useState(''); // estado para mostrar el modal// estado para mostrar el modal
     const [contraseña, setContraseña] = useState('Password'); // estado para mostrar el modal// estado para mostrar el modal
+
+    const router = useRouter();
     
 
 
@@ -41,7 +44,7 @@ export default function TabOneScreen() {
       if(consulta == undefined) {
         setUsuarios3(usuarios);
       }else{
-        const user = usuarios.filter((user) => user.rut.includes(consulta));
+        const user = usuarios.filter((user) => user.rut.toLowerCase().includes(consulta.toLowerCase()));
         setUsuarios3(user);
       }
       if(consulta == '') {
@@ -85,8 +88,8 @@ export default function TabOneScreen() {
       });
     }
 
-    const handleGuardar = () => {
-      
+    const handleGuardar = (id) => {
+      //console.log(usuarios4);
       if(rut == '') {
         setRut(usuarios4.rut);
       }
@@ -105,12 +108,19 @@ export default function TabOneScreen() {
       if(contraseña == 'Password') {
         setContraseña(usuarios4.password);
       }
-      console.log(rut);
-      console.log(nombre);
-      console.log(apellido);
-      console.log(correo);
-      console.log(fono);
-      console.log(contraseña);
+      const data ={
+        rut: rut,
+        nombre: nombre,
+        apellido: apellido,
+        correo: correo,
+        fono: fono,
+        password: contraseña,
+      }
+      editarUsuario(id,data).then((data) => {
+        if(!data) Alert.alert('Error al editar el usuario');
+        Alert.alert('Editado',`${data.rut} ${data.nombre}`);
+      });
+      return router.replace('/admin')
     }
    
 
@@ -156,7 +166,7 @@ export default function TabOneScreen() {
               <Text style={styles.usuarios}>Rut: {usuarios2.rut}</Text>
               <Text style={styles.usuarios}>Nombre: {usuarios2.nombre}</Text>
               <Text style={styles.usuarios}>Apellido: {usuarios2.apellido}</Text>
-              <Text style={styles.usuarios}>Correo: {usuarios2.correo}</Text>
+              <Text style={styles.usuarios}>Correo:{usuarios2.correo}</Text>
               <Text style={styles.usuarios}>Fono: {usuarios2.fono}</Text>
               <Pressable style={styles.bo}  onPress={()=>setModalVisible(false)} >
                 <Text style={styles.usuarios}>Cerrar</Text>
@@ -169,13 +179,13 @@ export default function TabOneScreen() {
           {/*Modal de editar */}
           <Modal
             visible={modalVisibleEditar}
-            animationType="slide"
+            animationType="fade"
             onRequestClose={()=>setModalVisibleEditar(false)}
             transparent={false}
           >
             <View style={styles.vistaEditar}>
               <Text style={styles.titel}>Editar Usuario</Text>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.rut} onChangeText={setRut}/>
+              <Text style={styles.titel}>{usuarios4.rut}</Text>
               <TextInput style={styles.textoEditar} placeholder={usuarios4.nombre} onChangeText={setNombre}/>
               <TextInput style={styles.textoEditar} placeholder={usuarios4.apellido} onChangeText={setApellido}/>
               <TextInput style={styles.textoEditar} placeholder={usuarios4.fono} onChangeText={setFono}/>
@@ -183,7 +193,7 @@ export default function TabOneScreen() {
               <TextInput style={styles.textoEditar} placeholder='********' onChangeText={setContraseña}/>
               <View style={styles.vistaBotones}>
                 <Pressable
-                  onPress={handleGuardar}
+                  onPress={()=>handleGuardar(usuarios4._id)}
                   style={styles.botoEditar}
                 >
                   <Text>Guardar</Text>
@@ -240,7 +250,9 @@ const styles = StyleSheet.create({
     padding:30,
     borderRadius: 10,
     elevation: 5,
-    margin: 10,
+    margin: 15,
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   titel : {
     fontSize: 30,
@@ -262,7 +274,7 @@ const styles = StyleSheet.create({
   bo:{
     backgroundColor: '#edf2f4',
     padding: 10,
-    margin:5,
+    margin:10,
     borderRadius: 10,
     alignItems: 'center',
     borderRightColor: '#000',

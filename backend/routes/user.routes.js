@@ -36,6 +36,7 @@ router.get("/verificar",authorizationMiddleware.esAcademico, usuarioController.v
 router.post("/crear", authorizationMiddleware.esAdmin ,usuarioController.crearUsuario); //Crear un usuario
 router.get("/allUsers", usuarioController.getUsuarios); // Obtener todos los usuarios
 router.delete("/delete/:id", authorizationMiddleware.esAdmin, usuarioController.eliminarUsuario); // Eliminar un usuario
+router.put("/update/:id", authorizationMiddleware.esAdmin, usuarioController.editarUsuario); // Actualizar un usuario
 
 // Define las rutas para los accesos a jaula
 router.post("/acceder", accesoController.registrarIngreso); //Generar token para ingresar a una jaula

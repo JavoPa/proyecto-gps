@@ -3,9 +3,14 @@ import { Pressable, StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { useSession } from '@/flo';
+import { Redirect } from 'expo-router';
 
 export default function ModalScreen() {
     const {signOut} = useSession();
+    const cerrarSession = () => {
+        signOut();
+        <Redirect href="/login" />;
+    }
     return (
         <View style={styles.container}>
         <Text style={styles.title}>Gestiona tu usuarios</Text>

@@ -6,7 +6,6 @@ import {rolesService} from '@/services/roles.service';
 import { useRouter } from 'expo-router';
 import { registerForPushNotificationsAsync } from '@/utils/notifications';
 import { putPushToken } from '@/services/pushToken.service';
-import { set } from 'react-datepicker/dist/date_utils';
 
 export default function login() {
     const [email, setEmail] = useState('');

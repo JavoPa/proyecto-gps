@@ -7,6 +7,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import {rolesService} from '@/services/roles.service';
+import { useRouter } from 'expo-router';
 
 import { useSession } from '@/flo';
 
@@ -22,21 +23,26 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true); 
   const { session, isLoading, signOut } = useSession();
+  const router = useRouter();
 
   if (isLoading) {
     return <Text>Cargando..</Text>;
   }
-  //validar consistencia de token dentro de cada vista
-  /*
-  const rol = rolesService(session);
-  if(rol != "academico"){
-    if(rol != "funcionario"){
-      if(rol != "estudiante"){
-        signOut();
-        return <Redirect href="/login" />;
+ 
+    if(session){
+      const rol = rolesService(session);
+      if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
+        return router.replace('/tabs')
+      }else{
+        if(rol == "Guardia"){
+          return router.replace('/guardias')
+        }else{
+          if(rol == "Administrador"){
+            return router.replace('/admin')
+          }
+        }
       }
     }
-  }*/
   
   if(!session) {
     return <Redirect href="/login" />;
