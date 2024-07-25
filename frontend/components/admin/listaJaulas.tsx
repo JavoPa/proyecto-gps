@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
 import { getJaulas, deleteJaula, getJaulaById, updateJaula } from '@/services/jaula.service';
 import { getGuardias } from '@/services/gestion.service'; // Importa el servicio de guardias
 import { useFocusEffect } from '@react-navigation/native';
@@ -108,6 +108,23 @@ const ListaJaulas: React.FC = () => {
             alert('No se pudo cargar los detalles de la jaula');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleOpenMaps = () => {
+        try {
+            if (selectedJaula?.ubicacion) {
+                // Validar la URL de Google Maps en el frontend
+                const googleMapsUrlPattern = /^https:\/\/(www\.)?google\.com\/maps\/.+/;
+                if (!googleMapsUrlPattern.test(selectedJaula.ubicacion)) {
+                    alert('La URL de Google Maps no es válida');
+                    return;
+                }
+
+                Linking.openURL(selectedJaula.ubicacion);
+            }
+        } catch (error) {
+            alert('La URL de Google Maps no es válida o no se puede abrir.');
         }
     };
 
@@ -246,6 +263,9 @@ const ListaJaulas: React.FC = () => {
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
+                                        <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                         <Text style={styles.modalButtonText}>Volver al Listado</Text>

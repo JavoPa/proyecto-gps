@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
 import { getJaulas, getJaulaById } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -76,6 +76,23 @@ const ListaJaulas: React.FC = () => {
         }
     };
 
+    const handleOpenMaps = () => {
+        try {
+            if (selectedJaula?.ubicacion) {
+                // Validar la URL de Google Maps en el frontend
+                const googleMapsUrlPattern = /^https:\/\/(www\.)?google\.com\/maps\/.+/;
+                if (!googleMapsUrlPattern.test(selectedJaula.ubicacion)) {
+                    alert('La URL de Google Maps no es válida');
+                    return;
+                }
+
+                Linking.openURL(selectedJaula.ubicacion);
+            }
+        } catch (error) {
+            alert('La URL de Google Maps no es válida o no se puede abrir.');
+        }
+    };
+
     const handleBackToList = () => {
         setSelectedJaula(null);
         setModalVisible(false);
@@ -130,6 +147,9 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
+                                <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
                             </TouchableOpacity>
