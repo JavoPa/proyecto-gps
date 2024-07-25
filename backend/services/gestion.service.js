@@ -66,7 +66,7 @@ async function createGuardia(guardiaData) {
             cargo,
             situacion_laboral
         });
-        if (newGuardia.nombre.includes('  ') || newGuardia.nombre.includes(' ')  ) {
+        if (newGuardia.nombre.includes('  ')) {
             return [null, "El nombre del guardia no puede estar vacio"];
           }
         await newGuardia.save();
