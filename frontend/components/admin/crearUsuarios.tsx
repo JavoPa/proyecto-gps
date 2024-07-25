@@ -3,11 +3,14 @@ import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Aler
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
 import { useRouter } from 'expo-router';
+import { CrearUsuario } from '@/services/crear.Usuarios';
+import { max } from 'date-fns';
+
 
 const data = [
     {label: 'Academico', value: 'Academico'},
     {label: 'Estudiante', value: 'Estudiante'},
-    {label: 'Funcionrio', value: 'Funcionrio'},
+    {label: 'Funcionario', value: 'Funcionario'},
     {label: 'Administrador', value: 'Administrador'},
 ];
 
@@ -40,15 +43,13 @@ const CrearUsuarios: React.FC = () =>{
     const [Tipo, setTipo] = useState('Tipo');
     const [carrera, setCarrera] = useState('Carrera');
     const [situacion, setSituacion] = useState('Situacion');
-    //const [situacion2, setSituacion2] = useState('Situacion');
     const [isFocus, setIsFocus] = useState(false);
     const [isFocus2, setIsFocus2] = useState(false);
+    const [aniquilar, setAniquilar] = useState(false);
     const [encontrado, setencontrado] = useState(false);
     const [cargando, setCargando] = useState(false);
 
     const router = useRouter();
-
-    
 
     const tipoLabel = () => {
         if (Tipo || isFocus) {
@@ -61,7 +62,21 @@ const CrearUsuarios: React.FC = () =>{
         return null;
     };
 
-    const handleCrear = () => {
+    const setear = () => {
+        setRut('rut');
+        setNombre('Nombre');
+        setApellido('Apellido');
+        setNumero('Numero de telefono');
+        setCorreo('Correo');
+        setPassword('Contraseña');
+        setTipo('Tipo');
+        setSituacion('Situacion');
+        setCarrera('Carrera');
+    }
+
+    const handleCrear = async () => {
+
+        //validar datos
         
         if(encontrado){
           //crear usuario con los datos encontrados
@@ -70,62 +85,73 @@ const CrearUsuarios: React.FC = () =>{
               rut: rut2,
               nombre: nombre2,
               apellido: apellido2,
-              telefono: numero2,
+              fono: numero2,
               correo: correo2,
-              contraseña: password,
-              tipo: Tipo,
+              password: password,
+              rol: Tipo,
               situacion: situacion,
               carrera: carrera,
             }
             //madar datos a funcion de crear usuario
-            console.log(datos);
-            return router.replace('/admin');
+            const respuesta =  CrearUsuario(datos);
+            Alert.alert(`${respuesta}`);
+            setear();
+            console.log(respuesta);
           }
           const datos = {
             rut: rut2,
             nombre: nombre2,
             apellido: apellido2,
-            telefono: numero2,
+            fono: numero2,
             correo: correo2,
-            contraseña: password,
-            tipo: Tipo,
+            password: password,
+            rol: Tipo,
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          console.log(datos);
-          return router.replace('/admin');
+          const respuesta =  CrearUsuario(datos);
+          Alert.alert(`${respuesta}`);
+          setear();
+          console.log(respuesta);
         }else{
           //crear usuario con los datos ingresados
-          if(Tipo == 'Estudiante'){
+          if(Tipo == "Estudiante"){
+            console.log("entrw")
             const datos = {
               rut: rut,
               nombre: nombre,
               apellido: apellido,
-              telefono: numero,
+              fono: numero,
               correo: correo,
-              contraseña: password,
-              tipo: Tipo,
+              password: password,
+              rol: Tipo,
               situacion: situacion,
               carrera: carrera,
             }
             //madar datos a funcion de crear usuario
-            console.log(datos);
-            return router.replace('/admin');
-          }
+            CrearUsuario(datos).then((respuesta) => {
+              console.log(respuesta.message);
+              Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+              setear();
+            });
+          }/*
           const datos = {
             rut: rut,
             nombre: nombre,
             apellido: apellido,
-            telefono: numero,
+            fono: numero,
             correo: correo,
-            contraseña: password,
-            tipo: Tipo,
+            password: password,
+            rol: Tipo,
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          console.log(datos);
-          return router.replace('/admin');
+          const respuesta =  CrearUsuario(datos);
+          console.log(respuesta);
+          setear();
+          Alert.alert(`${respuesta}`);*/
         }
+
     }
   
     const handleVerificar = async () => {
@@ -158,28 +184,16 @@ const CrearUsuarios: React.FC = () =>{
         setNumero2('Numero de telefono');
         setCorreo2('Correo');
         setPassword2('Contraseña');
-        setTipo('Tipo');
         setSituacion('Situacion');
       }
       setCargando(false);
     }
+
    
 
     return(
-        <ScrollView style={styles.vistaScroll}>
-            <Text style={styles.texto} >Crear Usuarios</Text>
-            <View style={styles.vistaRutIntranet}>
-              <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
-              <Pressable onPress={handleVerificar} style={styles.boton}>
-                  <Text>Buscar Intranet</Text>
-              </Pressable>
-            </View>
-            <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
-            <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
-            <TextInput style={styles.input} placeholder={numero2}  onChangeText={setNumero} ></TextInput>
-            <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
-            <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
-            {tipoLabel()}
+        <View style={styles.pagina}>
+            <Text style={styles.texto}>Crear Usuario</Text>
             <Dropdown
                 data={data}
                 style={styles.input}
@@ -194,24 +208,7 @@ const CrearUsuarios: React.FC = () =>{
                     setIsFocus(false);
                 }}
             />
-            {}
-            <Dropdown
-                data={data2}
-                style={styles.input}
-                labelField="label"
-                valueField="value"
-                placeholder={situacion}
-                value={situacion}
-                onFocus={() => setIsFocus2(true)}
-                onBlur={() => setIsFocus2(false)}
-                onChange={item => {
-                    setSituacion(item.value);
-                    setIsFocus2(false);
-                }}
-            />
-            <Pressable style={styles.botonCrear} onPress={handleCrear}>
-                <Text>Crear</Text>
-            </Pressable>
+            {/*Modal para vista de cargando */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -227,6 +224,7 @@ const CrearUsuarios: React.FC = () =>{
 
                 </View>
             </Modal>
+
              {/*Seleccion adicionales de datos para estudiante */}
             <Modal
               visible={Tipo == 'Estudiante'}
@@ -234,35 +232,141 @@ const CrearUsuarios: React.FC = () =>{
               transparent={false}
               onRequestClose={() => {}} //para que no se cierre con el boton de atras
             >
-              <View style={styles.modalEstudiante}>
-                <Text style={styles.texto}>Datos Adicionales Estudiante</Text>
+              <ScrollView style={styles.modalEstudiante}>
+                <Text style={styles.texto} >Crear Estudiante</Text>
+                <View style={styles.vistaRutIntranet}>
+                <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
+                <Pressable onPress={handleVerificar} style={styles.boton}>
+                    <Text>Buscar Intranet</Text>
+                </Pressable>
+                </View>
+                <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
+                <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
+                <TextInput style={styles.input} placeholder={numero2}  onChangeText={setNumero} ></TextInput>
+                <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
+                <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
+                {tipoLabel()}
                 <Dropdown
-                  data={data3}
-                  style={styles.input}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={carrera}
-                  value={carrera}
-                  onFocus={() => setIsFocus2(true)}
-                  onBlur={() => setIsFocus2(false)}
-                  onChange={item => {
-                      setCarrera(item.value);
-                      setIsFocus2(false);
-                  }}
+                    data={data}
+                    style={styles.input}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={Tipo}
+                    value={Tipo}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        setTipo(item.value);
+                        setIsFocus(false);
+                    }}
+                />
+                <Dropdown
+                    data={data2}
+                    style={styles.input}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={situacion}
+                    value={Tipo}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        setSituacion(item.value);
+                        setIsFocus(false);
+                    }}
+                />
+                <Dropdown
+                    data={data3}
+                    style={styles.input}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={carrera}
+                    value={Tipo}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        setCarrera(item.value);
+                        setIsFocus(false);
+                    }}
                 />
                 <Pressable style={styles.botonCrear} onPress={handleCrear}>
-                  <Text>Crear Estudiante</Text>
+                      <Text>Crear</Text>
+                  </Pressable>
+                <Pressable style={styles.botonCrear} onPress={()=>setTipo('Tipo')}>
+                      <Text>Volver</Text>
                 </Pressable>
-              </View>
+              </ScrollView>
+            </Modal>
+
+            {/*Creacion otros usuarios que no sean estudiante */}
+            <Modal
+              visible={Tipo == 'Academico' || Tipo == 'Funcionario' || Tipo == 'Administrador'}
+              animationType="slide"
+              transparent={false}
+              onRequestClose={() => {}} //para que no se cierre con el boton de atras
+            >
+              <ScrollView style={styles.modalEstudiante}>
+                <Text style={styles.texto} >Crear {Tipo}</Text>
+                <View style={styles.vistaRutIntranet}>
+                <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
+                <Pressable onPress={handleVerificar} style={styles.boton}>
+                    <Text>Buscar Intranet</Text>
+                </Pressable>
+                </View>
+                <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
+                <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
+                <TextInput style={styles.input} placeholder={numero2}  inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
+                <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
+                <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
+                {tipoLabel()}
+                <Dropdown
+                    data={data}
+                    style={styles.input}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={Tipo}
+                    value={Tipo}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        setTipo(item.value);
+                        setIsFocus(false);
+                    }}
+                />
+                <Dropdown
+                    data={data2}
+                    style={styles.input}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={situacion}
+                    value={Tipo}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        setSituacion(item.value);
+                        setIsFocus(false);
+                    }}
+                />
+                <Pressable style={styles.botonCrear} onPress={handleCrear}>
+                    <Text>Crear</Text>
+                </Pressable>
+                <Pressable style={styles.botonCrear} onPress={()=>setTipo('Tipo')}>
+                    <Text>Volver</Text>
+                </Pressable>
+              </ScrollView>
             </Modal>
             
-        </ScrollView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     vistaScroll: {
         width: "80%",
+    },
+    pagina: {
+      justifyContent: 'center',
+      borderRadius: 10,
+      padding: 50,
     },
     input: {
       height: 40,
@@ -280,21 +384,25 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '40%',
+        width: 'auto',
         margin: 5,
     },
     texto:{
-      fontSize: 20,
+      fontSize: 30,
       color: '#000',
-      padding: 10,
+      padding: 20,
+      margin: 20,
+      textAlign: 'center',
     },
     vistaRutIntranet:{
       flexDirection: 'row',
       justifyContent: 'center',
       marginBottom: 20,
+      
+      
     },
     rut:{
-      width: '58%',
+      width: "55%",
       padding: 10,
       margin:5,
       borderWidth: 2,
@@ -308,10 +416,11 @@ const styles = StyleSheet.create({
       borderColor: '#000',
       borderWidth: 2,
       padding: 10,
-      marginLeft:50,
-      marginRight:50,
+      marginLeft:'25%',
+      marginRight:'25%',
       alignItems: 'center',
       justifyContent: 'center',
+      margin: 5,
     },
     vistaCargando: {
       backgroundColor: '#f15',
@@ -323,12 +432,12 @@ const styles = StyleSheet.create({
       borderRadius: 10,
     },
     modalEstudiante: {
-      backgroundColor: '#a25',
-      marginTop: '60%',
+      marginTop: 'auto',
       padding: 40,
       marginLeft: '5%',
       marginRight: '5%',
       borderRadius: 10,
+      backgroundColor: '#3e92cc'
     }
   });
 

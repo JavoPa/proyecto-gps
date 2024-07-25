@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
 import { getJaulas, deleteJaula, getJaulaById, updateJaula } from '@/services/jaula.service';
 import { getGuardias } from '@/services/gestion.service'; // Importa el servicio de guardias
 import { useFocusEffect } from '@react-navigation/native';
@@ -111,6 +111,23 @@ const ListaJaulas: React.FC = () => {
         }
     };
 
+    const handleOpenMaps = () => {
+        try {
+            if (selectedJaula?.ubicacion) {
+                // Validar la URL de Google Maps en el frontend
+                const googleMapsUrlPattern = /^https:\/\/(www\.)?google\.com\/maps\/.+/;
+                if (!googleMapsUrlPattern.test(selectedJaula.ubicacion)) {
+                    alert('La URL de Google Maps no es válida');
+                    return;
+                }
+
+                Linking.openURL(selectedJaula.ubicacion);
+            }
+        } catch (error) {
+            alert('La URL de Google Maps no es válida o no se puede abrir.');
+        }
+    };
+
     const handleUpdate = async () => {
         if (selectedJaula) {
             const updatedJaula = {
@@ -173,7 +190,6 @@ const ListaJaulas: React.FC = () => {
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
                         <Text style={styles.itemText}>Identificador: {item.identificador}</Text>
-                        <Text style={styles.itemText}>Ubicación: {item.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {item.capacidad}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {item.guardiaAsignado ? `${item.guardiaAsignado.nombre} ${item.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.buttonContainer}>
@@ -238,7 +254,6 @@ const ListaJaulas: React.FC = () => {
                         ) : (
                             <>
                                 <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
-                                <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                                 <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                                 <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                                 <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
@@ -247,6 +262,13 @@ const ListaJaulas: React.FC = () => {
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
+                                    <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
+                                        <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                         <Text style={styles.modalButtonText}>Volver al Listado</Text>
                                     </TouchableOpacity>

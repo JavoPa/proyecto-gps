@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, FlatList, Modal } from 'react-native';
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { getIncidentesDia } from '@/services/incidentes.service'; // Adjust the path accordingly
-import Colors from '@/constants/Colors';
 import { formatDate } from '../../Utils';
-
-// Listo
 
 interface IncidentesDiaProps {
   navigateTo: (component: string) => void;
@@ -17,6 +14,8 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showFechaPicker, setShowFechaPicker] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedIncidente, setSelectedIncidente] = useState<any | null>(null);
 
   const fetchIncidentes = async () => {
     if (!selectedDate) {
@@ -66,21 +65,27 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
     }
   };
 
+  const handleViewDetails = (incidente: any) => {
+    setSelectedIncidente(incidente);
+    setModalVisible(true);
+  };
+
+  const handleBackToList = () => {
+    setSelectedIncidente(null);
+    setModalVisible(false);
+  };
+
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.tableRow}>
-      <Text style={styles.tableCell}>{formatDate(item.fecha)}</Text>
-      <Text style={styles.tableCell}>{item.hora}</Text>
-      <Text style={styles.tableCell}>{item.lugar}</Text>
-      <Text style={styles.tableCell}>{item.tipo}</Text>
-      <Text style={styles.tableCell}>{item.descripcion}</Text>
-    </View>
+    <TouchableOpacity style={styles.itemContainer} onPress={() => handleViewDetails(item)}>
+      <Text style={styles.itemText}>Fecha: {formatDate(item.fecha)}</Text>
+      <Text style={styles.itemText}>Hora: {item.hora}</Text>
+      <Text style={styles.itemText}>Lugar: {item.lugar}</Text>
+      <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <View style={{ margin: 10 }}>
-        <Button title="Volver al menú de incidentes" onPress={() => navigateTo('IncidentesMenu')} />
-      </View>
       <Text style={styles.label}>Selecciona una fecha</Text>
       <TouchableOpacity onPress={showDatePicker}>
         <TextInput
@@ -98,30 +103,50 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
         />
       )}
 
-      <Button title="Buscar Incidentes" onPress={fetchIncidentes} />
+      <TouchableOpacity style={styles.button} onPress={fetchIncidentes}>
+        <Text style={styles.buttonText}>Buscar Incidentes</Text>
+      </TouchableOpacity>
 
       {loading && <Text>Cargando incidentes...</Text>}
 
       {error && <Text style={styles.errorText}>{error}</Text>}
 
       {!loading && !error && incidentes.length > 0 && (
-        <ScrollView horizontal style={styles.tableContainer}>
-          <View style={styles.table}>
-            <View style={styles.tableHeader}>
-              <Text style={styles.tableHeaderText}>Fecha</Text>
-              <Text style={styles.tableHeaderText}>Hora</Text>
-              <Text style={styles.tableHeaderText}>Lugar</Text>
-              <Text style={styles.tableHeaderText}>Tipo</Text>
-              <Text style={styles.tableHeaderText}>Descripción</Text>
-            </View>
-            <FlatList
-              data={incidentes}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        </ScrollView>
+        <FlatList
+          data={incidentes}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.listContent}
+        />
       )}
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={handleBackToList}
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Detalles del Incidente</Text>
+            {selectedIncidente && (
+              <>
+                <Text style={styles.itemText}>Fecha: {formatDate(selectedIncidente.fecha)}</Text>
+                <Text style={styles.itemText}>Hora: {selectedIncidente.hora}</Text>
+                <Text style={styles.itemText}>Lugar: {selectedIncidente.lugar}</Text>
+                <Text style={styles.itemText}>Tipo: {selectedIncidente.tipo}</Text>
+                <Text style={styles.itemText}>Descripción: {selectedIncidente.descripcion}</Text>
+              </>
+            )}
+            <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
+              <Text style={styles.modalButtonText}>Volver al Listado</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
+        <Text style={styles.buttonText}>Volver al menú de Incidentes</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -129,57 +154,104 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 16,
+    backgroundColor: '#EDF2F4',
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#13293D',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
     marginBottom: 20,
-    paddingHorizontal: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  button: {
+    backgroundColor: '#2A628F',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
   errorText: {
     color: 'red',
     textAlign: 'center',
     marginVertical: 10,
   },
-  tableContainer: {
-    marginTop: 20,
+  itemContainer: {
+    marginBottom: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    backgroundColor: '#FFFFFF',
   },
-  table: {
-    minWidth: 600,
+  itemText: {
+    fontSize: 18,
+    color: '#16324F',
   },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: Colors.light.tint,
-    padding: 10,
+  listContent: {
+    paddingBottom: 20,
   },
-  tableHeaderText: {
+  modalContainer: {
     flex: 1,
-    width: '20%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
+  },
+  modalContent: {
+    width: '90%',
+    maxWidth: 600,
+    backgroundColor: '#EDF2F4',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
     textAlign: 'center',
+    marginBottom: 16,
+    color: '#13293D',
   },
-  tableRow: {
-    flexDirection: 'row',
+  modalButton: {
+    backgroundColor: '#2A628F',
+    borderRadius: 8,
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-    alignItems: 'center', // Center items vertically in each row
+    paddingHorizontal: 16,
+    marginTop: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  tableCell: {
-    width: '20%',
-    paddingHorizontal: 5,
-    textAlign: 'center',
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
-    height: '100%', // Make sure the cell takes the full height of the row
+  modalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  bo: {
+    backgroundColor: '#2A628F',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
 });
 

@@ -1,58 +1,55 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { getUsuariosConBicicleta, getUsuarioById } from '@/services/usuario.service';
 import { useFocusEffect } from '@react-navigation/native';
-import { getAllIncidentes } from '@/services/incidentes.service';
-import { formatDate } from '../../Utils';
 
-interface Incidente {
-    _id: string;
-    fecha: Date;
-    hora: string;
-    lugar: string;
+interface Bicicleta {
+    marca: string;
+    modelo: string;
+    color: string;
     tipo: string;
     descripcion: string;
+    estado: string;
 }
 
-interface MostrarIncidentesProps {
-    navigateTo: (component: string) => void;
+interface Usuario {
+    _id: string;
+    nombre: string;
+    apellido: string;
+    rut: string;
+    fono: string;
+    correo: string;
+    rol: string;
+    bicicleta: Bicicleta | null;
 }
 
-const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => {
-    const [incidentes, setIncidentes] = useState<Incidente[]>([]);
-    const [filteredIncidentes, setFilteredIncidentes] = useState<Incidente[]>([]);
+const ListaUsuariosConBicicleta: React.FC = () => {
+    const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+    const [filteredUsuarios, setFilteredUsuarios] = useState<Usuario[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [selectedIncidente, setSelectedIncidente] = useState<Incidente | null>(null);
+    const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     useFocusEffect(
         useCallback(() => {
-            fetchIncidentes();
+            fetchUsuarios();
         }, [])
     );
 
-    const fetchIncidentes = useCallback(async () => {
+    const fetchUsuarios = useCallback(async () => {
         try {
-            const response = await getAllIncidentes();
-            if (response.status === 200) {
-                const incidentesData = response.data.data.map((incidente: any) => ({
-                    ...incidente,
-                    fecha: new Date(incidente.fecha),
-                }));
-                /*
-                response.data.data.forEach((element: any) => {
-                    console.log(element._id);
-                });
-                */
-                setIncidentes(incidentesData);
-                setFilteredIncidentes(incidentesData);
+            const response = await getUsuariosConBicicleta();
+            if (Array.isArray(response)) {
+                setUsuarios(response);
+                setFilteredUsuarios(response);
             } else {
                 console.error('Unexpected response format:', response);
                 alert('Formato de respuesta inesperado');
             }
         } catch (error) {
-            console.error('Error fetching incidentes:', error);
-            alert('No se pudo cargar la lista de incidentes');
+            console.error('Error fetching usuarios:', error);
+            alert('No se pudo cargar la lista de usuarios');
         } finally {
             setLoading(false);
         }
@@ -61,25 +58,31 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
     const handleSearch = (term: string) => {
         setSearchTerm(term);
         if (term === '') {
-            setFilteredIncidentes(incidentes);
+            setFilteredUsuarios(usuarios);
         } else {
-            const filtered = incidentes.filter(incidente =>
-                incidente.tipo.toLowerCase().includes(term.toLowerCase()) || 
-                incidente.lugar.toLowerCase().includes(term.toLowerCase()) || 
-                formatDate(incidente.fecha).toLowerCase().includes(term.toLowerCase())
+            const filtered = usuarios.filter(usuario =>
+                usuario.rut.toLowerCase().includes(term.toLowerCase())
             );
-            setFilteredIncidentes(filtered);
+            setFilteredUsuarios(filtered);
         }
     };
 
     const handleViewDetails = async (id: string) => {
-        const incidente = incidentes.find(inc => inc._id === id);
-        setSelectedIncidente(incidente || null);
-        setModalVisible(true);
+        try {
+            setLoading(true);
+            const response = await getUsuarioById(id);
+            setSelectedUsuario(response);
+            setModalVisible(true);
+        } catch (error) {
+            console.error('Error fetching usuario details:', error);
+            alert('No se pudo cargar los detalles del usuario');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleBackToList = () => {
-        setSelectedIncidente(null);
+        setSelectedUsuario(null);
         setModalVisible(false);
     };
 
@@ -93,22 +96,20 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Listado de Incidentes</Text>
+            <Text style={styles.title}>Listado de Usuarios con Bicicleta</Text>
             <TextInput
                 style={styles.searchInput}
                 value={searchTerm}
                 onChangeText={handleSearch}
-                placeholder="Buscar por Tipo, Lugar o Fecha"
+                placeholder="Buscar por RUT"
             />
             <FlatList
-                data={filteredIncidentes}
+                data={filteredUsuarios}
                 keyExtractor={item => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>Fecha: {formatDate(item.fecha)}</Text>
-                        <Text style={styles.itemText}>Hora: {item.hora}</Text>
-                        <Text style={styles.itemText}>Lugar: {item.lugar}</Text>
-                        <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
+                        <Text style={styles.itemText}>Nombre: {item.nombre} {item.apellido}</Text>
+                        <Text style={styles.itemText}>RUT: {item.rut}</Text>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(item._id)}>
                                 <Text style={styles.buttonText}>Ver</Text>
@@ -125,12 +126,26 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Detalles del Incidente</Text>
-                        <Text style={styles.itemText}>Fecha: {selectedIncidente?.fecha && formatDate(selectedIncidente.fecha)}</Text>
-                        <Text style={styles.itemText}>Hora: {selectedIncidente?.hora}</Text>
-                        <Text style={styles.itemText}>Lugar: {selectedIncidente?.lugar}</Text>
-                        <Text style={styles.itemText}>Tipo: {selectedIncidente?.tipo}</Text>
-                        <Text style={styles.itemText}>Descripción: {selectedIncidente?.descripcion}</Text>
+                        <Text style={styles.modalTitle}>Detalles del Usuario</Text>
+                        {selectedUsuario && (
+                            <>
+                                <Text style={styles.itemText}>Nombre: {selectedUsuario.nombre} {selectedUsuario.apellido}</Text>
+                                <Text style={styles.itemText}>RUT: {selectedUsuario.rut}</Text>
+                                <Text style={styles.itemText}>Fono: {selectedUsuario.fono}</Text>
+                                <Text style={styles.itemText}>Correo: {selectedUsuario.correo}</Text>
+                                <Text style={styles.itemText}>Rol: {selectedUsuario.rol}</Text>
+                                {selectedUsuario.bicicleta && (
+                                    <>
+                                        <Text style={styles.itemText}>Marca: {selectedUsuario.bicicleta.marca}</Text>
+                                        <Text style={styles.itemText}>Modelo: {selectedUsuario.bicicleta.modelo}</Text>
+                                        <Text style={styles.itemText}>Color: {selectedUsuario.bicicleta.color}</Text>
+                                        <Text style={styles.itemText}>Tipo: {selectedUsuario.bicicleta.tipo}</Text>
+                                        <Text style={styles.itemText}>Descripción: {selectedUsuario.bicicleta.descripcion}</Text>
+                                        <Text style={styles.itemText}>Estado: {selectedUsuario.bicicleta.estado}</Text>
+                                    </>
+                                )}
+                            </>
+                        )}
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
@@ -139,9 +154,6 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
                     </View>
                 </View>
             </Modal>
-            <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
-                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -240,16 +252,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
     },
-    bo: {
-        backgroundColor: '#2A628F',
-        padding: 10,
-        marginTop: 10,
-        marginBottom: 20,
-        borderRadius: 8,
-        alignItems: 'center',
-        borderColor: '#ccc',
-        borderWidth: 1,
-    },
 });
 
-export default MostrarIncidentes;
+export default ListaUsuariosConBicicleta;
