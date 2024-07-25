@@ -199,7 +199,7 @@ const ListaJaulas: React.FC = () => {
                                     <Text style={styles.modalButtonText}>Ingresar como guardia</Text>
                                 </TouchableOpacity>
                             )}
-                            {selectedJaula && selectedJaula.guardiaAsignado && jaulaAsignada && selectedJaula.guardiaAsignado._id === jaulaAsignada.guardiaAsignado?._id && (
+                            {selectedJaula && jaulaAsignada && selectedJaula._id === jaulaAsignada._id && (
                                 <TouchableOpacity style={styles.modalButton} onPress={handleSalirGuardia}>
                                     <Text style={styles.modalButtonText}>Salir de la Jaula</Text>
                                 </TouchableOpacity>
