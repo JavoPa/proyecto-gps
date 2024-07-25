@@ -208,7 +208,6 @@ const ListaJaulas: React.FC = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
-                        <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                         <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
