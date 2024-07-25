@@ -6,8 +6,7 @@ import { Text, View } from '@/components/Themed';
 export default function ListaScreen() {
   return (
     <View style={styles.container}>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Text style={styles.title}>Crear Usuario</Text>
+      <View lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Crear/>
     </View>
   );
@@ -18,6 +17,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#3e92cc'
   },
   title: {
     fontSize: 20,

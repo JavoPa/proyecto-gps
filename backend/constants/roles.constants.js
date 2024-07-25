@@ -1,9 +1,9 @@
 /** Roles permitidos por la base de datos */
 const ROLES = [
-    "estudiante", 
-    "academico", 
-    "funcionario", 
-    "administrador",
+    "Estudiante", 
+    "Academico", 
+    "Funcionario", 
+    "Administrador",
     "Guardia"];
 
 module.exports = ROLES;

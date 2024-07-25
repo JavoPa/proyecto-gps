@@ -17,7 +17,8 @@ const {
     crearEstudiante,
     crearUser,
     crearAdministrador,
-    crearGuardia
+    crearAcademico,
+    crearFuncionario,
 } = require('../services/usuario.service');
 
 const axios = require('axios');
@@ -75,17 +76,20 @@ async function crearUsuario(req,res) {
     try {
         const { body } = req;
         //validar campo Tipo
-        // {tipo: ""}
-        if(body.tipo == null) return res.status(400).json({message: "El campo tipo es obligatorio"});
-
+        // {rol: ""}
+        if(body.rol == null) return res.status(400).json({message: "El campo tipo es obligatorio"});
+        //console.log(body);
         //validar campos obligatorios
-
+        
         //validar si el usuario ya existe
         const usuario = await Usuario.findOne({rut: body.rut});
         if(usuario) return res.status(400).json({message: "El usuario ya existe"});
-
+        const usuario2 = await Usuario.findOne({correo: body.correo});
+        if(usuario2) {
+            return res.status(400).json({message: "Un usuario ya usa ese correo"});
+        }
         //validar tipo de usuario a crear
-        if(body.tipo == "Estudiante"){
+        if(body.rol == "Estudiante"){
 
             const {error} = estudianteSchema.validate(body);
             console.log(error);
@@ -93,58 +97,63 @@ async function crearUsuario(req,res) {
 
             const nuevoEstudiante = crearEstudiante(body);
 
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoEstudiante);
+            return res.status(200).json({message: "Usuario creado correctamente"});
         }
-        if(body.tipo == "Administrador"){
+        if(body.rol == "Administrador"){
 
             const {error} = administradorSchema.validate(body);
             console.log(error);
             if(error) return res.status(400).json({message: "Campos no validos"});
 
             const nuevoAdministrador = crearAdministrador(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAdministrador);
-        }else{
-            //modificar para que se cree el usuario con el tipo de usuario que corresponda
-            const {error} = administradorSchema.validate(body);
-            console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
-            const nuevoUsuario = crearUsuario(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoUsuario);
+            return res.status(200).json({message: "Usuario creado correctamente"});
         }
-        /*deprecado
-        if(body.tipo == "Guardia"){
+        if(body.rol == "Guardia"){
 
             const {error} = guardiaSchema.validate(body);
             console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
+            if(error) return res.status(400).json(error.details);
 
             const nuevoGuardia = crearGuardia(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoGuardia);
+            return res.status(200).json({message: "Usuario creado correctamente"});
         }
 
-        if(body.tipo == "Academico"){
+        if(body.rol == "Academico"){
 
             const {error} = academicoSchema.validate(body);
             console.log(error);
             if(error) return res.status(400).json({message: "Campos no validos"});
 
             const nuevoAcademico = crearAcademico(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoAcademico);
+            return res.status(200).json({message: "Usuario creado correctamente"});
         }
 
-        if(body.tipo == "Funcionario"){
+        if(body.rol == "Funcionario"){
 
             const {error} = funcionarioSchema.validate(body);
             console.log(error);
             if(error) return res.status(400).json({message: "Campos no validos"});
 
             const nuevoFuncionario = crearFuncionario(body);
-            return res.status(200).json({message: "Usuario creado correctamente"}, nuevoFuncionario);
-        }*/
+            return res.status(200).json({message: "Usuario creado correctamente"});
+        }
 
 
         return res.status(400).json({message: "Tipo de usuario no encontrado, verifique los datos ingresados"});
         
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function eliminarUsuario(req, res) {
+    try {
+        const { id } = req.params;
+        const eliminar = await Usuario.findByIdAndDelete(id);
+        console.log(eliminar);
+        if(!eliminar) return res.status(400).json({message: "No se pudo eliminar el usuario"});
+        return res.status(200).json({message: "Usuario eliminado correctamente"});
+
     } catch (error) {
         console.log(error);
     }
@@ -224,6 +233,23 @@ async function enviarNotif(req, res) {
     }
 }
 
+async function editarUsuario(req, res) {
+    try {
+        const { id } = req.params;
+        const { body } = req;
+        console.log(body);
+        console.log(id);
+        const usuario = await Usuario.findByIdAndUpdate(id, body,   { new: true });
+        if (!usuario) {
+            return res.status(404).send({ message: 'Usuario no encontrado.' });
+        }
+        res.status(200).json(usuario);
+    }catch (error) {
+        console.error('Error al editar usuario', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
+    }
+}
+
 module.exports = {
     crearUsuario,
     getUserById,
@@ -232,5 +258,7 @@ module.exports = {
     getUsuarios,
     crearUsuario,
     verificarIntranet,
-    enviarNotif
+    eliminarUsuario,
+    enviarNotif,
+    editarUsuario
 };

@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { Alert } from 'react-native';
+import axiosInstance from './root.service';
 
 
 export default async function validarRut (rut) {
     try {
-        const validar = await axios.post('http://192.168.1.3:5000/api/users/obtener' , {rut: rut},{timeout: 2000});
+        const validar = await axiosInstance.post('/users/obtener' , {rut: rut},{timeout: 50000});
         console.log(validar.data);
         if(!validar.data){
             Alert.alert('Error', 'Sin datos');

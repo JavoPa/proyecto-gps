@@ -6,7 +6,6 @@ import {rolesService} from '@/services/roles.service';
 import { useRouter } from 'expo-router';
 import { registerForPushNotificationsAsync } from '@/utils/notifications';
 import { putPushToken } from '@/services/pushToken.service';
-import { set } from 'react-datepicker/dist/date_utils';
 
 export default function login() {
     const [email, setEmail] = useState('');
@@ -14,6 +13,7 @@ export default function login() {
     const [cargando, setCargando] = useState(false);
     const router = useRouter();
     const [pushToken, setPushToken] = useState('');
+    const { signIn, session, isLoading } = useSession();
 
     useEffect(() => {
         const getToken = async () => {
@@ -22,7 +22,7 @@ export default function login() {
         };
         getToken();
     }, []);
-    const { signIn, session, isLoading } = useSession();
+   
 
     const handleLogin = async () => {
       const data = {
@@ -39,6 +39,7 @@ export default function login() {
 
     useEffect(() => {
       setCargando(false);
+      console.log('la session es',session);
       if(session){
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
@@ -89,14 +90,12 @@ export default function login() {
             <Text style={styles.texto}>Iniciar</Text>
         </Pressable>
         <Modal
-          animationType="slide"
-          transparent={true}
+          animationType="fade"
           visible={cargando}
         >
           <View style={styles.vistaCargando}>
                   <Text>Cargando...</Text>
                   <Text>Espera Un Segundo..</Text>
-
                 </View>
         </Modal>
       </View>

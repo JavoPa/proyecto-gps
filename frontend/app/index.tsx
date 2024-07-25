@@ -4,11 +4,21 @@ import { Text, View } from '@/components/Themed';
 import { Button } from 'react-native';
 import { useSession } from '@/flo';
 import { Redirect, useRouter } from 'expo-router';
-import {rolesService} from '@/services/roles.service';
+import {rolesService, expiracion} from '@/services/roles.service';
 
 export default function TabOneScreen() {
   const { signOut, session, isLoading} = useSession();
+  //refrescar session si esta expira
+  const Hoy = Math.floor(Date.now() / 1000)+(60*60);
+  const expira = expiracion(session);
+  if(expira != null){
+    if(Hoy >= expira){
+      signOut();
+    }
+  }
+  
   const router = useRouter();
+  
   //funcion signIn
   const signIn = () => {
     return router.replace('/login');
