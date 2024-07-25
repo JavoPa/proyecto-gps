@@ -7,8 +7,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/flo';
 import { setAuthToken } from '@/services/root.service';
-import {rolesService} from '@/services/roles.service';
-import { useRouter } from 'expo-router';
+
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -23,24 +22,10 @@ export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
-  const router = useRouter();
+
   
   if (isLoading) {
     return <Text>Cagando..</Text>;
-  }
-  if(session){
-    const rol = rolesService(session);
-    if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
-      return router.replace('/tabs')
-    }else{
-      if(rol == "Guardia"){
-        return router.replace('/guardias')
-      }else{
-        if(rol == "Administrador"){
-          return router.replace('/admin')
-        }
-      }
-    }
   }
 
 

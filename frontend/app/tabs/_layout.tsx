@@ -22,28 +22,12 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true); 
-  const { session, isLoading, signOut } = useSession();
-  const router = useRouter();
+  const { session, isLoading } = useSession();
 
   if (isLoading) {
     return <Text>Cargando..</Text>;
   }
  
-    if(session){
-      const rol = rolesService(session);
-      if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
-        return router.replace('/tabs')
-      }else{
-        if(rol == "Guardia"){
-          return router.replace('/guardias')
-        }else{
-          if(rol == "Administrador"){
-            return router.replace('/admin')
-          }
-        }
-      }
-    }
-  
   if(!session) {
     return <Redirect href="/login" />;
   }else{
