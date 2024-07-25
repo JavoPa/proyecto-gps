@@ -76,14 +76,12 @@ export default function login() {
             <Text style={styles.texto}>Iniciar</Text>
         </Pressable>
         <Modal
-          animationType="slide"
-          transparent={true}
+          animationType="fade"
           visible={cargando}
         >
           <View style={styles.vistaCargando}>
                   <Text>Cargando...</Text>
                   <Text>Espera Un Segundo..</Text>
-
                 </View>
         </Modal>
       </View>

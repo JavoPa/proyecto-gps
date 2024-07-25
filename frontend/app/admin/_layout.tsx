@@ -51,14 +51,14 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: '',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/modal.usuarios" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="reorder"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -67,6 +67,7 @@ export default function AdminLayout() {
               </Pressable>
             </Link>
           ),
+          headerStyle: {backgroundColor:'#fff'},
         }}
       />
         <Tabs.Screen

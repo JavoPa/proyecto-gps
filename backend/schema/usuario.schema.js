@@ -167,7 +167,7 @@ const estudianteSchema = Joi.object({
     "any.required": "La carrera es obligatoria.",
     "string.base": "La carrera debe ser de tipo string.",
   }),
-  situacion_academica: Joi.string().required().messages({
+  situacion: Joi.string().required().messages({
     "string.empty": "La situacion academica no puede estar vacío.",
     "any.required": "La situacion academica es obligatoria.",
     "string.base": "La situacion academica debe ser de tipo string.",
@@ -268,17 +268,7 @@ const academicoSchema = Joi.object({
     "string.base": "El rol debe ser de tipo string.",
     "any.only": "El rol proporcionado no es válido.",
   }),
-  cargo: Joi.string().required().messages({
-    "string.empty": "El cargo no puede estar vacío.",
-    "any.required": "El cargo es obligatorio.",
-    "string.base": "El cargo debe ser de tipo string.",
-  }),
-  area: Joi.string().required().messages({
-    "string.empty": "La situacion laboral no puede estar vacío.",
-    "any.required": "La situacion laboral es obligatoria.",
-    "string.base": "La situacion laboral debe ser de tipo string.",
-  }),
-  situacion_laboral: Joi.string().required().messages({
+  situacion: Joi.string().required().messages({
     "string.empty": "La situacion laboral no puede estar vacío.",
     "any.required": "La situacion laboral es obligatoria.",
     "string.base": "La situacion laboral debe ser de tipo string.",
@@ -326,20 +316,10 @@ const funcionarioSchema = Joi.object({
     "string.base": "El rol debe ser de tipo string.",
     "any.only": "El rol proporcionado no es válido.",
   }),
-  situacion_laboral: Joi.string().required().messages({
+  situacion: Joi.string().required().messages({
     "string.empty": "La situacion laboral no puede estar vacío.",
     "any.required": "La situacion laboral es obligatoria.",
     "string.base": "La situacion laboral debe ser de tipo string.",
-  }),
-  departamento: Joi.string().required().messages({
-    "string.empty": "El departamento no puede estar vacío.",
-    "any.required": "El departamento es obligatorio.",
-    "string.base": "El departamento debe ser de tipo string.",
-  }),
-  cargo: Joi.string().required().messages({
-    "string.empty": "El cargo no puede estar vacío.",
-    "any.required": "El cargo es obligatorio.",
-    "string.base": "El cargo debe ser de tipo string.",
   }),
 })
 
@@ -384,17 +364,11 @@ const administradorSchema = Joi.object({
     "string.base": "El rol debe ser de tipo string.",
     "any.only": "El rol proporcionado no es válido.",
   }),
-  cargo: Joi.string().required().messages({
+  situacion: Joi.string().required().messages({
     "string.empty": "El cargo no puede estar vacío.",
     "any.required": "El cargo es obligatorio.",
     "string.base": "El cargo debe ser de tipo string.",
-  }),
-  departamento: Joi.string().required().messages({
-    "string.empty": "El departamento no puede estar vacío.",
-    "any.required": "El departamento es obligatorio.",
-    "string.base": "El departamento debe ser de tipo string.",
-  }),
-  
+  }),  
 })
 
 

@@ -66,6 +66,7 @@ function RootLayoutNav() {
             <Stack.Screen name="login" options={{ headerShown: false }} />
             <Stack.Screen name="admin" options={{ headerShown: false }} />
             <Stack.Screen name="guardias" options={{ headerShown: false }} />
+            <Stack.Screen name="modal.usuarios" options={{ headerShown: true , title: 'Opciones'}} />
           </Stack>
     </ThemeProvider>
    
