@@ -1,58 +1,50 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
+import { getJaulas, getJaulaById } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
-import { getAllIncidentes } from '@/services/incidentes.service';
-import { formatDate } from '../../Utils';
 
-interface Incidente {
+interface Guardia {
     _id: string;
-    fecha: Date;
-    hora: string;
-    lugar: string;
-    tipo: string;
-    descripcion: string;
+    nombre: string;
+    apellido: string;
 }
 
-interface MostrarIncidentesProps {
-    navigateTo: (component: string) => void;
+interface Jaula {
+    _id: string;
+    ubicacion: string;
+    capacidad: number;
+    identificador: string;
+    guardiaAsignado: { _id: string, nombre: string, apellido: string } | null;
+    situacion_actual?: number;  // Añadimos el campo para la situación actual
 }
 
-const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => {
-    const [incidentes, setIncidentes] = useState<Incidente[]>([]);
-    const [filteredIncidentes, setFilteredIncidentes] = useState<Incidente[]>([]);
+const ListaJaulas: React.FC = () => {
+    const [jaulas, setJaulas] = useState<Jaula[]>([]);
+    const [filteredJaulas, setFilteredJaulas] = useState<Jaula[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [selectedIncidente, setSelectedIncidente] = useState<Incidente | null>(null);
+    const [selectedJaula, setSelectedJaula] = useState<Jaula | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     useFocusEffect(
         useCallback(() => {
-            fetchIncidentes();
+            fetchJaulas();
         }, [])
     );
 
-    const fetchIncidentes = useCallback(async () => {
+    const fetchJaulas = useCallback(async () => {
         try {
-            const response = await getAllIncidentes();
-            if (response.status === 200) {
-                const incidentesData = response.data.data.map((incidente: any) => ({
-                    ...incidente,
-                    fecha: new Date(incidente.fecha),
-                }));
-                /*
-                response.data.data.forEach((element: any) => {
-                    console.log(element._id);
-                });
-                */
-                setIncidentes(incidentesData);
-                setFilteredIncidentes(incidentesData);
+            const response = await getJaulas();
+            if (Array.isArray(response)) {
+                setJaulas(response);
+                setFilteredJaulas(response);
             } else {
                 console.error('Unexpected response format:', response);
                 alert('Formato de respuesta inesperado');
             }
         } catch (error) {
-            console.error('Error fetching incidentes:', error);
-            alert('No se pudo cargar la lista de incidentes');
+            console.error('Error fetching jaulas:', error);
+            alert('No se pudo cargar la lista de jaulas');
         } finally {
             setLoading(false);
         }
@@ -61,25 +53,31 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
     const handleSearch = (term: string) => {
         setSearchTerm(term);
         if (term === '') {
-            setFilteredIncidentes(incidentes);
+            setFilteredJaulas(jaulas);
         } else {
-            const filtered = incidentes.filter(incidente =>
-                incidente.tipo.toLowerCase().includes(term.toLowerCase()) || 
-                incidente.lugar.toLowerCase().includes(term.toLowerCase()) || 
-                formatDate(incidente.fecha).toLowerCase().includes(term.toLowerCase())
+            const filtered = jaulas.filter(jaula =>
+                jaula.identificador.toLowerCase().includes(term.toLowerCase())
             );
-            setFilteredIncidentes(filtered);
+            setFilteredJaulas(filtered);
         }
     };
 
     const handleViewDetails = async (id: string) => {
-        const incidente = incidentes.find(inc => inc._id === id);
-        setSelectedIncidente(incidente || null);
-        setModalVisible(true);
+        try {
+            setLoading(true);
+            const response = await getJaulaById(id);
+            setSelectedJaula(response);
+            setModalVisible(true);
+        } catch (error) {
+            console.error('Error fetching jaula details:', error);
+            alert('No se pudo cargar los detalles de la jaula');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleBackToList = () => {
-        setSelectedIncidente(null);
+        setSelectedJaula(null);
         setModalVisible(false);
     };
 
@@ -93,22 +91,22 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Listado de Incidentes</Text>
+            <Text style={styles.title}>Listado de Jaulas</Text>
             <TextInput
                 style={styles.searchInput}
                 value={searchTerm}
                 onChangeText={handleSearch}
-                placeholder="Buscar por Tipo, Lugar o Fecha"
+                placeholder="Buscar por Identificador"
             />
             <FlatList
-                data={filteredIncidentes}
+                data={filteredJaulas}
                 keyExtractor={item => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>Fecha: {formatDate(item.fecha)}</Text>
-                        <Text style={styles.itemText}>Hora: {item.hora}</Text>
-                        <Text style={styles.itemText}>Lugar: {item.lugar}</Text>
-                        <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
+                        <Text style={styles.itemText}>Identificador: {item.identificador}</Text>
+                        <Text style={styles.itemText}>Ubicación: {item.ubicacion}</Text>
+                        <Text style={styles.itemText}>Capacidad: {item.capacidad}</Text>
+                        <Text style={styles.itemText}>Guardia Asignado: {item.guardiaAsignado ? `${item.guardiaAsignado.nombre} ${item.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(item._id)}>
                                 <Text style={styles.buttonText}>Ver</Text>
@@ -125,12 +123,12 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Detalles del Incidente</Text>
-                        <Text style={styles.itemText}>Fecha: {selectedIncidente?.fecha && formatDate(selectedIncidente.fecha)}</Text>
-                        <Text style={styles.itemText}>Hora: {selectedIncidente?.hora}</Text>
-                        <Text style={styles.itemText}>Lugar: {selectedIncidente?.lugar}</Text>
-                        <Text style={styles.itemText}>Tipo: {selectedIncidente?.tipo}</Text>
-                        <Text style={styles.itemText}>Descripción: {selectedIncidente?.descripcion}</Text>
+                        <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
+                        <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
+                        <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
+                        <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
+                        <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
+                        <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
@@ -139,9 +137,6 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
                     </View>
                 </View>
             </Modal>
-            <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
-                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -240,16 +235,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
     },
-    bo: {
-        backgroundColor: '#2A628F',
-        padding: 10,
-        marginTop: 10,
-        marginBottom: 20,
-        borderRadius: 8,
-        alignItems: 'center',
-        borderColor: '#ccc',
-        borderWidth: 1,
-    },
 });
 
-export default MostrarIncidentes;
+export default ListaJaulas;

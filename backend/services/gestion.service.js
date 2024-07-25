@@ -7,6 +7,7 @@ async function getGuardias() {
     try {
         const guardias = await Guardia.find().select({
             _id: 1,
+            rut: 1,
             nombre: 1,
             apellido: 1,
             situacion_laboral: 1

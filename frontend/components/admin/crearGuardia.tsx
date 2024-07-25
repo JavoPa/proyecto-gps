@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { postGuardia, getGuardias } from '@/services/gestion.service';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 
 const GuardiaForm: React.FC = () => {
     const [rut, setRut] = useState('');
@@ -10,13 +11,13 @@ const GuardiaForm: React.FC = () => {
     const [fono, setFono] = useState('');
     const [correo, setCorreo] = useState('');
     const [password, setPassword] = useState('');
-    const [situacionLaboral, setSituacionLaboral] = useState('');
+    const [situacionLaboral, setSituacionLaboral] = useState('Contratado');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const navigation = useNavigation();
 
     const handleSubmit = async () => {
-        if (rut === '' || nombre === '' || apellido === '' || fono === '' || correo === '' || password === '' || situacionLaboral === '') {
+        if (rut === '' || nombre === '' || apellido === '' || fono === '' || correo === '' || password === '') {
             setErrorMessage('Todos los campos son obligatorios.');
             return;
         }
@@ -87,12 +88,17 @@ const GuardiaForm: React.FC = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Situación Laboral"
-                value={situacionLaboral}
-                onChangeText={setSituacionLaboral}
-            />
+            <View style={styles.pickerContainer}>
+                <Text style={styles.pickerLabel}>Situación Laboral</Text>
+                <Picker
+                    selectedValue={situacionLaboral}
+                    onValueChange={(itemValue) => setSituacionLaboral(itemValue)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Contratado" value="Contratado" />
+                    <Picker.Item label="Despedido" value="Despedido" />
+                </Picker>
+            </View>
             <Button title="Guardar" onPress={handleSubmit} />
         </View>
     );
@@ -117,6 +123,20 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         paddingLeft: 8,
         marginBottom: 16,
+    },
+    pickerContainer: {
+        marginBottom: 16,
+    },
+    pickerLabel: {
+        fontSize: 16,
+        marginBottom: 8,
+    },
+    picker: {
+        height: 40,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 4,
+        width: '100%',
     },
     errorText: {
         color: 'red',

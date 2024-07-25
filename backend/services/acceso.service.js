@@ -29,7 +29,7 @@ const generarToken = async (usuarioId) => {
     // let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: null, salida: null });
 
     // Busca un acceso pendiente del usuario (salida null)
-    let acceso = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
+    let acceso = await Acceso.findOne({ usuario: usuarioId, salida: null });
     // Si existe un acceso pendiente, se actualiza el token y la fecha de expiración
     if(acceso){
       acceso.token = token;
@@ -212,19 +212,21 @@ async function ingresoInvitado(body, guardiaId) {
  */
 async function getAccesoActivo(usuarioId) {
   try {
-    // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+    // Buscar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
     const accesoExistente = await Acceso.findOne({ usuario: usuarioId, entrada: { $ne: null }, salida: null });
     if (accesoExistente) {
-      return [null, 'Ya posees una bicicleta registrada en el sistema.'];
+      return ['Bicicleta registrada', null];
+    }else{
+      return ['Bicicleta no registrada', null];
     }
     // Verificar si el estudiante tiene un token activo (token sin escanear)
-    const accesoActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
-    if (!accesoActivo) {
-      return [null, 'No posees un token activo.'];
-    }
+    // const accesoActivo = await Acceso.findOne({ usuario: usuarioId, entrada: null, expiryDate: { $gt: new Date() } });
+    // if (!accesoActivo) {
+    //   return [null, 'No posees un token activo.'];
+    // }
   
     // Devolver el token
-    return [accesoActivo, null];
+    //return [accesoActivo, null];
   } catch (error) {
     handleError(error, "acceso.service -> getAccesoActivo");
     return [null, error];
