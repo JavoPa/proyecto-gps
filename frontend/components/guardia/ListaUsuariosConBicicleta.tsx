@@ -127,19 +127,23 @@ const ListaUsuariosConBicicleta: React.FC = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Detalles del Usuario</Text>
-                        <Text style={styles.itemText}>Nombre: {selectedUsuario?.nombre} {selectedUsuario?.apellido}</Text>
-                        <Text style={styles.itemText}>RUT: {selectedUsuario?.rut}</Text>
-                        <Text style={styles.itemText}>Fono: {selectedUsuario?.fono}</Text>
-                        <Text style={styles.itemText}>Correo: {selectedUsuario?.correo}</Text>
-                        <Text style={styles.itemText}>Rol: {selectedUsuario?.rol}</Text>
-                        {selectedUsuario?.bicicleta && (
+                        {selectedUsuario && (
                             <>
-                                <Text style={styles.itemText}>Marca: {selectedUsuario.bicicleta.marca}</Text>
-                                <Text style={styles.itemText}>Modelo: {selectedUsuario.bicicleta.modelo}</Text>
-                                <Text style={styles.itemText}>Color: {selectedUsuario.bicicleta.color}</Text>
-                                <Text style={styles.itemText}>Tipo: {selectedUsuario.bicicleta.tipo}</Text>
-                                <Text style={styles.itemText}>Descripción: {selectedUsuario.bicicleta.descripcion}</Text>
-                                <Text style={styles.itemText}>Estado: {selectedUsuario.bicicleta.estado}</Text>
+                                <Text style={styles.itemText}>Nombre: {selectedUsuario.nombre} {selectedUsuario.apellido}</Text>
+                                <Text style={styles.itemText}>RUT: {selectedUsuario.rut}</Text>
+                                <Text style={styles.itemText}>Fono: {selectedUsuario.fono}</Text>
+                                <Text style={styles.itemText}>Correo: {selectedUsuario.correo}</Text>
+                                <Text style={styles.itemText}>Rol: {selectedUsuario.rol}</Text>
+                                {selectedUsuario.bicicleta && (
+                                    <>
+                                        <Text style={styles.itemText}>Marca: {selectedUsuario.bicicleta.marca}</Text>
+                                        <Text style={styles.itemText}>Modelo: {selectedUsuario.bicicleta.modelo}</Text>
+                                        <Text style={styles.itemText}>Color: {selectedUsuario.bicicleta.color}</Text>
+                                        <Text style={styles.itemText}>Tipo: {selectedUsuario.bicicleta.tipo}</Text>
+                                        <Text style={styles.itemText}>Descripción: {selectedUsuario.bicicleta.descripcion}</Text>
+                                        <Text style={styles.itemText}>Estado: {selectedUsuario.bicicleta.estado}</Text>
+                                    </>
+                                )}
                             </>
                         )}
                         <View style={styles.modalButtonContainer}>
