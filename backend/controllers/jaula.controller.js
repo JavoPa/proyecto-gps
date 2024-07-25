@@ -1,6 +1,6 @@
 const Jaula = require('../models/jaula.model');
+const Guardia = require('../models/guardia.model');
 const Acceso = require('../models/acceso.model');
-
 
 async function listarJaulas(req, res) {
     try {
@@ -144,6 +144,18 @@ async function eliminarJaula(req, res) {
     }
 }
 
+async function getGuardiaAsignado(req, res) {
+    try {
+        const jaulaId = req.params.id;
+        const jaula = await Jaula.findById(jaulaId);
+        const guardiaRes = await Guardia.findById(jaula.guardiaAsignado).select('-password');
+
+        res.status(200).json(guardiaRes);
+    } catch (error) {
+        console.error('Error al listar las jaulas', error);
+    }
+}
+
 async function getJaulaAsignada(req, res) {
     try {
         const guardiaId = req.id;
@@ -177,5 +189,4 @@ async function getJaulaAsignada(req, res) {
     }
 }
 
-
-module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula, getJaulaAsignada };
+module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula, getGuardiaAsignado, getJaulaAsignada };
