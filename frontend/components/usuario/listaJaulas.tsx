@@ -103,7 +103,7 @@ const ListaJaulas: React.FC = () => {
             console.error('Error', error);
         }
     };
-    
+
     const handleOpenMaps = () => {
         try {
             if (selectedJaula?.ubicacion) {
@@ -178,9 +178,13 @@ const ListaJaulas: React.FC = () => {
                             <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                 <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                             </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
                             </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleNotification}>
                                 <Text style={styles.modalButtonText}>Solicitar guardia</Text>
                             </TouchableOpacity>
@@ -271,7 +275,7 @@ const styles = StyleSheet.create({
     modalButtonContainer: {
         marginTop: 16,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
     },
     modalButton: {
         backgroundColor: '#2A628F',
