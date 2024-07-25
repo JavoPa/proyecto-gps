@@ -38,7 +38,7 @@ const Historial: React.FC = () => {
     );
 
     const formatDate = (date: string | null) => {
-        return date ? new Date(date).toLocaleString() : 'null';
+        return date ? new Date(date).toLocaleString() : 'No registrada';
     };
 
     if (loading) {
@@ -56,9 +56,9 @@ const Historial: React.FC = () => {
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.item}>
+                        <Text>Nombre: {item.usuario.nombre}</Text>
                         <Text>Entrada: {formatDate(item.entrada)}</Text>
                         <Text>Salida: {formatDate(item.salida)}</Text>
-                        <Text>Usuario: {item.usuario.nombre}</Text>
                     </View>
                 )}
                 ListEmptyComponent={<Text>No hay historial disponible.</Text>}

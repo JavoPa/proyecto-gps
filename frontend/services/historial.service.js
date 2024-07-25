@@ -12,3 +12,16 @@ export async function getHistorialUsuario() {
         }
     }
 }
+
+export async function getAllHistorial() {
+    try {
+        const response = await axios.get('/guardias/historial');
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            return error.response.data;
+        } else {
+            return { message: 'Ocurrió un error en la api' };
+        }
+    }
+}
