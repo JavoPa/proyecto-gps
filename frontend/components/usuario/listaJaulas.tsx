@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
 import { getJaulas, getJaulaById } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
+import axios from '../../services/root.service';
 
 interface Guardia {
     _id: string;
@@ -76,6 +77,33 @@ const ListaJaulas: React.FC = () => {
         }
     };
 
+    const handleNotification = async () => {
+        try {
+            const response = await axios.get(`/jaulas/${selectedJaula?._id}/guardia`);
+            if (!response.data) {
+                alert("No hay guardia asignado a esa jaula");
+                return;
+            }
+            const guardiaData = response.data;
+            const pushToken = guardiaData.pushToken;
+
+            const notificationResponse = await axios.post(`/users/notif`, {
+                tokens: pushToken,
+                message: `Se le solicita en bicicletero ${selectedJaula?.identificador}`
+            });
+
+            if (notificationResponse.data.tickets[0].status === 'ok') {
+                alert('Guardia solicitado');
+                return;
+            } else {
+                alert('No se pudo enviar la notificación, intente de nuevo');
+                return;
+            }
+        } catch (error) {
+            console.error('Error', error);
+        }
+    };
+    
     const handleOpenMaps = () => {
         try {
             if (selectedJaula?.ubicacion) {
@@ -152,6 +180,9 @@ const ListaJaulas: React.FC = () => {
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleNotification}>
+                                <Text style={styles.modalButtonText}>Solicitar guardia</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
