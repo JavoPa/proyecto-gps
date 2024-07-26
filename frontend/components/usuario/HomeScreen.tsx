@@ -34,7 +34,7 @@ export default function HomeScreen() {
           style={styles.getStartedText}
           lightColor="rgba(0,0,0,0.8)"
           darkColor="rgba(255,255,255,0.8)">
-          Estado actual de tu acceso
+          Estado actual de tu acceso: 
         </Text>
 
         <View
@@ -52,6 +52,11 @@ const styles = StyleSheet.create({
   getStartedContainer: {
     alignItems: 'center',
     marginHorizontal: 50,
+    padding: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   homeScreenFilename: {
     marginVertical: 7,
