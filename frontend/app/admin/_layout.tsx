@@ -48,7 +48,7 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '',
+          title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal.usuarios" asChild>
