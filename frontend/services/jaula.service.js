@@ -103,3 +103,15 @@ export async function getJaulaAsignada() {
     }
   }
 }
+export async function salidaGuardiaAdmin(jaulaId) {
+  try {
+    const response = await axios.post('/jaulas/salidaGuardia', { jaulaId });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}
