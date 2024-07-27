@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { getGuardias, deleteGuardia, getGuardiaById, updateGuardia } from '@/services/gestion.service';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 
 interface Guardia {
     _id: string;
@@ -19,10 +20,11 @@ const ListaGuardias: React.FC = () => {
     const [filteredGuardias, setFilteredGuardias] = useState<Guardia[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedGuardia, setSelectedGuardia] = useState<Guardia | null>(null);
+    const [originalGuardia, setOriginalGuardia] = useState<Guardia | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const navigation = useNavigation();
+    const [error, setError] = useState<string | null>(null);
 
     useFocusEffect(
         useCallback(() => {
@@ -80,6 +82,7 @@ const ListaGuardias: React.FC = () => {
             setLoading(true);
             const response = await getGuardiaById(id);
             setSelectedGuardia(response);
+            setOriginalGuardia(response);
             setModalVisible(true);
         } catch (error) {
             console.error('Error fetching guardia details:', error);
@@ -91,23 +94,28 @@ const ListaGuardias: React.FC = () => {
 
     const handleUpdate = async () => {
         if (selectedGuardia) {
-            const updatedGuardia = {
-                rut: selectedGuardia.rut,
-                nombre: selectedGuardia.nombre,
-                apellido: selectedGuardia.apellido,
-                fono: selectedGuardia.fono,
-                correo: selectedGuardia.correo,
-                password: selectedGuardia.password,
-                situacion_laboral: selectedGuardia.situacion_laboral
-            };
             try {
+                
+                setError(null);
+                const currentGuardia = await getGuardiaById(selectedGuardia._id);
+    
+                const updatedGuardia = {
+                    rut: selectedGuardia.rut,
+                    nombre: selectedGuardia.nombre,
+                    apellido: selectedGuardia.apellido,
+                    fono: selectedGuardia.fono,
+                    correo: selectedGuardia.correo,
+                    password: selectedGuardia.password || currentGuardia.password,
+                    situacion_laboral: selectedGuardia.situacion_laboral
+                };
+    
                 const response = await updateGuardia(selectedGuardia._id, updatedGuardia);
-                if (response.state === "Success") {
+                if (response && response._id) {
                     setIsEditing(false);
                     fetchGuardias();
                     handleViewDetails(selectedGuardia._id);
                 } else {
-                    Alert.alert('Error', 'No se pudo actualizar el guardia');
+                    setError(response.message || "Error al crear el guardias");
                 }
             } catch (error) {
                 console.error('Error updating guardia:', error);
@@ -115,19 +123,21 @@ const ListaGuardias: React.FC = () => {
             }
         }
     };
-
     const handleEdit = () => {
         setIsEditing(true);
+        setOriginalGuardia(selectedGuardia);
     };
-
     const handleBackToList = () => {
         setSelectedGuardia(null);
         setIsEditing(false);
         setModalVisible(false);
     };
-
     const handleCancelEdit = () => {
+        if (originalGuardia) {
+            setSelectedGuardia(originalGuardia);
+        }
         setIsEditing(false);
+        setError(null);
     };
 
     if (loading) {
@@ -201,12 +211,20 @@ const ListaGuardias: React.FC = () => {
                                     onChangeText={fono => setSelectedGuardia(prev => prev ? { ...prev, fono } : null)}
                                     placeholder="Fono"
                                 />
-                                <TextInput
-                                    style={styles.input}
-                                    value={selectedGuardia?.situacion_laboral}
-                                    onChangeText={situacion_laboral => setSelectedGuardia(prev => prev ? { ...prev, situacion_laboral } : null)}
-                                    placeholder="Situación Laboral"
-                                />
+                                <Picker
+                                    selectedValue={selectedGuardia?.situacion_laboral}
+                                    onValueChange={situacion_laboral => setSelectedGuardia(prev => prev ? { ...prev, situacion_laboral } : null)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="Vigente" value="Vigente" />
+                                    <Picker.Item label="No Vigente" value="No Vigente" />
+                                </Picker>
+
+                                {error && (
+                                    <View>
+                                    <Text style={styles.errorText}>{error}</Text>
+                                    </View>
+                                )}
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleUpdate}>
                                         <Text style={styles.modalButtonText}>Guardar Cambios</Text>
@@ -305,6 +323,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
     },
+    picker: {
+        height: 40,
+        width: '100%',
+        marginBottom: 16,
+    },
     input: {
         height: 40,
         borderColor: '#ccc',
@@ -321,6 +344,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 16,
     },
+    errorText: {
+        textAlign: 'center',
+        fontSize: 15,
+        marginTop: 10,
+        marginBottom: 10,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        padding: 10,
+      },
     modalContent: {
         width: '90%',
         maxWidth: 600,
