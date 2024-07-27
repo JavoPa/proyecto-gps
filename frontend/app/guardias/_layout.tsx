@@ -46,7 +46,7 @@ export default function GuardiasLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
@@ -93,6 +93,21 @@ export default function GuardiasLayout() {
             }}
         />
 
+      <Tabs.Screen
+        name="historial"
+        options={{
+          title: 'Historial',
+          tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="incidente"
+        options={{
+          title: 'Incidentes',
+          tabBarIcon: ({ color }) => <TabBarIcon name="warning" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

@@ -208,7 +208,6 @@ const ListaJaulas: React.FC = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
-                        <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                         <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
@@ -217,20 +216,27 @@ const ListaJaulas: React.FC = () => {
                             <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                 <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                             </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             {selectedJaula && !selectedJaula.guardiaAsignado && !jaulaAsignada && (
                                 <TouchableOpacity style={styles.modalButton} onPress={handleAsignarGuardia}>
                                     <Text style={styles.modalButtonText}>Ingresar como guardia</Text>
                                 </TouchableOpacity>
                             )}
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             {selectedJaula && jaulaAsignada && selectedJaula._id === jaulaAsignada._id && (
                                 <TouchableOpacity style={styles.modalButton} onPress={handleSalirGuardia}>
                                     <Text style={styles.modalButtonText}>Salir de la Jaula</Text>
                                 </TouchableOpacity>
                             )}
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 </View>
             </Modal>
@@ -317,7 +323,7 @@ const styles = StyleSheet.create({
     modalButtonContainer: {
         marginTop: 16,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
     },
     modalButton: {
         backgroundColor: '#2A628F',

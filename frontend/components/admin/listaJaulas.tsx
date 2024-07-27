@@ -190,7 +190,6 @@ const ListaJaulas: React.FC = () => {
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
                         <Text style={styles.itemText}>Identificador: {item.identificador}</Text>
-                        <Text style={styles.itemText}>Ubicación: {item.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {item.capacidad}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {item.guardiaAsignado ? `${item.guardiaAsignado.nombre} ${item.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.buttonContainer}>
@@ -255,7 +254,6 @@ const ListaJaulas: React.FC = () => {
                         ) : (
                             <>
                                 <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
-                                <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                                 <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                                 <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                                 <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
@@ -264,9 +262,13 @@ const ListaJaulas: React.FC = () => {
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                         <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                                     </TouchableOpacity>
+                                </View>
+                                <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                         <Text style={styles.modalButtonText}>Volver al Listado</Text>
                                     </TouchableOpacity>

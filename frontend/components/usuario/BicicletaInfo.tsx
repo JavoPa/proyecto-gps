@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Modal, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { Modal, TextInput, StyleSheet, Alert } from 'react-native';
+import CustomButton from '@/components/customButton';
 import { getBicicleta, postBicicleta, putBicicleta } from '@/services/bicicleta.service';
 import { Text, View } from '../Themed';
 import Colors from '@/constants/Colors';
@@ -116,10 +117,15 @@ export default function BicicletaInfo() {
             <Text style={styles.bicicletaDetail}>{bicicleta?.color || 'No definido'}</Text>
           </View>
         </View>
-        <Button
+        <CustomButton
+                onPress={() => setModalVisible(true)}
+                title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
+            />
+        {/* <Button
           title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
           onPress={() => setModalVisible(true)}
-        />
+          color="#2A628F"
+        /> */}
         </>
       )}
       <BicicletaModal 
@@ -130,61 +136,6 @@ export default function BicicletaInfo() {
         handleActualizar={handleActualizar}
         fields={fields} 
       ></BicicletaModal>
-      {/* <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.titleContainer}>{!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}</Text>
-
-            <View style={styles.inputRow}>
-              <Text style={styles.title}>Marca: </Text>
-              <TextInput 
-                style={styles.input} 
-                onChangeText={(value) => handleFieldChange('marca', value)}
-                value={fields.marca}
-                maxLength={20}
-                placeholder="Ej: Oxford"
-                placeholderTextColor='gray'
-                textAlign="left"
-              />
-            </View>
-            <View style={styles.inputRow}>
-              <Text style={styles.title}>Modelo: </Text>
-              <TextInput
-                style={styles.input} 
-                onChangeText={(value) => handleFieldChange('color', value)}
-                value={fields.color}
-                maxLength={20}
-                placeholder="Ej: Azul"
-                placeholderTextColor='gray'
-                textAlign="left"
-              />
-            </View>
-            <View style={styles.buttonContainer}>
-              <View style={styles.button}>
-                <Button
-                  title="Guardar"
-                  onPress={handleActualizar}
-                  color='green'
-                />
-              </View>
-              <View style={styles.button}>
-                <Button
-                  title="Cancelar"
-                  onPress={() => setModalVisible(false)}
-                  color='red'
-                />
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal> */}
     </View>
   );
 }
@@ -201,17 +152,24 @@ const styles = StyleSheet.create({
   bicicletaContainer: {
     padding: 20,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#FFF',
     marginVertical: 10,
     height: 150,
     width: 300,
+    marginBottom: 30,
+    // marginHorizontal: 50,
+    // padding: 20,
+    // backgroundColor: '#FFF',
+    // borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   bicicletaTitle: {
     fontSize: 16,
@@ -221,51 +179,5 @@ const styles = StyleSheet.create({
   bicicletaDetail: {
     fontSize: 16,
     color: Colors.light.text,
-  },
-  //
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional: This adds a semi-transparent background
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#25292e',
-    borderRadius: 18,
-    padding: 20,
-  },
-  titleContainer: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  title: {
-    color: '#fff',
-    fontSize: 14,
-
-  },
-  input: {
-    height: 40,
-    width: 150,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginLeft: 10,
-    padding: 5,
-    color: 'white',
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    backgroundColor: '#25292e',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    backgroundColor: '#25292e',
-  },
-  button: {
-    margin: 10, // Agrega un margen a los botones
   },
 });

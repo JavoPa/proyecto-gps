@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { getJaulas, getJaulaById } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
+import axios from '../../services/root.service';
 
 interface Guardia {
     _id: string;
@@ -76,6 +77,33 @@ const ListaJaulas: React.FC = () => {
         }
     };
 
+    const handleNotification = async () => {
+        try {
+            const response = await axios.get(`/jaulas/${selectedJaula?._id}/guardia`);
+            if (!response.data) {
+                alert("No hay guardia asignado a esa jaula");
+                return;
+            }
+            const guardiaData = response.data;
+            const pushToken = guardiaData.pushToken;
+
+            const notificationResponse = await axios.post(`/users/notif`, {
+                tokens: pushToken,
+                message: `Se le solicita en bicicletero ${selectedJaula?.identificador}`
+            });
+
+            if (notificationResponse.data.tickets[0].status === 'ok') {
+                alert('Guardia solicitado');
+                return;
+            } else {
+                alert('No se pudo enviar la notificación, intente de nuevo');
+                return;
+            }
+        } catch (error) {
+            console.error('Error', error);
+        }
+    };
+
     const handleOpenMaps = () => {
         try {
             if (selectedJaula?.ubicacion) {
@@ -121,7 +149,6 @@ const ListaJaulas: React.FC = () => {
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
                         <Text style={styles.itemText}>Identificador: {item.identificador}</Text>
-                        <Text style={styles.itemText}>Ubicación: {item.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {item.capacidad}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {item.guardiaAsignado ? `${item.guardiaAsignado.nombre} ${item.guardiaAsignado.apellido}` : 'No asignado'}</Text>
                         <View style={styles.buttonContainer}>
@@ -141,7 +168,6 @@ const ListaJaulas: React.FC = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
-                        <Text style={styles.itemText}>Ubicación: {selectedJaula?.ubicacion}</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                         <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
@@ -150,8 +176,15 @@ const ListaJaulas: React.FC = () => {
                             <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                 <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
                             </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleNotification}>
+                                <Text style={styles.modalButtonText}>Solicitar guardia</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -161,14 +194,16 @@ const ListaJaulas: React.FC = () => {
     );
 };
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EDF2F4',
+        paddingHorizontal: '5%',
+        // backgroundColor: '#fff',
     },
     title: {
-        fontSize: 24,
+        fontSize: width > 600 ? 32 : 24,
         fontWeight: 'bold',
         marginBottom: 16,
         color: '#13293D',
@@ -191,7 +226,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     itemText: {
-        fontSize: 18,
+        fontSize: width > 600 ? 22 : 18,
         color: '#16324F',
     },
     buttonContainer: {
@@ -231,7 +266,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalTitle: {
-        fontSize: 24,
+        fontSize: width > 600 ? 28 : 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 16,
@@ -240,7 +275,7 @@ const styles = StyleSheet.create({
     modalButtonContainer: {
         marginTop: 16,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
     },
     modalButton: {
         backgroundColor: '#2A628F',
