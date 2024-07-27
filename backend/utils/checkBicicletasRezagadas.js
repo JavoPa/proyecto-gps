@@ -11,16 +11,16 @@ async function checkBicicletasRezagadas() {
     console.log("Revisando bicicletas rezagadas...");
     try {
         // Se buscan los registros de bicicletas que no han salido
-        registros = await Acceso.find({ entrada: { $ne: null }, salida: null });
-        for (registro of registros){
+        const registros = await Acceso.find({ entrada: { $ne: null }, salida: null });
+        for (const registro of registros){
             // Se obtiene el usuario asociado al registro
-            usuario = await Usuario.findById(registro.usuario);
+            const usuario = await Usuario.findById(registro.usuario);
             //console.log("Usuario: ", usuario.nombre, " ", usuario.apellido, "RUT: ", usuario.rut, "Correo: ", usuario.correo);
             // console.log("Bicicleta rezagada: ", registro);
 
             // Envío de notificación push al usuario
             if (usuario.pushToken){
-                message = `Tu bicicleta aún se encuentra en el bicicletero. Por favor, retírala lo antes posible. 🚴`;
+                const message = `Tu bicicleta aún se encuentra en el bicicletero. Por favor, retírala lo antes posible. 🚴`;
                 await enviarPushNotification([usuario.pushToken], message);
             }
         }

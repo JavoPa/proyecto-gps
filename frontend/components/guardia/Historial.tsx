@@ -1,12 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { getAllHistorial } from '@/services/historial.service';
 import { useFocusEffect } from '@react-navigation/native';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import { LineChart } from 'react-native-chart-kit';
 import { Picker } from '@react-native-picker/picker';
-
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
 interface HistorialItem {
     _id: string;
@@ -110,13 +107,21 @@ const HistorialViewer: React.FC = () => {
         labels: Array.from({ length: new Date(selectedMonth + '-01').getDate() }, (_, i) => (i + 1).toString()),
         datasets: [
             {
-                label: 'Accesos del Mes',
                 data: getMonthlyData(selectedMonth),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 1,
+                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
+                strokeWidth: 2,
             },
         ],
+    };
+
+    const chartConfig = {
+        backgroundGradientFrom: '#ffffff',
+        backgroundGradientTo: '#ffffff',
+        decimalPlaces: 0,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        style: {
+            borderRadius: 16,
+        },
     };
 
     const renderItem = ({ item }: { item: HistorialItem }) => (
@@ -167,26 +172,35 @@ const HistorialViewer: React.FC = () => {
             )}
 
             {viewMode === 'chart' && (
-                <View style={styles.chartContainer}>
-                    <Text style={styles.pickerLabel}>Selecciona el Mes</Text>
-                    <Picker
-                        selectedValue={selectedMonth}
-                        style={styles.picker}
-                        onValueChange={(itemValue) => setSelectedMonth(itemValue)}
-                    >
-                        {getPastMonths().map(month => {
-                            const [year, monthNum] = month.split('-');
-                            return (
-                                <Picker.Item
-                                    key={month}
-                                    label={`${monthNum}/${year}`}
-                                    value={month}
-                                />
-                            );
-                        })}
-                    </Picker>
-                    <Line data={chartData} options={{ responsive: true }} />
-                </View>
+                <ScrollView horizontal contentContainerStyle={styles.chartContainer}>
+                    <View style={styles.chartInnerContainer}>
+                        <Text style={styles.pickerLabel}>Selecciona el Mes</Text>
+                        <Picker
+                            selectedValue={selectedMonth}
+                            style={styles.picker}
+                            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+                        >
+                            {getPastMonths().map(month => {
+                                const [year, monthNum] = month.split('-');
+                                return (
+                                    <Picker.Item
+                                        key={month}
+                                        label={`${monthNum}/${year}`}
+                                        value={month}
+                                    />
+                                );
+                            })}
+                        </Picker>
+                        <LineChart
+                            data={chartData}
+                            width={Dimensions.get('window').width * 1.5} // Ajusta el ancho para el gráfico
+                            height={220} // Ajusta la altura del gráfico
+                            chartConfig={chartConfig}
+                            bezier
+                            style={styles.chart}
+                        />
+                    </View>
+                </ScrollView>
             )}
         </View>
     );
@@ -241,10 +255,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     chartContainer: {
-        marginBottom: 16,
-        width: '100%',
-        height: 300,
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 10,
+    },
+    chartInnerContainer: {
+        width: Dimensions.get('window').width * 1.5, // Ajusta el ancho del contenedor del gráfico
+        alignItems: 'center',
+    },
+    chart: {
+        borderRadius: 16,
+        marginVertical: 8,
     },
     pickerLabel: {
         fontSize: 16,
@@ -253,12 +275,12 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     picker: {
-        textAlign: "center",
-        width: '40%',
+        textAlign: 'center',
+        width: '50%',
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 2,
         backgroundColor: '#fff',
         color: '#333',
     },

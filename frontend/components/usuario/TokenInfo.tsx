@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Button} from 'react-native';
+import { StyleSheet, Button, Image} from 'react-native';
 import { registrarIngreso, getAcceso, registrarSalida } from '@/services/acceso.service';
 import QRCode from 'react-native-qrcode-svg';
 import { Text, View } from '../Themed';
@@ -13,7 +13,18 @@ export default function TokenInfo() {
       const [acceso, setAcceso] = useState<Acceso | null>(null);
       const [isIngresada, setIsIngresada] = useState<boolean>(false);
       const [error, setError] = useState<string | null>(null);
-      const [timeLeft, setTimeLeft] = useState<number | null>(null); // Inicia el temporizador 
+      const [timeLeft, setTimeLeft] = useState<number | null>(null); // Inicia el temporizador
+      
+      useState(() => {
+        getAcceso().then((response) => {
+          if(response.state === "Success" && response.data === "Bicicleta registrada") {
+            setIsIngresada(true);
+          } else if(response.state === "Success" && response.data === "Bicicleta no registrada") {
+            setIsIngresada(false);
+          }
+        });
+      });
+
         useEffect(() => {
               // Salir antes si llega a 0
             if(!timeLeft) {
@@ -110,7 +121,11 @@ export default function TokenInfo() {
             />
         </View>
       ) : isIngresada ? (
-        <View>
+        <View style={styles.container}>
+          <Text style={styles.title}>Bicicleta Registrada</Text>
+          <Text style={styles.separator}></Text>
+          <Image source={require('../../assets/images/salir.png')} style={styles.icon} />
+          <Text style={styles.separator}></Text>
           <Text style={styles.getStartedText}>Presiona el botón para registrar tu salida</Text>
           <View style={styles.registrarButton}>
             <Button
@@ -120,7 +135,11 @@ export default function TokenInfo() {
           </View>
         </View>
       ) : (
-        <View> 
+        <View style={styles.container}>
+          <Text style={styles.title}>Bicicleta No Registrada</Text>
+          <Text style={styles.separator}></Text>
+          <Image source={require('../../assets/images/ingresar.png')} style={styles.icon} />
+          <Text style={styles.separator}></Text>
           <Text style={styles.getStartedText}>Presiona el botón para registrar tu ingreso</Text>
           <View style={styles.registrarButton}>
             <Button
@@ -141,9 +160,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
   tokenText: {
     textAlign: 'center',
     fontSize: 50,
+  },
+  icon:{
+    width: 225,
+    height: 125,
   },
   errorText: {
     textAlign: 'center',
