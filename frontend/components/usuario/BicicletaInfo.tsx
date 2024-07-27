@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Modal, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { Modal, TextInput, StyleSheet, Alert } from 'react-native';
+import CustomButton from '@/components/customButton';
 import { getBicicleta, postBicicleta, putBicicleta } from '@/services/bicicleta.service';
 import { Text, View } from '../Themed';
 import Colors from '@/constants/Colors';
@@ -116,10 +117,14 @@ export default function BicicletaInfo() {
             <Text style={styles.bicicletaDetail}>{bicicleta?.color || 'No definido'}</Text>
           </View>
         </View>
-        <Button
+        <CustomButton
+                onPress={() => setModalVisible(true)}
+                title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
+            />
+        {/* <Button
           title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
           onPress={() => setModalVisible(true)}
-        />
+        /> */}
         </>
       )}
       <BicicletaModal 
