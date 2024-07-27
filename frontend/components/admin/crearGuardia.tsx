@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { postGuardia, getGuardias } from '@/services/gestion.service';
-import { useNavigation } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState, useCallback  } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { postGuardia } from '@/services/gestion.service';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const GuardiaForm: React.FC = () => {
     const [rut, setRut] = useState('');
@@ -11,17 +10,32 @@ const GuardiaForm: React.FC = () => {
     const [fono, setFono] = useState('');
     const [correo, setCorreo] = useState('');
     const [password, setPassword] = useState('');
-    const [situacionLaboral, setSituacionLaboral] = useState('Contratado');
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
 
-    const handleSubmit = async () => {
-        if (rut === '' || nombre === '' || apellido === '' || fono === '' || correo === '' || password === '') {
-            setErrorMessage('Todos los campos son obligatorios.');
-            return;
-        }
 
+    useFocusEffect(
+        useCallback(() => {
+            setRut('');
+            setNombre('');
+            setApellido('');
+            setFono('');
+            setCorreo('');
+            setPassword('');
+            setError(null);
+
+            return () => {
+                setRut('');
+                setNombre('');
+                setApellido('');
+                setFono('');
+                setCorreo('');
+                setPassword('');
+                setError(null);
+            };
+        }, [])
+    );
+    const handleSubmit = async () => {
         const newGuardia = {
             rut,
             nombre,
@@ -31,24 +45,22 @@ const GuardiaForm: React.FC = () => {
             password,
             rol: 'Guardia', 
             cargo: 'Guardia',
-            situacion_laboral: situacionLaboral
+            situacion_laboral: 'Contratado'
         };
 
         const response = await postGuardia(newGuardia);
 
         if (response && response._id) {
-            getGuardias();
             Alert.alert('Éxito', 'Guardia creado correctamente');
             navigation.goBack();
         } else {
-            setErrorMessage(response.message || 'No se pudo crear el guardia');
+            setError(response.message || 'Hubo un error al cargar la bicicleta 🚲');
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Crear Nuevo Guardia</Text>
-            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
             <TextInput
                 style={styles.input}
                 placeholder="RUT"
@@ -88,18 +100,14 @@ const GuardiaForm: React.FC = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <View style={styles.pickerContainer}>
-                <Text style={styles.pickerLabel}>Situación Laboral</Text>
-                <Picker
-                    selectedValue={situacionLaboral}
-                    onValueChange={(itemValue) => setSituacionLaboral(itemValue)}
-                    style={styles.picker}
-                >
-                    <Picker.Item label="Contratado" value="Contratado" />
-                    <Picker.Item label="Despedido" value="Despedido" />
-                </Picker>
-            </View>
-            <Button title="Guardar" onPress={handleSubmit} color="#2A628F"/>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Guardar</Text>
+            </TouchableOpacity> 
+            {error && (
+                <View>
+                <Text style={styles.errorText}>{error}</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -119,6 +127,7 @@ const styles = StyleSheet.create({
     input: {
         height: 40,
         borderColor: '#ccc',
+        backgroundColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 4,
         paddingLeft: 8,
@@ -139,8 +148,25 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     errorText: {
-        color: 'red',
-        marginBottom: 16,
+        textAlign: 'center',
+        fontSize: 15,
+        marginTop: 10,
+        marginBottom: 10,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        padding: 10,
+      },
+    button: {
+        backgroundColor: '#2A628F',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
     },
 });
 

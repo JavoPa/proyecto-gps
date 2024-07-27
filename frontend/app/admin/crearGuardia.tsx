@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 
-import ListaGuardias from '@/components/admin/crearGuardia';
+import CrearGuardia from '@/components/admin/crearGuardia';
 import { Text, View } from '@/components/Themed';
 
-export default function ListaScreen() {
+export default function crearGuardia() {
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <ListaGuardias />
+      <CrearGuardia />
     </View>
   );
 }

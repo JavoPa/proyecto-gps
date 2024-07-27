@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-
 import ListaGuardias from '@/components/admin/listaGuardias';
 import { Text, View } from '@/components/Themed';
 
