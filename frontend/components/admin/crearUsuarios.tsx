@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
 import { useRouter } from 'expo-router';
 import { CrearUsuario } from '@/services/crear.Usuarios';
-import { max } from 'date-fns';
 
 
 const data = [
@@ -50,6 +49,17 @@ const CrearUsuarios: React.FC = () =>{
     const [cargando, setCargando] = useState(false);
 
     const router = useRouter();
+
+    const formatearRut = (rut: string) => {
+      const limpio = rut.replace(/\D/g, '');
+      const formateado = limpio.replace(/^(\d{1,2})(\d{3})(\d{3})(\w{1})$/, '$1.$2.$3-$4').slice(0, 12);
+      return formateado;
+    }
+
+    useEffect(() => {
+      setRut(formatearRut(rut));
+    },[rut]);
+
 
     const tipoLabel = () => {
         if (Tipo || isFocus) {
@@ -153,15 +163,14 @@ const CrearUsuarios: React.FC = () =>{
         }
 
     }
+
+    
   
     const handleVerificar = async () => {
-      //no permite entrada vacia
-      if(rut == 'rut'){
-        Alert.alert('No se admite Rut vacio', 'Ingrese un rut valido para buscar');
-      }
+      
       setCargando(true);
+      setRut2(formatearRut(rut));
       const resp = await validarRut(rut);
-      console.log(resp);
       if(resp != null){
         setCargando(false);
         setencontrado(true);
@@ -185,6 +194,7 @@ const CrearUsuarios: React.FC = () =>{
         setCorreo2('Correo');
         setPassword2('Contraseña');
         setSituacion('Situacion');
+        //setRut2('Rut');
       }
       setCargando(false);
     }

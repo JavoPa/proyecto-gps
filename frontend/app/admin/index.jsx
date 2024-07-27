@@ -1,4 +1,4 @@
-import { StyleSheet, Pressable, ScrollView ,ActivityIndicator, Button, Modal, TextInput, FlatList, Alert, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { StyleSheet, ScrollView ,ActivityIndicator, Modal, TextInput, Alert, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { useSession } from '@/flo';
 import { Text, View } from '@/components/Themed';
 import React, { useState, useEffect } from 'react';
@@ -222,10 +222,10 @@ export default function TabOneScreen() {
             <View style={styles.detalle}>
               <Text style={styles.titel}>Editar Usuario</Text>
               <Text style={styles.textoNoEditar}>{usuarios4.rut}</Text>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.nombre} onChangeText={setNombre}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.apellido} onChangeText={setApellido}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.fono} onChangeText={setFono}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.correo} onChangeText={setCorreo}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.nombre || 'Nombre'} onChangeText={setNombre}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.apellido || 'Apellido'} onChangeText={setApellido}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.fono || 'Fono'} onChangeText={setFono}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.correo || 'Correo'} onChangeText={setCorreo}/>
               <TextInput style={styles.textoEditar} placeholder='********' onChangeText={setContraseña}/>
               <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
