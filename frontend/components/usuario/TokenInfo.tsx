@@ -118,6 +118,7 @@ export default function TokenInfo() {
           {/* <Button
               title="Cancelar"
               onPress={handleCancelar}
+              color="#2A628F"
             /> */}
           <TouchableOpacity style={styles.registrarButton} onPress={handleCancelar}>
             <Text style={styles.buttonText}>Cancelar</Text>
@@ -133,6 +134,13 @@ export default function TokenInfo() {
           <TouchableOpacity style={styles.registrarButton} onPress={handleSalida}>
             <Text style={styles.buttonText}>Registrar Salida</Text>
           </TouchableOpacity>
+          {/* <View style={styles.registrarButton}>
+            <Button
+              title="Registrar Salida"
+              onPress={handleSalida}
+              color="#2A628F"
+            />
+          </View> */}
         </View>
       ) : (
         <View style={styles.container}>
@@ -144,6 +152,13 @@ export default function TokenInfo() {
           <TouchableOpacity style={styles.registrarButton} onPress={handleIngreso}>
             <Text style={styles.buttonText}>Registrar Ingreso</Text>
           </TouchableOpacity>
+          {/* <View style={styles.registrarButton}>
+            <Button
+              title="Registrar Ingreso"
+              onPress={handleIngreso}
+              color="#2A628F"
+            />
+          </View> */}
         </View>
       )}
       {error && <Text style={styles.errorText}>⚠ {error} ⚠</Text>}
