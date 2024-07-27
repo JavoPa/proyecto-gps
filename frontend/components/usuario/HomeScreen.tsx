@@ -3,19 +3,30 @@ import { StyleSheet } from 'react-native';
 import { MonoText } from '../StyledText';
 import { Text, View } from '../Themed';
 import { getAcceso } from '@/services/acceso.service';
-import Colors from '@/constants/Colors';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const [estado, setEstado] = useState<string | null>(null);
-  useEffect(() => {
-    getAcceso().then((response) => {
-      if(response.state === "Success") {
-        setEstado(response.data);
-      }else{
-        setEstado('Hubo un problema al obtener tu estado');
-      }
-    });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchAcceso = async () => {
+        try {
+          const response = await getAcceso();
+          if (response.state === "Success") {
+            setEstado(response.data);
+          } else {
+            setEstado('Hubo un problema al obtener tu estado');
+          }
+        } catch (error) {
+          setEstado('Hubo un problema al obtener tu estado');
+        }
+      };
+
+      fetchAcceso();
+      return () => {
+      };
+    }, [])
+  );
   return (
     <View>
       <View style={styles.getStartedContainer}>
@@ -23,7 +34,7 @@ export default function HomeScreen() {
           style={styles.getStartedText}
           lightColor="rgba(0,0,0,0.8)"
           darkColor="rgba(255,255,255,0.8)">
-          Estado actual de tu acceso
+          Estado actual de tu acceso: 
         </Text>
 
         <View
@@ -41,6 +52,11 @@ const styles = StyleSheet.create({
   getStartedContainer: {
     alignItems: 'center',
     marginHorizontal: 50,
+    padding: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   homeScreenFilename: {
     marginVertical: 7,

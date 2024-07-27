@@ -48,7 +48,7 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: '',
+          title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal.usuarios" asChild>
@@ -77,7 +77,7 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="listaGuardias"
         options={{
-          title: 'guardias',
+          title: 'Guardias',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
@@ -91,7 +91,7 @@ export default function AdminLayout() {
       <Tabs.Screen
         name="crearGuardia"
         options={{
-          title: 'Agregar Guardia',
+          title: 'Guardia',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />

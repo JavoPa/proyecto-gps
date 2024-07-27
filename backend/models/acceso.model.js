@@ -15,6 +15,11 @@ const accesoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Guardia' 
     },
+    jaula: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Jaula',
+        default: null
+    },
     entrada: { type: Date, default: null }, // Fecha y hora de entrada
     salida: { type: Date, default: null } // Fecha y hora de salida
 });

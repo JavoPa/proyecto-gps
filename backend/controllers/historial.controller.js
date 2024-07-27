@@ -1,10 +1,10 @@
 const accesoService = require("../services/historial.service");
+const path = require('path');
 
-// Obtiene el historial para un usuario específico por ID
-const getHistorialByUsuarioId = async (req, res) => {
-    const usuarioId = req.params.usuarioId; // Obtén el usuarioId de los parámetros de la solicitud
+// Obtiene el historial completo
+const getAllHistorial = async (req, res) => {
     try {
-        const historial = await accesoService.getHistorialByUsuarioId(usuarioId);
+        const historial = await accesoService.getAllHistorial();
         res.status(200).json(historial);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -21,5 +21,4 @@ const getHistorialUsuario = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-module.exports = {getHistorialByUsuarioId, getHistorialUsuario};
+module.exports = {getAllHistorial, getHistorialUsuario};

@@ -16,7 +16,22 @@ const getHistorialByUsuarioId = async (usuarioId) => {
     }
 };
 
+const getAllHistorial = async () => {
+    try {
+        const historial = await Acceso.find({})
+            .populate({
+                path: 'usuario',
+                select: 'nombre apellido rut -_id' 
+            })
+            .populate('invitado')
+            .lean()
+            .exec();
+        return historial;
+    } catch (error) {
+        throw new Error('Error al obtener el historial de accesos');
+    }
+};
 
 module.exports = {
-    getHistorialByUsuarioId,
-};
+    getHistorialByUsuarioId, getAllHistorial
+}

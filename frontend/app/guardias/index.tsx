@@ -10,7 +10,7 @@ export default function TabOneScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title} >Tab Ones</Text>
-      <Button title="Salir" onPress={()=>signOut()} />
+      <Button title="Salir" onPress={()=>signOut()} color="#2A628F"/>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/tabs/index.tsx" />
     </View>

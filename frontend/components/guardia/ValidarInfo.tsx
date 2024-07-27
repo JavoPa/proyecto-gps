@@ -191,6 +191,7 @@ export default function ValidarInfo() {
             <Button
               title="Validar"
               onPress={handleIngresar}
+              color="#2A628F"
             />
           </View>
           <View style={styles.registrarButton}>
