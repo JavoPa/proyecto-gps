@@ -99,7 +99,7 @@ const GuardiaForm: React.FC = () => {
                     <Picker.Item label="Despedido" value="Despedido" />
                 </Picker>
             </View>
-            <Button title="Guardar" onPress={handleSubmit} />
+            <Button title="Guardar" onPress={handleSubmit} color="#2A628F"/>
         </View>
     );
 };

@@ -118,6 +118,7 @@ export default function TokenInfo() {
           <Button
               title="Cancelar"
               onPress={handleCancelar}
+              color="#2A628F"
             />
         </View>
       ) : isIngresada ? (
@@ -131,6 +132,7 @@ export default function TokenInfo() {
             <Button
               title="Registrar Salida"
               onPress={handleSalida}
+              color="#2A628F"
             />
           </View>
         </View>
@@ -145,6 +147,7 @@ export default function TokenInfo() {
             <Button
               title="Registrar Ingreso"
               onPress={handleIngreso}
+              color="#2A628F"
             />
           </View>
         </View>
