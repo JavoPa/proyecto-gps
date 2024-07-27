@@ -82,17 +82,20 @@ const ListaJaulas: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        try {
-            const response = await deleteJaula(id);
-            if (response.message === 'Jaula eliminada con éxito') {
-                fetchJaulas();
-                alert('Jaula eliminada correctamente');
-            } else {
+        const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta jaula?");
+        if (confirmed) {
+            try {
+                const response = await deleteJaula(id);
+                if (response.message === 'Jaula eliminada con éxito') {
+                    fetchJaulas();
+                    alert('Jaula eliminada correctamente');
+                } else {
+                    alert('No se pudo eliminar la jaula');
+                }
+            } catch (error) {
+                console.error('Error deleting jaula:', error);
                 alert('No se pudo eliminar la jaula');
             }
-        } catch (error) {
-            console.error('Error deleting jaula:', error);
-            alert('No se pudo eliminar la jaula');
         }
     };
 
@@ -136,7 +139,7 @@ const ListaJaulas: React.FC = () => {
             };
             try {
                 const response = await updateJaula(selectedJaula._id, updatedJaula);
-                if (response.state === "Success") {
+                if (response.message === "Jaula modificada con éxito") {
                     alert('Jaula actualizada correctamente');
                     setIsEditing(false);
                     setModalVisible(false);  // Cerrar el modal
