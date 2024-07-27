@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, FlatList, ActivityIndicator, Alert, useWindowDimensions } from 'react-native';
 import { getHistorialUsuario } from '@/services/historial.service'; // Asegúrate de que la ruta sea correcta
 import { useFocusEffect } from '@react-navigation/native';
+import { Text, View } from '@/components/Themed';
 
 interface HistorialItem {
     _id: string;
@@ -13,13 +14,14 @@ interface HistorialItem {
 }
 
 const Historial: React.FC = () => {
+    const { width } = useWindowDimensions();
     const [historial, setHistorial] = useState<HistorialItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     const fetchHistorial = useCallback(async () => {
         setLoading(true);
-        setError(null); 
+        setError(null);
         try {
             const data = await getHistorialUsuario();
             setHistorial(data);
@@ -50,18 +52,18 @@ const Historial: React.FC = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
             <FlatList
                 data={historial}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <Text>Nombre: {item.usuario.nombre}</Text>
-                        <Text>Entrada: {formatDate(item.entrada)}</Text>
-                        <Text>Salida: {formatDate(item.salida)}</Text>
+                    <View style={[styles.item, { padding: width * 0.04 }]}>
+                        <Text style={[{ fontSize: width * 0.04 }]}>Nombre: {item.usuario.nombre}</Text>
+                        <Text style={[{ fontSize: width * 0.04 }]}>Entrada: {formatDate(item.entrada)}</Text>
+                        <Text style={[{ fontSize: width * 0.04 }]}>Salida: {formatDate(item.salida)}</Text>
                     </View>
                 )}
-                ListEmptyComponent={<Text>No hay historial disponible.</Text>}
+                ListEmptyComponent={<Text style={[{ fontSize: width * 0.04 }]}>No hay historial disponible.</Text>}
                 contentContainerStyle={styles.listContent}
             />
         </View>
@@ -71,13 +73,14 @@ const Historial: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        // backgroundColor: '#fff',
     },
     item: {
-        marginBottom: 15,
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 5,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ccc',
+        backgroundColor: '#FFFFFF',
     },
     listContent: {
         paddingBottom: 20,

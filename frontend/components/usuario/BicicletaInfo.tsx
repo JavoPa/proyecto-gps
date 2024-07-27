@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Modal, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { Modal, TextInput, StyleSheet, Alert } from 'react-native';
+import CustomButton from '@/components/customButton';
 import { getBicicleta, postBicicleta, putBicicleta } from '@/services/bicicleta.service';
 import { Text, View } from '../Themed';
 import Colors from '@/constants/Colors';
@@ -116,11 +117,15 @@ export default function BicicletaInfo() {
             <Text style={styles.bicicletaDetail}>{bicicleta?.color || 'No definido'}</Text>
           </View>
         </View>
-        <Button
+        <CustomButton
+                onPress={() => setModalVisible(true)}
+                title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
+            />
+        {/* <Button
           title={!bicicletaNotExists ? 'Actualizar datos' : 'Registrar datos'}
           onPress={() => setModalVisible(true)}
           color="#2A628F"
-        />
+        /> */}
         </>
       )}
       <BicicletaModal 
@@ -147,17 +152,24 @@ const styles = StyleSheet.create({
   bicicletaContainer: {
     padding: 20,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#FFF',
     marginVertical: 10,
     height: 150,
     width: 300,
+    marginBottom: 30,
+    // marginHorizontal: 50,
+    // padding: 20,
+    // backgroundColor: '#FFF',
+    // borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   bicicletaTitle: {
     fontSize: 16,

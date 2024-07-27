@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { getJaulas, getJaulaById } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from '../../services/root.service';
@@ -194,14 +194,16 @@ const ListaJaulas: React.FC = () => {
     );
 };
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#EDF2F4',
+        paddingHorizontal: '5%',
+        // backgroundColor: '#fff',
     },
     title: {
-        fontSize: 24,
+        fontSize: width > 600 ? 32 : 24,
         fontWeight: 'bold',
         marginBottom: 16,
         color: '#13293D',
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     itemText: {
-        fontSize: 18,
+        fontSize: width > 600 ? 22 : 18,
         color: '#16324F',
     },
     buttonContainer: {
@@ -264,7 +266,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalTitle: {
-        fontSize: 24,
+        fontSize: width > 600 ? 28 : 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 16,
