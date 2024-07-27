@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { getGuardias, deleteGuardia, getGuardiaById, updateGuardia } from '@/services/gestion.service';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 interface Guardia {
     _id: string;
@@ -22,6 +22,7 @@ const ListaGuardias: React.FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const navigation = useNavigation();
 
     useFocusEffect(
         useCallback(() => {
@@ -102,10 +103,9 @@ const ListaGuardias: React.FC = () => {
             try {
                 const response = await updateGuardia(selectedGuardia._id, updatedGuardia);
                 if (response.state === "Success") {
-                    Alert.alert('Éxito', 'Guardia actualizado correctamente');
                     setIsEditing(false);
                     fetchGuardias();
-                    handleViewDetails(selectedGuardia._id); // Volver a la vista de detalles después de actualizar
+                    handleViewDetails(selectedGuardia._id);
                 } else {
                     Alert.alert('Error', 'No se pudo actualizar el guardia');
                 }
@@ -257,12 +257,14 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 4,
+        backgroundColor: '#FFFFFF',
         padding: 8,
         marginBottom: 16,
     },
     itemContainer: {
         marginBottom: 16,
         padding: 16,
+        backgroundColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 8,
         borderColor: '#ccc',
@@ -276,7 +278,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     button: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#2A628F',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonAdd:{
+        backgroundColor: '#DB2B39',
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
@@ -284,7 +294,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonDelete: {
-        backgroundColor: '#FF0000',
+        backgroundColor: '#DB2B39',
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
@@ -299,6 +309,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
+        backgroundColor: '#FFFFFF',
         marginBottom: 12,
         padding: 8,
         borderRadius: 4,
@@ -313,7 +324,7 @@ const styles = StyleSheet.create({
     modalContent: {
         width: '90%',
         maxWidth: 600,
-        backgroundColor: '#fff',
+        backgroundColor: '#EDF2F4',
         padding: 16,
         borderRadius: 12,
         shadowColor: '#000',
@@ -334,7 +345,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     modalButton: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#2A628F',
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,
