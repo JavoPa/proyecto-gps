@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Button, Image} from 'react-native';
+import { StyleSheet, Button, Image, TouchableOpacity } from 'react-native';
 import { registrarIngreso, getAcceso, registrarSalida } from '@/services/acceso.service';
 import QRCode from 'react-native-qrcode-svg';
 import { Text, View } from '../Themed';
@@ -115,24 +115,24 @@ export default function TokenInfo() {
           </View>
           <Text style={styles.tokenText}>{acceso.token}</Text>
           <Text style={styles.timerText}>Tiempo restante: {formatTime(timeLeft)}</Text>
-          <Button
+          {/* <Button
               title="Cancelar"
               onPress={handleCancelar}
-            />
+            /> */}
+          <TouchableOpacity style={styles.registrarButton} onPress={handleCancelar}>
+            <Text style={styles.buttonText}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
       ) : isIngresada ? (
         <View style={styles.container}>
-          <Text style={styles.title}>Bicicleta Registrada</Text>
+          <Text style={styles.title}>Bicicleta Ingresada</Text>
           <Text style={styles.separator}></Text>
           <Image source={require('../../assets/images/salir.png')} style={styles.icon} />
           <Text style={styles.separator}></Text>
           <Text style={styles.getStartedText}>Presiona el botón para registrar tu salida</Text>
-          <View style={styles.registrarButton}>
-            <Button
-              title="Registrar Salida"
-              onPress={handleSalida}
-            />
-          </View>
+          <TouchableOpacity style={styles.registrarButton} onPress={handleSalida}>
+            <Text style={styles.buttonText}>Registrar Salida</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.container}>
@@ -141,12 +141,9 @@ export default function TokenInfo() {
           <Image source={require('../../assets/images/ingresar.png')} style={styles.icon} />
           <Text style={styles.separator}></Text>
           <Text style={styles.getStartedText}>Presiona el botón para registrar tu ingreso</Text>
-          <View style={styles.registrarButton}>
-            <Button
-              title="Registrar Ingreso"
-              onPress={handleIngreso}
-            />
-          </View>
+          <TouchableOpacity style={styles.registrarButton} onPress={handleIngreso}>
+            <Text style={styles.buttonText}>Registrar Ingreso</Text>
+          </TouchableOpacity>
         </View>
       )}
       {error && <Text style={styles.errorText}>⚠ {error} ⚠</Text>}
@@ -163,7 +160,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '',
+    color: '#13293D',
   },
   separator: {
     marginVertical: 30,
@@ -201,14 +198,23 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   registrarButton: {
-    backgroundColor: Colors.light.tint,
-    borderRadius: 5,
-    margin: 20,
+    backgroundColor: '#2A628F',
+    marginTop: 20,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   getStartedText: {
     fontSize: 20,
     lineHeight: 24,
     textAlign: 'center',
+    marginHorizontal: 50,
   },
   //
   getStartedContainer: {
