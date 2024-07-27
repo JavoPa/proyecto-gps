@@ -85,20 +85,30 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional: This adds a semi-transparent background
     },
     modalContent: {
-      width: '80%',
-      backgroundColor: '#25292e',
-      borderRadius: 18,
-      padding: 20,
+      width: '90%',
+      maxWidth: 600,
+      backgroundColor: '#EDF2F4',
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 4,
+      elevation: 5,
     },
     titleContainer: {
-      color: '#fff',
-      fontSize: 16,
-      marginBottom: 10,
+      fontSize: 24,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 16,
+      color: '#13293D',
     },
     title: {
-      color: '#fff',
-      fontSize: 14,
-  
+      fontSize: 18,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 16,
+      color: '#13293D',
     },
     input: {
       height: 40,
@@ -113,12 +123,10 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 10,
-      backgroundColor: '#25292e',
     },
     buttonContainer: {
       flexDirection: 'row',
-      justifyContent: 'flex-start',
-      backgroundColor: '#25292e',
+      justifyContent: 'flex-start'
     },
     button: {
       margin: 10, // Agrega un margen a los botones
