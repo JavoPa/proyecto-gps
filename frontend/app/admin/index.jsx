@@ -29,12 +29,14 @@ export default function TabOneScreen() {
     
     const sacarDatos = () => {
       setCargando(true);
+      setTimeout(() => {
       obtenerUsuarios(session).then((data) => {
         if(!data) Alert.alert('Error al obtener los usuarios');
         setUsuarios(data.data);
         setUsuarios3(data.data);
       });
       setCargando(false);
+    },2000);
     }
  
     //funcion para buscar usuarios por rut
@@ -253,7 +255,7 @@ export default function TabOneScreen() {
           <Modal
             visible={cargando}
             animationType="none"
-            transparent={false}
+            transparent={true}
             onRequestClose={()=>setCargando(false)}
           >
             <View style={styles.modalBackground}>
@@ -416,17 +418,18 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   modalContent: {
+    flex: 0.05,
     width: 150,
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#EDF2F4',
     
   },
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#EDF2F4'
+    
   },
 });
