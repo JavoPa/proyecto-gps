@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import GestionarHorarios from '@/components/admin/gestionarHorarios';
+import { Dimensions } from 'react-native';
 
 export default function HorariosScreen() {
   return (
       <View style={styles.container}>
           <Text style={styles.title}>Horarios Funcionamiento Bicicletero</Text>
-          <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          {/* <View style={styles.separator}/> */}
           <GestionarHorarios/>
       </View>
   );
 }
 
+const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -22,9 +24,13 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     title: {
-        padding: 16,
-        fontSize: 20,
+        fontSize: width > 600 ? 32 : 24,
         fontWeight: 'bold',
+        // marginBottom: 16,
+        // color: '#13293D',
+        padding: 16,
+        // fontSize: 20,
+        // fontWeight: 'bold',
         textAlign: 'center',
     },
     separator: {

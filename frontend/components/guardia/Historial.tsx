@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Text, View } from '../Themed';
 import { getAllHistorial } from '@/services/historial.service';
 import { useFocusEffect } from '@react-navigation/native';
 import { LineChart } from 'react-native-chart-kit';
