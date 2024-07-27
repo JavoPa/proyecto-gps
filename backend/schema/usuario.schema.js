@@ -121,6 +121,7 @@ const usuarioShema = Joi.object({
   }),
 })
 
+
 const estudianteSchema = Joi.object({
   rut: Joi.string().min(9).max(10).required().messages({
     "string.empty": "El rut no puede estar vacío.",
@@ -371,6 +372,36 @@ const administradorSchema = Joi.object({
   }),  
 })
 
+const nombreSchema = Joi.object({
+  nombre: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
+  })
+})
+const apellidoSchema = Joi.object({
+  apellido: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).required().messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
+  })
+})
+const fonoSchema = Joi.object({
+  fono: Joi.string().pattern(/^9\d{8}$/).messages({
+      "number.empty": "El fono no puede estar vacío.",
+      "number.max": "El fono debe contener al menos 9 numeros",
+      'string.pattern.base': 'El fono debe comenzar con 9 y tener 9 digitos, no se damiten letras ni + 56 antes del numero'
+    })
+})
+const passwordSchema = Joi.object({
+  password: Joi.string().alphanum().required().min(5).messages({
+    "string.empty": "La contraseña no puede estar vacío.",
+  })
+})
+
+
 
 module.exports = { /*userBodySchema, */
   userIdSchema,
@@ -380,5 +411,9 @@ module.exports = { /*userBodySchema, */
   guardiaSchema,
   academicoSchema,
   funcionarioSchema,
-  administradorSchema
+  administradorSchema,
+  nombreSchema,
+  apellidoSchema,
+  fonoSchema,
+  passwordSchema
 };

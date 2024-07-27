@@ -22,7 +22,18 @@ const {
 } = require('../services/usuario.service');
 
 const axios = require('axios');
-const {rutSchema,estudianteSchema,academicoSchema,funcionarioSchema,guardiaSchema,administradorSchema} = require('../schema/usuario.schema');
+const {
+    rutSchema,
+    estudianteSchema,
+    academicoSchema,
+    funcionarioSchema,
+    guardiaSchema,
+    administradorSchema,
+    nombreSchema,
+    apellidoSchema,
+    fonoSchema,
+    passwordSchema
+} = require('../schema/usuario.schema');
 const { enviarPushNotification, enviarNotifSingular } = require("../utils/notifHandler.js");
 
 
@@ -93,7 +104,7 @@ async function crearUsuario(req,res) {
 
             const {error} = estudianteSchema.validate(body);
             console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
+            if(error) return res.status(400).json({message: error.details[0].message});
 
             const nuevoEstudiante = crearEstudiante(body);
 
@@ -103,7 +114,7 @@ async function crearUsuario(req,res) {
 
             const {error} = administradorSchema.validate(body);
             console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
+            if(error) return res.status(400).json({message: error.details[0].message});
 
             const nuevoAdministrador = crearAdministrador(body);
             return res.status(200).json({message: "Usuario creado correctamente"});
@@ -122,7 +133,7 @@ async function crearUsuario(req,res) {
 
             const {error} = academicoSchema.validate(body);
             console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
+            if(error) return res.status(400).json({message: error.details[0].message});
 
             const nuevoAcademico = crearAcademico(body);
             return res.status(200).json({message: "Usuario creado correctamente"});
@@ -132,7 +143,7 @@ async function crearUsuario(req,res) {
 
             const {error} = funcionarioSchema.validate(body);
             console.log(error);
-            if(error) return res.status(400).json({message: "Campos no validos"});
+            if(error) return res.status(400).json({message: error.details[0].message});
 
             const nuevoFuncionario = crearFuncionario(body);
             return res.status(200).json({message: "Usuario creado correctamente"});
@@ -236,14 +247,44 @@ async function enviarNotif(req, res) {
 async function editarUsuario(req, res) {
     try {
         const { id } = req.params;
-        const { body } = req;
-        console.log(body);
-        console.log(id);
-        const usuario = await Usuario.findByIdAndUpdate(id, body,   { new: true });
+        let { body } = req;
+       
+        let data = {};
+        
+        if(body.nombre != ''){
+            const {error} = nombreSchema.validate({nombre: body.nombre});
+            if(error) return res.status(400).json({message: error.details[0].message});
+            data.nombre = body.nombre;
+        }
+        if(body.apellido != ''){
+            const {error} = apellidoSchema.validate({apellido: body.apellido});
+            if(error) return res.status(400).json({message: error.details[0].message});
+            data.apellido = body.apellido;
+        }
+        if(body.fono != ''){
+            const {error} = fonoSchema.validate({fono: body.fono});
+            if(error) return res.status(400).json({message: error.details[0].message});
+            data.fono = body.fono;
+        }
+        if(body.correo != ''){
+            data.correo = body.correo;
+            const emailRegex = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+            if(!emailRegex.test(body.correo)){
+                return res.status(400).json({message: "Correo no valido"});
+            }
+        }
+        if(body.password != ''){
+            const {error} = passwordSchema.validate({password: body.password});
+            if(error) return res.status(400).json({message: error.details[0].message});
+            data.password = body.password;
+        }
+
+        const usuario = await Usuario.findByIdAndUpdate(id, data,  { new: true });
         if (!usuario) {
             return res.status(404).send({ message: 'Usuario no encontrado.' });
         }
-        res.status(200).json(usuario);
+        return res.status(200).json({message: "Actualizado correctamente"});
+        
     }catch (error) {
         console.error('Error al editar usuario', error);
         res.status(500).send({ message: 'Error al procesar la solicitud' });

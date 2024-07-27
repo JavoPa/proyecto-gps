@@ -28,3 +28,11 @@ export default async function validarRut (rut) {
         
     }
 }
+
+
+
+export function validarCorreo(correo) {
+    console.log(correo);
+    const emailRegex = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(correo);
+}

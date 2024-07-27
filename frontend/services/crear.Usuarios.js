@@ -36,6 +36,7 @@ export async function eliminarUsuario(data) {
 
 export async function editarUsuario(id,data) {
     try {
+        //console.log(id,data)
         const res = await axiosInstance.put(`/users/update/${id}`,data);
         //console.log("await",res);
         //console.log(res.data)
