@@ -45,7 +45,7 @@ const GuardiaForm: React.FC = () => {
             password,
             rol: 'Guardia', 
             cargo: 'Guardia',
-            situacion_laboral: 'Contratado'
+            situacion_laboral: 'Vigente'
         };
 
         const response = await postGuardia(newGuardia);
@@ -54,7 +54,7 @@ const GuardiaForm: React.FC = () => {
             Alert.alert('Éxito', 'Guardia creado correctamente');
             navigation.goBack();
         } else {
-            setError(response.message || 'Hubo un error al cargar la bicicleta 🚲');
+            setError(response.message || 'Hubo un error al crear el guardia');
         }
     };
 
