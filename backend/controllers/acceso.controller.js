@@ -120,17 +120,9 @@ async function ingresoGuardia(req, res) {
         jaula.guardiaAsignado = guardiaId;
         await jaula.save();
 
-        const nuevoAcceso = new Acceso({
-            usuario: guardiaId,
-            entrada: new Date(),
-            salida: null
-        });
 
-        const accesoGuardado = await nuevoAcceso.save();
-        if (!accesoGuardado) return respondError(req, res, 400, 'No se registró el ingreso del guardia');
 
         respondSuccess(req, res, 201, {
-            acceso: accesoGuardado,
             jaulaAsignada: jaula.identificador
         });
     } catch (error) {
@@ -184,11 +176,7 @@ async function salidaGuardia(req, res) {
       jaula.guardiaAsignado = null;
       await jaula.save();
 
-      const acceso = await Acceso.findOne({ usuario: guardiaId, salida: null });
-      if (acceso) {
-          acceso.salida = new Date();
-          await acceso.save();
-      }
+
 
       respondSuccess(req, res, 200, { message: 'Salida registrada con éxito', jaula: jaula.identificador });
   } catch (error) {
@@ -213,12 +201,6 @@ async function salidaGuardiaAdmin(req, res) {
 
       jaula.guardiaAsignado = null;
       await jaula.save();
-
-      const acceso = await Acceso.findOne({ usuario: guardiaId, salida: null });
-      if (acceso) {
-          acceso.salida = new Date();
-          await acceso.save();
-      }
 
       respondSuccess(req, res, 200, { message: 'Salida del guardia registrada con éxito', jaula: jaula.identificador });
   } catch (error) {
