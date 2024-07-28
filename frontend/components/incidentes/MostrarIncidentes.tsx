@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getAllIncidentes } from '@/services/incidentes.service';
-import { formatDate } from '../../Utils';
+import { formatDate, formatDateDMY } from '../../Utils';
 
 interface Incidente {
     _id: string;
@@ -66,7 +66,7 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
             const filtered = incidentes.filter(incidente =>
                 incidente.tipo.toLowerCase().includes(term.toLowerCase()) || 
                 incidente.lugar.toLowerCase().includes(term.toLowerCase()) || 
-                formatDate(incidente.fecha).toLowerCase().includes(term.toLowerCase())
+                formatDateDMY(incidente.fecha).toLowerCase().includes(term.toLowerCase())
             );
             setFilteredIncidentes(filtered);
         }
@@ -105,7 +105,7 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
                 keyExtractor={item => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>Fecha: {formatDate(item.fecha)}</Text>
+                        <Text style={styles.itemText}>Fecha: {formatDateDMY(item.fecha)}</Text>
                         <Text style={styles.itemText}>Hora: {item.hora}</Text>
                         <Text style={styles.itemText}>Lugar: {item.lugar}</Text>
                         <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
@@ -126,7 +126,7 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Detalles del Incidente</Text>
-                        <Text style={styles.itemText}>Fecha: {selectedIncidente?.fecha && formatDate(selectedIncidente.fecha)}</Text>
+                        <Text style={styles.itemText}>Fecha: {selectedIncidente?.fecha && formatDateDMY(selectedIncidente.fecha)}</Text>
                         <Text style={styles.itemText}>Hora: {selectedIncidente?.hora}</Text>
                         <Text style={styles.itemText}>Lugar: {selectedIncidente?.lugar}</Text>
                         <Text style={styles.itemText}>Tipo: {selectedIncidente?.tipo}</Text>

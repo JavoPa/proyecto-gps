@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, Pla
 import { Picker } from '@react-native-picker/picker'; // Import the Picker component
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { createIncidente } from '@/services/incidentes.service';
-import { formatDate } from '../../Utils';
+import { formatDate, formatDateDMY } from '../../Utils';
 
 // Listo
 
@@ -68,7 +68,14 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
   const onFechaChange = (event: any, selectedDate: Date | undefined) => {
     setShowFechaPicker(false);
     if (selectedDate) {
-      setFecha(selectedDate);
+      const today = new Date();
+      // Check if the selected date is in the future
+      if (selectedDate > today) {
+        alert('No se pueden registrar incidentes en el futuro, seleccione otra fecha');
+        return;
+      } else {
+        setFecha(selectedDate);
+      }
     }
   };
 
@@ -89,7 +96,7 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
         <TouchableOpacity onPress={showDatePicker}>
           <TextInput
             style={styles.input}
-            value={fecha ? formatDate(fecha) : ''}
+            value={fecha ? formatDateDMY(fecha) : ''}
             editable={false}
             placeholder="Seleccione la fecha"
           />
@@ -167,8 +174,8 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
           <Text style={styles.buttonText}>Crear Incidente</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
-                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
-            </TouchableOpacity>
+          <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -202,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   picker: {
-    height: 40,
+    height: 50,
     width: '100%',
   },
   textArea: {
@@ -237,7 +244,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: '#ccc',
     borderWidth: 1,
-},
+  },
 });
 
 export default RegistrarIncidente;
