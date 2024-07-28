@@ -15,9 +15,8 @@ export default function ListaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3e92cc'
+    padding: 16,
+    backgroundColor: '#EDF2F4'
   },
   title: {
     fontSize: 20,

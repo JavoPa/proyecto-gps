@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
 import { useRouter } from 'expo-router';
 import { CrearUsuario } from '@/services/crear.Usuarios';
-import { max } from 'date-fns';
 
 
 const data = [
@@ -16,13 +15,22 @@ const data = [
 
 const data2 = [
     {label: 'Regular', value: 'Regular'},
-    {label: 'Irregular', value: 'Irregular'},
+    {label: 'Titulado', value: 'Titulado'},
+    {label: 'Retirado', value: 'Retirado'},
+    {label: 'Egresado', value: 'Egresado'},
 ];
 
 const data3 = [
   {label: 'ICINF', value: 'Ingenieria Civil Informatica'},
   {label: 'IECI', value: 'Ingenieria En Ejecucion Informatica'},
 ];
+
+const data4 = [
+  {label: 'Contratado', value: 'Contratado'},
+  {label: 'Planta', value: 'Planta'},
+  {label: 'Honorario', value: 'Honorario'},
+];
+
 
 
 
@@ -44,12 +52,21 @@ const CrearUsuarios: React.FC = () =>{
     const [carrera, setCarrera] = useState('Carrera');
     const [situacion, setSituacion] = useState('Situacion');
     const [isFocus, setIsFocus] = useState(false);
-    const [isFocus2, setIsFocus2] = useState(false);
-    const [aniquilar, setAniquilar] = useState(false);
     const [encontrado, setencontrado] = useState(false);
     const [cargando, setCargando] = useState(false);
 
     const router = useRouter();
+
+    const formatearRut = (rut: string) => {
+      const limpio = rut.replace(/\D/g, '');
+      const formateado = limpio.replace(/^(\d{7,8})(\d)$/, '$1-$2').slice(0, 10);
+      return formateado;
+    }
+
+    useEffect(() => {
+      setRut(formatearRut(rut));
+    },[rut]);
+
 
     const tipoLabel = () => {
         if (Tipo || isFocus) {
@@ -75,9 +92,8 @@ const CrearUsuarios: React.FC = () =>{
     }
 
     const handleCrear = async () => {
-
-        //validar datos
-        
+      
+              
         if(encontrado){
           //crear usuario con los datos encontrados
           if(Tipo == 'Estudiante'){
@@ -93,10 +109,15 @@ const CrearUsuarios: React.FC = () =>{
               carrera: carrera,
             }
             //madar datos a funcion de crear usuario
-            const respuesta =  CrearUsuario(datos);
-            Alert.alert(`${respuesta}`);
-            setear();
-            console.log(respuesta);
+            CrearUsuario(datos).then((respuesta) => {
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK', onPress: () => setear()}]);
+                }
+              }
+            });
+          
           }
           const datos = {
             rut: rut2,
@@ -109,10 +130,18 @@ const CrearUsuarios: React.FC = () =>{
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          const respuesta =  CrearUsuario(datos);
-          Alert.alert(`${respuesta}`);
-          setear();
-          console.log(respuesta);
+          CrearUsuario(datos).then((respuesta) => {
+            if(respuesta.message != undefined){
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                  setear();
+                }
+              }
+            }
+          });
+  
         }else{
           //crear usuario con los datos ingresados
           if(Tipo == "Estudiante"){
@@ -130,11 +159,15 @@ const CrearUsuarios: React.FC = () =>{
             }
             //madar datos a funcion de crear usuario
             CrearUsuario(datos).then((respuesta) => {
-              console.log(respuesta.message);
-              Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
-              setear();
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                  setear();
+                }
+              }
             });
-          }/*
+          }
           const datos = {
             rut: rut,
             nombre: nombre,
@@ -146,22 +179,26 @@ const CrearUsuarios: React.FC = () =>{
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          const respuesta =  CrearUsuario(datos);
-          console.log(respuesta);
-          setear();
-          Alert.alert(`${respuesta}`);*/
+          CrearUsuario(datos).then((respuesta) => {
+            if(respuesta){
+              if(respuesta.message != undefined){
+                console.log(respuesta.message);
+                Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                setear();
+              }
+            }
+          });
         }
 
     }
+
+    
   
     const handleVerificar = async () => {
-      //no permite entrada vacia
-      if(rut == 'rut'){
-        Alert.alert('No se admite Rut vacio', 'Ingrese un rut valido para buscar');
-      }
+      
       setCargando(true);
+      setRut2(formatearRut(rut));
       const resp = await validarRut(rut);
-      console.log(resp);
       if(resp != null){
         setCargando(false);
         setencontrado(true);
@@ -185,6 +222,7 @@ const CrearUsuarios: React.FC = () =>{
         setCorreo2('Correo');
         setPassword2('Contraseña');
         setSituacion('Situacion');
+        //setRut2('Rut');
       }
       setCargando(false);
     }
@@ -210,11 +248,10 @@ const CrearUsuarios: React.FC = () =>{
             />
             {/*Modal para vista de cargando */}
             <Modal
-                animationType="slide"
-                transparent={true}
+                animationType="none"
+                transparent={false}
                 visible={cargando}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
                     setCargando(!cargando);
                 }}
             >
@@ -228,131 +265,145 @@ const CrearUsuarios: React.FC = () =>{
              {/*Seleccion adicionales de datos para estudiante */}
             <Modal
               visible={Tipo == 'Estudiante'}
-              animationType="slide"
-              transparent={false}
+              animationType="none"
+              transparent={true}
               onRequestClose={() => {}} //para que no se cierre con el boton de atras
             >
-              <ScrollView style={styles.modalEstudiante}>
-                <Text style={styles.texto} >Crear Estudiante</Text>
-                <View style={styles.vistaRutIntranet}>
-                <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
-                <Pressable onPress={handleVerificar} style={styles.boton}>
-                    <Text>Buscar Intranet</Text>
-                </Pressable>
+              <View style={styles.modalEstudiante}>
+                <View style={styles.detalle}>
+                  <Text style={styles.texto} >Crear Estudiante</Text>
+                  <ScrollView >
+                    <View style={styles.vistaRutIntranet}>
+                      <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
+                      <Pressable onPress={handleVerificar} style={styles.boton}>
+                          <Text style={styles.modalButtonText}>Buscar Intranet</Text>
+                      </Pressable>
+                    </View>
+                    <TextInput style={styles.input} placeholder={nombre2} onTouchEnd={()=>setRut2(rut)} onChangeText={setNombre}></TextInput>
+                    <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
+                    <TextInput style={styles.input} placeholder={numero2} inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
+                    <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
+                    <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
+                    {tipoLabel()}
+                    <Dropdown
+                        data={data}
+                        style={styles.input}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={Tipo}
+                        value={Tipo}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            setTipo(item.value);
+                            setIsFocus(false);
+                        }}
+                    />
+                    <Dropdown
+                        data={data2}
+                        style={styles.input}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={situacion}
+                        value={situacion}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            setSituacion(item.value);
+                            setIsFocus(false);
+                        }}
+                    />
+                    <Dropdown
+                        data={data3}
+                        style={styles.input}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={carrera}
+                        value={situacion}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            setCarrera(item.value);
+                            setIsFocus(false);
+                        }}
+                    />
+                    <View style={styles.modalButtonContainer}>
+                      <Pressable style={styles.modalButton} onPress={handleCrear}>
+                            <Text style={styles.modalButtonText}>Crear</Text>
+                        </Pressable>
+                      <Pressable style={styles.modalButton} onPress={()=>{setTipo('Tipo'),setRut2('Rut')}}>
+                            <Text style={styles.modalButtonText}>Volver</Text>
+                      </Pressable>
+                    </View>
+                  </ScrollView>
                 </View>
-                <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
-                <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
-                <TextInput style={styles.input} placeholder={numero2}  onChangeText={setNumero} ></TextInput>
-                <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
-                <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
-                {tipoLabel()}
-                <Dropdown
-                    data={data}
-                    style={styles.input}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={Tipo}
-                    value={Tipo}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        setTipo(item.value);
-                        setIsFocus(false);
-                    }}
-                />
-                <Dropdown
-                    data={data2}
-                    style={styles.input}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={situacion}
-                    value={Tipo}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        setSituacion(item.value);
-                        setIsFocus(false);
-                    }}
-                />
-                <Dropdown
-                    data={data3}
-                    style={styles.input}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={carrera}
-                    value={Tipo}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        setCarrera(item.value);
-                        setIsFocus(false);
-                    }}
-                />
-                <Pressable style={styles.botonCrear} onPress={handleCrear}>
-                      <Text>Crear</Text>
-                  </Pressable>
-                <Pressable style={styles.botonCrear} onPress={()=>setTipo('Tipo')}>
-                      <Text>Volver</Text>
-                </Pressable>
-              </ScrollView>
+              </View>
             </Modal>
 
             {/*Creacion otros usuarios que no sean estudiante */}
             <Modal
               visible={Tipo == 'Academico' || Tipo == 'Funcionario' || Tipo == 'Administrador'}
-              animationType="slide"
-              transparent={false}
+              animationType="none"
+              transparent={true}
               onRequestClose={() => {}} //para que no se cierre con el boton de atras
             >
-              <ScrollView style={styles.modalEstudiante}>
-                <Text style={styles.texto} >Crear {Tipo}</Text>
-                <View style={styles.vistaRutIntranet}>
-                <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
-                <Pressable onPress={handleVerificar} style={styles.boton}>
-                    <Text>Buscar Intranet</Text>
-                </Pressable>
+             
+              <View style={styles.modalEstudiante}>
+                  <View style={styles.detalle}>
+                    <Text style={styles.texto} >Crear {Tipo}</Text>
+                    <ScrollView >
+                      <View style={styles.vistaRutIntranet}>
+                        <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut} ></TextInput>
+                        <Pressable onPress={handleVerificar} style={styles.boton}>
+                            <Text style={styles.modalButtonText}>Buscar Intranet</Text>
+                        </Pressable>
+                      </View>
+                      <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre} onTouchEnd={()=>setRut2(rut)} ></TextInput>
+                      <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
+                      <TextInput style={styles.input} placeholder={numero2}  inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
+                      <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
+                      <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
+                      {tipoLabel()}
+                      <Dropdown
+                          data={data}
+                          style={styles.input}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={Tipo}
+                          value={Tipo}
+                          onFocus={() => setIsFocus(true)}
+                          onBlur={() => setIsFocus(false)}
+                          onChange={item => {
+                              setTipo(item.value);
+                              setIsFocus(false);
+                          }}
+                      />
+                      <Dropdown
+                          data={data4}
+                          style={styles.input}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={situacion}
+                          value={situacion}
+                          onFocus={() => setIsFocus(true)}
+                          onBlur={() => setIsFocus(false)}
+                          onChange={item => {
+                              setSituacion(item.value);
+                              setIsFocus(false);
+                          }}
+                      />
+                      <View style={styles.modalButtonContainer}>
+                        <Pressable style={styles.modalButton} onPress={handleCrear}>
+                            <Text style={styles.modalButtonText}>Crear</Text>
+                        </Pressable>
+                        <Pressable style={styles.modalButton} onPress={()=>{setTipo('Tipo'),setRut2('Rut')}}>
+                            <Text style={styles.modalButtonText}>Volver</Text>
+                        </Pressable>
+                      </View>
+                    </ScrollView>
+                  </View>
                 </View>
-                <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
-                <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
-                <TextInput style={styles.input} placeholder={numero2}  inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
-                <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
-                <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
-                {tipoLabel()}
-                <Dropdown
-                    data={data}
-                    style={styles.input}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={Tipo}
-                    value={Tipo}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        setTipo(item.value);
-                        setIsFocus(false);
-                    }}
-                />
-                <Dropdown
-                    data={data2}
-                    style={styles.input}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={situacion}
-                    value={Tipo}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        setSituacion(item.value);
-                        setIsFocus(false);
-                    }}
-                />
-                <Pressable style={styles.botonCrear} onPress={handleCrear}>
-                    <Text>Crear</Text>
-                </Pressable>
-                <Pressable style={styles.botonCrear} onPress={()=>setTipo('Tipo')}>
-                    <Text>Volver</Text>
-                </Pressable>
-              </ScrollView>
+              
             </Modal>
             
         </View>
@@ -364,48 +415,49 @@ const styles = StyleSheet.create({
         width: "80%",
     },
     pagina: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: '#EDF2F4',
       justifyContent: 'center',
-      borderRadius: 10,
-      padding: 50,
     },
     input: {
       height: 40,
+      borderColor: '#ccc',
       borderWidth: 1,
-      marginBottom: 20,
-      paddingHorizontal: 10,
-      backgroundColor: '#fff',
-      borderRadius: 5,
+      marginBottom: 12,
+      padding: 8,
+      borderRadius: 4,
+      backgroundColor: '#FFFFFF', 
     },
     boton: {
-        backgroundColor: '#fff',
-        borderRadius: 5,
+        backgroundColor: '#2A628F',
+        borderRadius: 8,
         padding: 10,
-        borderColor: '#000',
-        borderWidth: 2,
         alignItems: 'center',
         justifyContent: 'center',
         width: 'auto',
         margin: 5,
     },
     texto:{
-      fontSize: 30,
-      color: '#000',
-      padding: 20,
-      margin: 20,
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      color: '#13293D',
       textAlign: 'center',
     },
     vistaRutIntranet:{
       flexDirection: 'row',
       justifyContent: 'center',
-      marginBottom: 20,
-      
-      
+      alignContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
     },
     rut:{
-      width: "55%",
+      width: '50%',
       padding: 10,
-      margin:5,
-      borderWidth: 2,
+      margin:6,
+      borderWidth: 1,
+      borderColor: '#ccc',
       backgroundColor: '#fff',
       borderRadius: 5,
       paddingHorizontal: 10,
@@ -423,7 +475,7 @@ const styles = StyleSheet.create({
       margin: 5,
     },
     vistaCargando: {
-      backgroundColor: '#f15',
+      backgroundColor: '#000',
       padding: 40,
       marginTop: '80%',
       marginLeft: '20%',
@@ -432,13 +484,43 @@ const styles = StyleSheet.create({
       borderRadius: 10,
     },
     modalEstudiante: {
-      marginTop: 'auto',
-      padding: 40,
-      marginLeft: '5%',
-      marginRight: '5%',
-      borderRadius: 10,
-      backgroundColor: '#3e92cc'
-    }
+      flex: 2,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    detalle : {
+      width: '90%',
+      maxWidth: 600,
+      backgroundColor: '#EDF2F4', // Fondo del modal
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    modalButtonContainer: {
+      marginTop: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: '#EDF2F4',
+    },
+    modalButton: {
+      backgroundColor: '#2A628F', // Color de los botones del modal
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      marginHorizontal: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalButtonText: {
+      color: '#FFFFFF', // Color del texto de los botones del modal
+      fontSize: 16,
+    },
   });
 
 export default CrearUsuarios;
