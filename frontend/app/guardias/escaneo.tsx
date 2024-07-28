@@ -17,8 +17,7 @@ export default function EscaneoScreen() {
         validar(data).then((response) => {
             if(response.state === "Success") {
               Alert.alert(
-                "Ingreso Registrado",
-                "Ingreso registrado correctamente\n" + 
+                "Registrado",
                 "Estudiante:" + response.data.usuario.nombre + " " + response.data.usuario.apellido + 
                 "\nRUT: " + response.data.usuario.rut +
                 "\n" + "Bicicleta: " + (response.data.usuario.bicicleta

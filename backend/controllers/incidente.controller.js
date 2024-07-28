@@ -105,27 +105,22 @@ async function crearIncidente(req, res) {
  */
 async function generarInforme(req, res) {
     try {
-        // Get year and month from query parameters
         const { year, month } = req.query;
 
-        // Validate year and month format
         const yearFormat = /^\d{4}$/;
         const monthFormat = /^(0?[1-9]|1[012])$/;
         if (!yearFormat.test(year) || !monthFormat.test(month)) {
             return res.status(400).json({ error: "Formato de año o mes inválido. Año debe ser YYYY y mes debe ser MM." });
         }
 
-        // Parse year and month to create a date object
-        const date = new Date(year, month - 1); // Month is 0-indexed in JavaScript
+        const date = new Date(year, month - 1);
 
-        // Call service function to get incidents for the specified month
         const [incidentes, error] = await IncidenteService.getIncidentesMes(date);
-        
+
         if (error) {
             return res.status(204).json({ error });
         }
 
-        // Count incident types
         const incidentTypes = {
             'Robo': 0,
             'Desaparición': 0,
@@ -140,7 +135,6 @@ async function generarInforme(req, res) {
             }
         });
 
-        // Count incident places
         const incidentPlaces = {
             'Entrada': 0,
             'Gantes': 0,
@@ -160,11 +154,9 @@ async function generarInforme(req, res) {
             }
         });
 
-        // Create a new PDF document
         const doc = new PDFDocument();
         let buffers = [];
-        
-        // Collect PDF data into buffers
+
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => {
             const pdfData = Buffer.concat(buffers);
@@ -172,11 +164,9 @@ async function generarInforme(req, res) {
             res.json({ pdf: base64PDF });
         });
 
-        // Add incident information to the PDF
         doc.fontSize(12).text(`Informe de incidentes del mes ${month} del año ${year}`, { align: 'center' });
         doc.moveDown();
 
-        // Generate the incident type chart image
         const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 400, height: 200 });
         const typeChartConfig = {
             type: 'bar',
@@ -194,13 +184,29 @@ async function generarInforme(req, res) {
                     x: {
                         title: {
                             display: true,
-                            text: 'Tipos de incidentes'
+                            text: 'Tipos de incidentes',
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            }
                         }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Frecuencia'
+                            text: 'Frecuencia',
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            },
+                            color: 'black',
                         }
                     }
                 }
@@ -208,16 +214,14 @@ async function generarInforme(req, res) {
         };
         const typeChartImage = await chartJSNodeCanvas.renderToBuffer(typeChartConfig);
 
-        // Embed the incident type chart image in the PDF
         doc.image(typeChartImage, {
             fit: [500, 300],
             align: 'center',
             valign: 'center'
         });
 
-        doc.moveDown(20); // Add a new page for the next chart
+        doc.addPage();
 
-        // Generate the incident places chart image
         const placeChartConfig = {
             type: 'bar',
             data: {
@@ -234,13 +238,29 @@ async function generarInforme(req, res) {
                     x: {
                         title: {
                             display: true,
-                            text: 'Lugares de incidentes'
+                            text: 'Lugares de incidentes',
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            }
                         }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Frecuencia'
+                            text: 'Frecuencia',
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            },
+                            color: 'black',
                         }
                     }
                 }
@@ -248,14 +268,12 @@ async function generarInforme(req, res) {
         };
         const placeChartImage = await chartJSNodeCanvas.renderToBuffer(placeChartConfig);
 
-        // Embed the incident places chart image in the PDF
         doc.image(placeChartImage, {
             fit: [500, 300],
             align: 'center',
             valign: 'center'
         });
 
-        // Finalize the PDF document
         doc.end();
     } catch (error) {
         console.error(error);

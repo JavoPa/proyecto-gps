@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking } from 'react-native';
-import { getJaulas, deleteJaula, getJaulaById, updateJaula } from '@/services/jaula.service';
+import { getJaulas, deleteJaula, getJaulaById, updateJaula, salidaGuardiaAdmin } from '@/services/jaula.service';
 import { getGuardias } from '@/services/gestion.service'; // Importa el servicio de guardias
 import { useFocusEffect } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker'; // Importa el Picker
 
 interface Guardia {
     _id: string;
@@ -33,7 +32,7 @@ const ListaJaulas: React.FC = () => {
     useFocusEffect(
         useCallback(() => {
             fetchJaulas();
-            fetchGuardias(); // Obtén la lista de guardias cuando el componente tenga foco
+            fetchGuardias();
         }, [])
     );
 
@@ -83,17 +82,20 @@ const ListaJaulas: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        try {
-            const response = await deleteJaula(id);
-            if (response.message === 'Jaula eliminada con éxito') {
-                fetchJaulas();
-                alert('Jaula eliminada correctamente');
-            } else {
+        const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta jaula?");
+        if (confirmed) {
+            try {
+                const response = await deleteJaula(id);
+                if (response.message === 'Jaula eliminada con éxito') {
+                    fetchJaulas();
+                    alert('Jaula eliminada correctamente');
+                } else {
+                    alert('No se pudo eliminar la jaula');
+                }
+            } catch (error) {
+                console.error('Error deleting jaula:', error);
                 alert('No se pudo eliminar la jaula');
             }
-        } catch (error) {
-            console.error('Error deleting jaula:', error);
-            alert('No se pudo eliminar la jaula');
         }
     };
 
@@ -134,11 +136,10 @@ const ListaJaulas: React.FC = () => {
                 ubicacion: selectedJaula.ubicacion,
                 capacidad: selectedJaula.capacidad,
                 identificador: selectedJaula.identificador,
-                guardiaAsignado: selectedJaula.guardiaAsignado?._id || null // Enviar solo el ID del guardia asignado
             };
             try {
                 const response = await updateJaula(selectedJaula._id, updatedJaula);
-                if (response.state === "Success") {
+                if (response.message === "Jaula modificada con éxito") {
                     alert('Jaula actualizada correctamente');
                     setIsEditing(false);
                     setModalVisible(false);  // Cerrar el modal
@@ -149,6 +150,23 @@ const ListaJaulas: React.FC = () => {
             } catch (error) {
                 console.error('Error updating jaula:', error);
                 alert('No se pudo actualizar la jaula');
+            }
+        }
+    };
+    const handleRetirarGuardia = async () => {
+        if (selectedJaula) {
+            try {
+                const response = await salidaGuardiaAdmin(selectedJaula._id);
+                if (response.state === "Success") {
+                    alert('Guardia retirado con éxito');
+                    fetchJaulas();
+                    setModalVisible(false);  // Cerrar el modal
+                } else {
+                    alert('No se pudo retirar al guardia');
+                }
+            } catch (error) {
+                console.error('Error retirando al guardia:', error);
+                alert('No se pudo retirar al guardia');
             }
         }
     };
@@ -233,15 +251,7 @@ const ListaJaulas: React.FC = () => {
                                     onChangeText={identificador => setSelectedJaula(prev => prev ? { ...prev, identificador } : null)}
                                     placeholder="Identificador"
                                 />
-                                <Picker
-                                    selectedValue={selectedJaula?.guardiaAsignado?._id || null}
-                                    onValueChange={(itemValue) => setSelectedJaula(prev => prev ? { ...prev, guardiaAsignado: guardias.find(guardia => guardia._id === itemValue) || null } : null)}
-                                >
-                                    <Picker.Item label="Ninguno" value={null} />
-                                    {guardias.map(guardia => (
-                                        <Picker.Item key={guardia._id} label={`${guardia.nombre} ${guardia.apellido}`} value={guardia._id} />
-                                    ))}
-                                </Picker>
+
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleUpdate}>
                                         <Text style={styles.modalButtonText}>Guardar Cambios</Text>
@@ -263,6 +273,15 @@ const ListaJaulas: React.FC = () => {
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
                                 </View>
+                                <View style={styles.modalButtonContainer}>
+
+                                {selectedJaula?.guardiaAsignado && (
+                                    <TouchableOpacity style={styles.modalButton} onPress={handleRetirarGuardia}>
+                                        <Text style={styles.modalButtonText}>Retirar Guardia</Text>
+                                    </TouchableOpacity>
+                                )}
+                                </View>
+
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
                                         <Text style={styles.modalButtonText}>Ver en Google Maps</Text>

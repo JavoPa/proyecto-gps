@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { FlatList, StyleSheet, Alert, TextInput, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { Text, View } from '../Themed';
 import { getAllHistorial } from '@/services/historial.service';
 import { useFocusEffect } from '@react-navigation/native';
 import { LineChart } from 'react-native-chart-kit';
@@ -135,6 +136,7 @@ const HistorialViewer: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Historial</Text>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={[styles.button, viewMode === 'list' && styles.activeButton]}
@@ -170,7 +172,6 @@ const HistorialViewer: React.FC = () => {
                     )}
                 </>
             )}
-
             {viewMode === 'chart' && (
                 <ScrollView horizontal contentContainerStyle={styles.chartContainer}>
                     <View style={styles.chartInnerContainer}>
@@ -193,8 +194,8 @@ const HistorialViewer: React.FC = () => {
                         </Picker>
                         <LineChart
                             data={chartData}
-                            width={Dimensions.get('window').width * 1.5} // Ajusta el ancho para el gráfico
-                            height={220} // Ajusta la altura del gráfico
+                            width={Dimensions.get('window').width * 1.5}
+                            height={220}
                             chartConfig={chartConfig}
                             bezier
                             style={styles.chart}
@@ -211,6 +212,12 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
     },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
     buttonContainer: {
         flexDirection: 'row',
         marginBottom: 16,
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         borderRadius: 4,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#2A628F',
         marginHorizontal: 4,
         alignItems: 'center',
     },
@@ -235,7 +242,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 4,
-        paddingLeft: 8,
+        backgroundColor: '#FFFFFF',
+        padding: 8,
         marginBottom: 16,
     },
     list: {
@@ -244,12 +252,10 @@ const styles = StyleSheet.create({
     item: {
         marginBottom: 16,
         padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
         borderRadius: 8,
-        backgroundColor: '#f9f9f9',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 2,
+        borderColor: '#ccc',
     },
     text: {
         fontSize: 16,
@@ -261,7 +267,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     chartInnerContainer: {
-        width: Dimensions.get('window').width * 1.5, // Ajusta el ancho del contenedor del gráfico
+        width: Dimensions.get('window').width * 1.5,
         alignItems: 'center',
     },
     chart: {
@@ -273,6 +279,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 8,
         color: '#333',
+        fontWeight: 'bold',
     },
     picker: {
         textAlign: 'center',
