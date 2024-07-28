@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import {API_URL2} from './root.service';
+const API_URL2 = process.env.EXPO_PUBLIC_API_URL_I || 'http://38.7.199.239:5000/api';
 import axios from 'axios';
 
 
@@ -16,10 +16,15 @@ export default async function validarRut (rut) {
         return validar.data;
     } catch (error) {
         console.log(error);
+        //android
         if (error.response) {
             Alert.alert(`Error ${error.response.status}`, `${error.response.data.message}`);
         }else{
             //Alert.alert('Error', 'Sin conexión');
+        }
+        //web
+        if(error){
+            alert('Usuario sin registros en intranet, registrelo manual');
         }
         
     }

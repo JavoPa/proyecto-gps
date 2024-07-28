@@ -92,10 +92,10 @@ const usuariosShema = Joi.object({
     "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
   apellido: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).required().messages({
-    "string.empty": "El nombre no puede estar vacío.",
-    "string.base": "El nombre debe ser de tipo string.",
-    'string.pattern.base': "El nombre solo puede contener letras",
-    "string.max": "El nombre debe contener menos de 30 caracteres",
+    "string.empty": "El apellido no puede estar vacío.",
+    "string.base": "El apellido debe ser de tipo string.",
+    'string.pattern.base': "El apellido solo puede contener letras",
+    "string.max": "El apellido debe contener menos de 30 caracteres",
   }),
   fono: Joi.string().pattern(/^9\d{8}$/).messages({
     "number.empty": "El fono no puede estar vacío.",

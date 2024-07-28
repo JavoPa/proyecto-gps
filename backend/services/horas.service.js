@@ -7,20 +7,19 @@ const initializeSchedule = require("../utils/checkBicicletasRezagadas.js");
  * @param {Object} body Objeto con los datos del horario
  * @returns {Promise} Promesa con el objeto de horario creado
  */
-
 async function createHorario(body) {
     try {
-        const horario = new Horas({
-            ...body
-        });
-        await horario.save();
-        initializeSchedule(horario.limiteSalida);
-        return [horario, null];
+      const horario = new Horas({
+        ...body
+      });
+      await horario.save();
+      initializeSchedule(horario.limiteSalida);
+      return [horario, null];
     } catch (error) {
-        handleError(error, "horas.service -> createHorario");
-        return [null, error];
+      handleError(error, "horas.service -> createHorario");
+      return [null, error];
     }
-}
+  }
 
 /**
  * Obtiene todos los horarios de la base de datos.
@@ -38,20 +37,29 @@ async function getHorarios() {
 
 /**
  * Actualiza un horario en la base de datos.
- * @param {string} horarioId Id del horario
+ * @param {Object} body - Datos del horario
  */
-
 async function updateHorario(body) {
     try {
-        const horarioId = await Horas.find({}).select('_id');
-        const horario = await Horas.findByIdAndUpdate(horarioId , body, { new: true }); 
-        initializeSchedule(horario.limiteSalida);
-        return [horario, null];
+      const horarioId = await Horas.find({}).select('_id');
+      
+      if (horarioId.length === 0) {
+        throw new Error('No se encontró ningún horario');
+      }
+  
+      const horario = await Horas.findByIdAndUpdate(horarioId[0]._id, body, { new: true });
+  
+      if (!horario) {
+        throw new Error('No se actualizó el horario');
+      }
+  
+      initializeSchedule(horario.limiteSalida);
+      return [horario, null];
     } catch (error) {
-        handleError(error, "horas.service -> updateHorario");
-        return [null, error];
+      handleError(error, "horas.service -> updateHorario");
+      return [null, error];
     }
-}
+  }
 
 // /**
 //  * Elimina un horario en la base de datos.

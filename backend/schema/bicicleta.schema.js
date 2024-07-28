@@ -8,11 +8,13 @@ const Joi = require("joi");
  */
 const bicicletaSchema = Joi.object({
     marca: Joi.string()
+      .pattern(/^[a-zA-Z\s]+$/)
       .required()
       .messages({
         "string.empty": "La marca no puede estar vacía.",
         "any.required": "La marca es obligatoria.",
         "string.base": "La marca debe ser de tipo string.",
+        "string.pattern.base": "El color solo puede contener letras y espacios.",
       }),
     modelo: Joi.string()
       .messages({
@@ -20,11 +22,13 @@ const bicicletaSchema = Joi.object({
         "string.base": "El modelo debe ser de tipo string.",
       }),
     color: Joi.string()
+      .pattern(/^[a-zA-Z\s]+$/)
       .required()
       .messages({
         "string.empty": "El color no puede estar vacío.",
         "any.required": "El color es obligatorio.",
         "string.base": "El color debe ser de tipo string.",
+        "string.pattern.base": "El color solo puede contener letras y espacios.",
       }),
     tipo: Joi.string()
       .messages({

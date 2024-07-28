@@ -89,7 +89,6 @@ data = {
 async function crearUsuario(req,res) {
     try {
         const { body } = req;
-        console.log(body);
         //validar campo rol
         if(body.rol == null) return res.status(400).json({message: "El campo tipo es obligatorio"});
 
@@ -99,7 +98,7 @@ async function crearUsuario(req,res) {
 
         //validar rut
         const error = verificarRut(body.rut);
-        console.log(error);
+        //console.log(error);
         if(error) return res.status(400).json({message: "El rut no es valido"});
         
         //validar si el usuario ya existe
@@ -181,7 +180,7 @@ async function eliminarUsuario(req, res) {
     try {
         const { id } = req.params;
         const eliminar = await Usuario.findByIdAndDelete(id);
-        console.log(eliminar);
+        //console.log(eliminar);
         if(!eliminar) return res.status(400).json({message: "No se pudo eliminar el usuario"});
         return res.status(200).json({message: "Usuario eliminado correctamente"});
 
@@ -204,7 +203,7 @@ async function getUserById(req, res) {
         const [user, userError] = await usuarioService.getUserById(id);
         if (userError) return respondError(req, res, 500, userError);
         if(!user) return respondError(req, res, 400, 'No se obtuvo el usuario');
-        respondSuccess(req, res, 201, user);
+        respondSuccess(req, res, 200, user);
     } catch (error) {
         handleError(error, "usuario.controller -> getUserById");
         respondError(req, res, 500, "No se pudo obtener el usuario");
@@ -319,7 +318,7 @@ async function editarUsuario(req, res) {
 
         if(body.situacion){
             if(body.situacion != 'Regular' || body.situacion != 'Retirado' || body.situacion != 'Titulado' || body.situacion != 'Egresado' || body.situacion != 'Contratado' || body.situacion != 'Planta' || body.situacion != 'Honorario'){
-                return res.status(400).json({message: "Situacion academica no valida"});
+                return res.status(400).json({message: "Situacion no valida"});
             }
         }
         

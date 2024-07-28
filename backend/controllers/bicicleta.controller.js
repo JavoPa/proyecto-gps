@@ -20,10 +20,10 @@ async function createBicicleta(req, res) { //Solicitud emitida por el Usuario pa
     const { error: bodyError } = bicicletaSchema.validate(body);
     if (bodyError) return respondError(req, res, 400, bodyError.message);
 
-    const [token, tokenError] = await bicicletaService.createBicicleta(body, userId);
-    if (tokenError) return respondError(req, res, 500, tokenError);
-    if(!token) return respondError(req, res, 400, 'No se creó el token');
-    respondSuccess(req, res, 201, token);
+    const [bicicleta, bicicletaError] = await bicicletaService.createBicicleta(body, userId);
+    if (bicicletaError) return respondError(req, res, 400, bicicletaError);
+    if(!bicicleta) return respondError(req, res, 400, 'No se creó la bicicleta');
+    respondSuccess(req, res, 201, bicicleta);
   } catch (error) {
     handleError(error, "bicicleta.controller -> createBicicleta");
     respondError(req, res, 500, "No se creó la bicicleta");
@@ -48,7 +48,7 @@ async function updateBicicletaUsuario(req, res) { //Solicitud emitida por el Usu
     const [bicicleta, bicicletaError] = await bicicletaService.updateBicicletaUsuario(body, id);
     if (bicicletaError) return respondError(req, res, 500, bicicletaError);
     if(!bicicleta) return respondError(req, res, 400, 'No se registró la bicicleta');
-    respondSuccess(req, res, 201, bicicleta);
+    respondSuccess(req, res, 200, bicicleta);
   } catch (error) {
     handleError(error, "bicicleta.controller -> updateBicicletaUsuario");
     respondError(req, res, 500, "No se registró la bicicleta");
@@ -71,10 +71,10 @@ async function updateBicicleta(req, res) { //Solicitud emitida por el Usuario pa
     const { error: bodyError } = bicicletaSchema.validate(body);
     if (bodyError) return respondError(req, res, 400, bodyError.message);
 
-    const [token, tokenError] = await bicicletaService.updateBicicleta(body, userId);
-    if (tokenError) return respondError(req, res, 500, tokenError);
-    if(!token) return respondError(req, res, 400, 'No se creó el token');
-    respondSuccess(req, res, 201, token);
+    const [bicicleta, bicicletaError] = await bicicletaService.updateBicicleta(body, userId);
+    if (bicicletaError) return respondError(req, res, 500, bicicletaError);
+    if(!bicicleta) return respondError(req, res, 400, 'No se modificó la bicicleta');
+    respondSuccess(req, res, 200, bicicleta);
   } catch (error) {
     handleError(error, "bicicleta.controller -> updateBicicleta");
     respondError(req, res, 500, "No se modificó la bicicleta");
@@ -114,10 +114,10 @@ async function getBicicletaById(req, res) {
         const { error: idError } = userIdSchema.validate({ id });
         if (idError) return respondError(req, res, 400, idError.message);
     
-        const [token, tokenError] = await bicicletaService.getBicicletaById(id);
-        if (tokenError) return respondError(req, res, 500, tokenError);
-        if(!token) return respondError(req, res, 400, 'No se creó el token');
-        respondSuccess(req, res, 201, token);
+        const [bicicleta, bicicletaError] = await bicicletaService.getBicicletaById(id);
+        if (bicicletaError) return respondError(req, res, 500, bicicletaError);
+        if(!bicicleta) return respondError(req, res, 400, 'No se creó el bicicleta');
+        respondSuccess(req, res, 201, bicicleta);
     } catch (error) {
         handleError(error, "bicicleta.controller -> getBicicletaById");
         respondError(req, res, 500, "No se pudo obtener la bicicleta");

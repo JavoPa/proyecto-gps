@@ -39,7 +39,6 @@ export default function login() {
 
     useEffect(() => {
       setCargando(false);
-      console.log('la session es',session);
       if(session){
         const rol = rolesService(session);
         if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){

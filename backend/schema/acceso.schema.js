@@ -24,41 +24,35 @@ const tokenSchema = Joi.object({
  * @constant {Object}
  */
 const invitadoSchema = Joi.object({
-    nombre: Joi.string()
-      .required()
-      .messages({
-        "string.empty": "El nombre no puede estar vacío.",
-        "any.required": "El nombre es obligatorio.",
-        "string.base": "El nombre debe ser de tipo string.",
-      }),
-    apellido: Joi.string()
-      .required()
-      .messages({
-        "string.empty": "El apellido no puede estar vacío.",
-        "any.required": "El apellido es obligatorio.",
-        "string.base": "El apellido debe ser de tipo string.",
-      }),
-    rut: Joi.string()
-      .required()
-      .pattern(/^[0-9]+[-]{1}[0-9kK]{1}$/)
-      .messages({
-        "string.empty": "El rut no puede estar vacío.",
-        "any.required": "El rut es obligatorio.",
-        "string.pattern.base": "El rut debe tener un formato válido.",
-      }),
-    fono: Joi.string()
-      .pattern(/^[0-9]+$/)
-      .messages({
-        "string.empty": "El teléfono no puede estar vacío.",
-        "string.base": "El teléfono debe ser de tipo string.",
-        "string.pattern.base": "El teléfono solo puede contener números.",
-      }),
-    correo: Joi.string()
-      .email({ tlds: { allow: false } })
-      .messages({
-        "string.empty": "El correo no puede estar vacío.",
-        "string.email": "El correo debe tener un formato válido.",
-      }),
+  rut: Joi.string().min(9).max(12).required().messages({
+    "string.empty": "El rut no puede estar vacío.",
+    "any.required": "El rut es obligatorio.",
+    "string.base": "El rut debe ser de tipo string.",
+    "string.min": "Rut invalido"
+  }),
+  nombre: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
+  }),
+  apellido: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).required().messages({
+    "string.empty": "El apellido no puede estar vacío.",
+    "string.base": "El apellido debe ser de tipo string.",
+    'string.pattern.base': "El apellido solo puede contener letras",
+    "string.max": "El apellido debe contener menos de 30 caracteres",
+  }),
+  fono: Joi.string().pattern(/^9\d{8}$/).messages({
+    "number.empty": "El fono no puede estar vacío.",
+    "number.max": "El fono debe contener al menos 9 numeros",
+    'string.pattern.base': 'El fono debe comenzar con 9 y tener 9 digitos, no se damiten letras ni + 56 antes del numero'
+  }),
+  correo: Joi.string().email().required().messages({
+    "string.empty": "El correo no puede estar vacío.",
+    "any.required": "El correo es obligatorio.",
+    "string.base": "El correo debe ser de tipo string.",
+    "string.email": "El correo debe tener un formato válido.",
+  }),
 });
   
   module.exports = { tokenSchema, invitadoSchema};
