@@ -38,11 +38,19 @@ const JaulaForm: React.FC = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Crear Nueva Jaula</Text>
             {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+            <Text style={styles.helpText}>Recomendamos ingresar las coordenadas de la ubicación para mayor precisión.</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ubicación"
                 value={ubicacion}
                 onChangeText={setUbicacion}
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Identificador"
+                value={identificador}
+                onChangeText={setIdentificador}
             />
             <TextInput
                 style={styles.input}
@@ -50,12 +58,6 @@ const JaulaForm: React.FC = () => {
                 value={capacidad}
                 onChangeText={setCapacidad}
                 keyboardType="numeric"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Identificador"
-                value={identificador}
-                onChangeText={setIdentificador}
             />
             <Button title="Guardar" onPress={handleSubmit} color="#2A628F" />
         </View>
@@ -84,6 +86,11 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         marginBottom: 16,
         backgroundColor: '#FFFFFF', // Fondo del input
+    },
+    helpText: {
+        fontSize: 12,
+        color: '#6c757d',
+        marginBottom: 16,
     },
     errorText: {
         color: 'red',
