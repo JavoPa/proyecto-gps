@@ -15,13 +15,22 @@ const data = [
 
 const data2 = [
     {label: 'Regular', value: 'Regular'},
-    {label: 'Irregular', value: 'Irregular'},
+    {label: 'Titulado', value: 'Titulado'},
+    {label: 'Retirado', value: 'Retirado'},
+    {label: 'Egresado', value: 'Egresado'},
 ];
 
 const data3 = [
   {label: 'ICINF', value: 'Ingenieria Civil Informatica'},
   {label: 'IECI', value: 'Ingenieria En Ejecucion Informatica'},
 ];
+
+const data4 = [
+  {label: 'Contratado', value: 'Contratado'},
+  {label: 'Planta', value: 'Planta'},
+  {label: 'Honorario', value: 'Honorario'},
+];
+
 
 
 
@@ -43,8 +52,6 @@ const CrearUsuarios: React.FC = () =>{
     const [carrera, setCarrera] = useState('Carrera');
     const [situacion, setSituacion] = useState('Situacion');
     const [isFocus, setIsFocus] = useState(false);
-    const [isFocus2, setIsFocus2] = useState(false);
-    const [aniquilar, setAniquilar] = useState(false);
     const [encontrado, setencontrado] = useState(false);
     const [cargando, setCargando] = useState(false);
 
@@ -52,7 +59,7 @@ const CrearUsuarios: React.FC = () =>{
 
     const formatearRut = (rut: string) => {
       const limpio = rut.replace(/\D/g, '');
-      const formateado = limpio.replace(/^(\d{1,2})(\d{3})(\d{3})(\w{1})$/, '$1.$2.$3-$4').slice(0, 12);
+      const formateado = limpio.replace(/^(\d{7,8})(\d)$/, '$1-$2').slice(0, 10);
       return formateado;
     }
 
@@ -85,9 +92,8 @@ const CrearUsuarios: React.FC = () =>{
     }
 
     const handleCrear = async () => {
-
-        //validar datos
-        
+      
+              
         if(encontrado){
           //crear usuario con los datos encontrados
           if(Tipo == 'Estudiante'){
@@ -103,10 +109,15 @@ const CrearUsuarios: React.FC = () =>{
               carrera: carrera,
             }
             //madar datos a funcion de crear usuario
-            const respuesta =  CrearUsuario(datos);
-            Alert.alert(`${respuesta}`);
-            setear();
-            console.log(respuesta);
+            CrearUsuario(datos).then((respuesta) => {
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK', onPress: () => setear()}]);
+                }
+              }
+            });
+          
           }
           const datos = {
             rut: rut2,
@@ -119,10 +130,18 @@ const CrearUsuarios: React.FC = () =>{
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          const respuesta =  CrearUsuario(datos);
-          Alert.alert(`${respuesta}`);
-          setear();
-          console.log(respuesta);
+          CrearUsuario(datos).then((respuesta) => {
+            if(respuesta.message != undefined){
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                  setear();
+                }
+              }
+            }
+          });
+  
         }else{
           //crear usuario con los datos ingresados
           if(Tipo == "Estudiante"){
@@ -140,11 +159,15 @@ const CrearUsuarios: React.FC = () =>{
             }
             //madar datos a funcion de crear usuario
             CrearUsuario(datos).then((respuesta) => {
-              console.log(respuesta.message);
-              Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
-              setear();
+              if(respuesta){
+                if(respuesta.message != undefined){
+                  console.log(respuesta.message);
+                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                  setear();
+                }
+              }
             });
-          }/*
+          }
           const datos = {
             rut: rut,
             nombre: nombre,
@@ -156,10 +179,15 @@ const CrearUsuarios: React.FC = () =>{
             situacion: situacion,
           }
           //madar datos a funcion de crear usuario
-          const respuesta =  CrearUsuario(datos);
-          console.log(respuesta);
-          setear();
-          Alert.alert(`${respuesta}`);*/
+          CrearUsuario(datos).then((respuesta) => {
+            if(respuesta){
+              if(respuesta.message != undefined){
+                console.log(respuesta.message);
+                Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
+                setear();
+              }
+            }
+          });
         }
 
     }
@@ -220,11 +248,10 @@ const CrearUsuarios: React.FC = () =>{
             />
             {/*Modal para vista de cargando */}
             <Modal
-                animationType="slide"
-                transparent={true}
+                animationType="none"
+                transparent={false}
                 visible={cargando}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
                     setCargando(!cargando);
                 }}
             >
@@ -238,8 +265,8 @@ const CrearUsuarios: React.FC = () =>{
              {/*Seleccion adicionales de datos para estudiante */}
             <Modal
               visible={Tipo == 'Estudiante'}
-              animationType="slide"
-              transparent={false}
+              animationType="none"
+              transparent={true}
               onRequestClose={() => {}} //para que no se cierre con el boton de atras
             >
               <View style={styles.modalEstudiante}>
@@ -252,9 +279,9 @@ const CrearUsuarios: React.FC = () =>{
                           <Text style={styles.modalButtonText}>Buscar Intranet</Text>
                       </Pressable>
                     </View>
-                    <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
+                    <TextInput style={styles.input} placeholder={nombre2} onTouchEnd={()=>setRut2(rut)} onChangeText={setNombre}></TextInput>
                     <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
-                    <TextInput style={styles.input} placeholder={numero2}  onChangeText={setNumero} ></TextInput>
+                    <TextInput style={styles.input} placeholder={numero2} inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
                     <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
                     <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
                     {tipoLabel()}
@@ -278,7 +305,7 @@ const CrearUsuarios: React.FC = () =>{
                         labelField="label"
                         valueField="value"
                         placeholder={situacion}
-                        value={Tipo}
+                        value={situacion}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
@@ -292,7 +319,7 @@ const CrearUsuarios: React.FC = () =>{
                         labelField="label"
                         valueField="value"
                         placeholder={carrera}
-                        value={Tipo}
+                        value={situacion}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
@@ -304,7 +331,7 @@ const CrearUsuarios: React.FC = () =>{
                       <Pressable style={styles.modalButton} onPress={handleCrear}>
                             <Text style={styles.modalButtonText}>Crear</Text>
                         </Pressable>
-                      <Pressable style={styles.modalButton} onPress={()=>setTipo('Tipo')}>
+                      <Pressable style={styles.modalButton} onPress={()=>{setTipo('Tipo'),setRut2('Rut')}}>
                             <Text style={styles.modalButtonText}>Volver</Text>
                       </Pressable>
                     </View>
@@ -316,8 +343,8 @@ const CrearUsuarios: React.FC = () =>{
             {/*Creacion otros usuarios que no sean estudiante */}
             <Modal
               visible={Tipo == 'Academico' || Tipo == 'Funcionario' || Tipo == 'Administrador'}
-              animationType="slide"
-              transparent={false}
+              animationType="none"
+              transparent={true}
               onRequestClose={() => {}} //para que no se cierre con el boton de atras
             >
              
@@ -326,12 +353,12 @@ const CrearUsuarios: React.FC = () =>{
                     <Text style={styles.texto} >Crear {Tipo}</Text>
                     <ScrollView >
                       <View style={styles.vistaRutIntranet}>
-                        <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
+                        <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut} ></TextInput>
                         <Pressable onPress={handleVerificar} style={styles.boton}>
                             <Text style={styles.modalButtonText}>Buscar Intranet</Text>
                         </Pressable>
                       </View>
-                      <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre}></TextInput>
+                      <TextInput style={styles.input} placeholder={nombre2} onChangeText={setNombre} onTouchEnd={()=>setRut2(rut)} ></TextInput>
                       <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
                       <TextInput style={styles.input} placeholder={numero2}  inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
                       <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
@@ -352,12 +379,12 @@ const CrearUsuarios: React.FC = () =>{
                           }}
                       />
                       <Dropdown
-                          data={data2}
+                          data={data4}
                           style={styles.input}
                           labelField="label"
                           valueField="value"
                           placeholder={situacion}
-                          value={Tipo}
+                          value={situacion}
                           onFocus={() => setIsFocus(true)}
                           onBlur={() => setIsFocus(false)}
                           onChange={item => {
@@ -369,7 +396,7 @@ const CrearUsuarios: React.FC = () =>{
                         <Pressable style={styles.modalButton} onPress={handleCrear}>
                             <Text style={styles.modalButtonText}>Crear</Text>
                         </Pressable>
-                        <Pressable style={styles.modalButton} onPress={()=>setTipo('Tipo')}>
+                        <Pressable style={styles.modalButton} onPress={()=>{setTipo('Tipo'),setRut2('Rut')}}>
                             <Text style={styles.modalButtonText}>Volver</Text>
                         </Pressable>
                       </View>
@@ -448,7 +475,7 @@ const styles = StyleSheet.create({
       margin: 5,
     },
     vistaCargando: {
-      backgroundColor: '#f15',
+      backgroundColor: '#000',
       padding: 40,
       marginTop: '80%',
       marginLeft: '20%',
