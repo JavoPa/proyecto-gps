@@ -180,14 +180,15 @@ export default function TabOneScreen() {
         >    
           <Text style={styles.usuarios}>Rut: {user.rut}</Text>
           <Text style={styles.usuarios}>{user.nombre}</Text>
-          <View style={styles.vistaBotones}>
-            <TouchableOpacity style={styles.bo} onPress={()=>handleModal(user._id)} >
-              <Text style={styles.buttonText}>Ver</Text>
-            </TouchableOpacity>
-            <TouchableHighlight style={styles.botonEliminar}  onPress={()=>handleElminar(user._id)} >
-              <Text style={styles.buttonText}>Eliminar</Text>
-            </TouchableHighlight>
-          </View>
+            <View style={styles.vistaBotones}>
+              <TouchableHighlight style={styles.botonEliminar} onPress={() => handleElminar(user._id)} >
+                <Text style={styles.buttonText}>Eliminar</Text>
+              </TouchableHighlight>
+              <TouchableOpacity style={styles.bo} onPress={() => handleModal(user._id)} >
+                <Text style={styles.buttonText}>Ver</Text>
+              </TouchableOpacity>
+
+            </View>
           
 
           <Modal
