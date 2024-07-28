@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { postJaula, getJaulas } from '@/services/jaula.service';
 import { useNavigation } from '@react-navigation/native';
 
@@ -27,7 +27,7 @@ const JaulaForm: React.FC = () => {
 
         if (response && response.message === "Jaula creada exitosamente") {
             getJaulas();
-            Alert.alert('Éxito', 'Jaula creada correctamente');
+            alert('Jaula creada correctamente. Se recomienda comprobar que la ubicación se muestra correctamente en Google Maps');
             navigation.goBack();
         } else {
             setErrorMessage(response.message || 'No se pudo crear la jaula');
