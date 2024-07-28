@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { postGuardia } from '@/services/gestion.service';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, CommonActions  } from '@react-navigation/native';
 
 const GuardiaForm: React.FC = () => {
     const [rut, setRut] = useState('');
@@ -52,7 +52,12 @@ const GuardiaForm: React.FC = () => {
 
         if (response && response._id) {
             Alert.alert('Éxito', 'Guardia creado correctamente');
-            navigation.goBack();
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'listaGuardias' }],
+                })
+            );
         } else {
             setError(response.message || 'Hubo un error al crear el guardia');
         }

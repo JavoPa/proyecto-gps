@@ -220,7 +220,7 @@ async function generarInforme(req, res) {
             valign: 'center'
         });
 
-        doc.addPage();
+        doc.moveDown(20);
 
         const placeChartConfig = {
             type: 'bar',

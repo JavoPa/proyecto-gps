@@ -38,9 +38,20 @@ const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
       switch (response.status) {
         case 200:
           const base64PDF = response.data.pdf;
-          const uri = FileSystem.documentDirectory + `informe_incidentes.pdf`;
-          await FileSystem.writeAsStringAsync(uri, base64PDF, { encoding: FileSystem.EncodingType.Base64 });
-          openPDF(uri);
+          if (Platform.OS === 'web') {
+            const pdfBlob = base64ToBlob(base64PDF, 'application/pdf');
+            const url = URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `informe_incidentes_${selectedYear}_${selectedMonth}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } else {
+            const uri = FileSystem.documentDirectory + `informe_incidentes.pdf`;
+            await FileSystem.writeAsStringAsync(uri, base64PDF, { encoding: FileSystem.EncodingType.Base64 });
+            openPDF(uri);
+          }
           break;
 
         case 204:
@@ -74,6 +85,23 @@ const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
     }
   };
 
+  const base64ToBlob = (base64: string, contentType: string) => {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, { type: contentType });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>Año</Text>
@@ -104,8 +132,8 @@ const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
         <Text style={styles.buttonText}>Descargar y Abrir Informe</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bo} onPress={() => navigateTo('IncidentesMenu')}>
-                <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
-            </TouchableOpacity>
+        <Text style={styles.buttonText}>Volver al menú de incidentes</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -158,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: '#ccc',
     borderWidth: 1,
-},
+  },
 });
 
 export default DescargarInforme;

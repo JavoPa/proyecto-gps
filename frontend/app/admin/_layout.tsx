@@ -96,26 +96,7 @@ export default function AdminLayout() {
           }
         }}
       />
-        <Tabs.Screen
-            name="crearJaula"
-            options={{
-                title: 'Agregar Jaula',
-                tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
-                headerStyle: {
-                  backgroundColor: '#EDF2F4'
-                }
-            }}
-        />
-      <Tabs.Screen
-        name="crearGuardia"
-        options={{
-          title: 'Guardia',
-          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
-          headerStyle: {
-            backgroundColor: '#EDF2F4'
-          }
-        }}
-      />
+
       <Tabs.Screen
         name="crearUsuarios"
         options={{
