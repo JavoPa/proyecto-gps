@@ -184,8 +184,12 @@ async function validarToken(token, guardiaId) {
 async function ingresoInvitado(body, guardiaId) {
   try {
     //Crear el usuario
-    let invitado = await Invitado.findOne({ rut: body.rut });
+    let invitado = await Usuario.findOne({ rut: body.rut });
     if(!invitado){
+      const correoExistente = await Usuario.findOne({ correo: body.correo });
+      if (correoExistente) {
+        return [null, 'El correo ya está registrado por otro usuario'];
+      }
       invitado = new Invitado({
         nombre: body.nombre,
         apellido: body.apellido,
@@ -197,17 +201,33 @@ async function ingresoInvitado(body, guardiaId) {
       });
       await invitado.save();
     }else{
-      // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
-      const accesoExistente = await Acceso.findOne({ usuario: invitado._id, entrada: { $ne: null }, salida: null });
-      if (accesoExistente) {
-        return [null, 'El usuario ya posee una bicicleta registrada en el sistema.'];
+      // Verificar si el correo ya está registrado por otro usuario
+      if (invitado.correo !== body.correo) {
+        const correoExistente = await Usuario.findOne({ correo: body.correo });
+        if (correoExistente) {
+          return [null, 'El correo ya está registrado por otro usuario'];
+        }
+        invitado.correo = body.correo;
       }
       //Actualizar los datos del usuario
       invitado.nombre = body.nombre;
       invitado.apellido = body.apellido;
-      invitado.fono = body.fono;
-      invitado.correo = body.correo;
+      if(invitado.fono != body.fono) {invitado.fono = body.fono};
       await invitado.save();
+      // Verificar si el estudiante ya tiene un acceso sin fecha de salida (bicicleta registrada)
+      const accesoExistente = await Acceso.findOne({ usuario: invitado._id, entrada: { $ne: null }, salida: null })
+        .populate({
+          path: 'usuario',
+          select: '-password',
+          populate: {
+            path: 'bicicleta',
+          },
+        });
+      if (accesoExistente) {
+        accesoExistente.salida = new Date();
+        await accesoExistente.save();
+        return [accesoExistente, null];
+      }
     }
     //Validacion de capacidad jaula
     const jaula = await Jaula.findOne({ guardiaAsignado: guardiaId }); //Buscar la jaula asignada al guardia
