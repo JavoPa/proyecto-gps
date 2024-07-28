@@ -125,14 +125,20 @@ const HistorialViewer: React.FC = () => {
         },
     };
 
-    const renderItem = ({ item }: { item: HistorialItem }) => (
-        <View style={styles.item}>
-            <Text style={styles.text}>Rut: {item.usuario.rut}</Text>
-            <Text style={styles.text}>Nombre: {item.usuario.nombre + " " + item.usuario.apellido}</Text>
-            <Text style={styles.text}>Entrada: {item.entrada ? new Date(item.entrada).toLocaleString() : 'No registrada'}</Text>
-            <Text style={styles.text}>Salida: {item.salida ? new Date(item.salida).toLocaleString() : 'No registrada'}</Text>
-        </View>
-    );
+    const renderItem = ({ item }: { item: HistorialItem }) => {
+        if (!item.usuario) {
+            return null;
+        }
+    
+        return (
+            <View style={styles.item}>
+                <Text style={styles.text}>Rut: {item.usuario.rut}</Text>
+                <Text style={styles.text}>Nombre: {item.usuario.nombre} {item.usuario.apellido}</Text>
+                <Text style={styles.text}>Entrada: {item.entrada ? new Date(item.entrada).toLocaleString() : 'No registrada'}</Text>
+                <Text style={styles.text}>Salida: {item.salida ? new Date(item.salida).toLocaleString() : 'No registrada'}</Text>
+            </View>
+        );
+    };
 
     const screenWidth = Dimensions.get('window').width;
 

@@ -44,6 +44,32 @@ async function getGuardiaById(id) {
     }
 }
 
+
+/**
+ * Valida el RUT chileno
+ * @param {string} rut 
+ * @returns {boolean}
+ */
+function validarRUT(rut) {
+
+    rut = rut.replace(/\./g, '').replace(/-/g, '');    
+    const rutNumeros = rut.slice(0, -1);
+    const dv = rut.slice(-1).toUpperCase();
+    
+    // Calcular dígito verificador
+    let suma = 0;
+    let multiplicador = 2;
+    for (let i = rutNumeros.length - 1; i >= 0; i--) {
+        suma += parseInt(rutNumeros[i]) * multiplicador;
+        multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+    const dvEsperado = 11 - (suma % 11);
+    const dvCalculado = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : dvEsperado.toString();
+    
+    // Comparar dígito verificador calculado con el dígito verificador proporcionado
+    return dv === dvCalculado;
+}
+
 /**
  * @param {Object} guardiaData
  * @returns {Promise} 
@@ -66,6 +92,9 @@ async function createGuardia(guardiaData) {
             cargo,
             situacion_laboral
         });
+        if (!validarRUT(newGuardia.rut)) {
+            return [null, "El RUT no es válido"];
+        }
         if (newGuardia.nombre.includes('  ')) {
             return [null, "El nombre del guardia no puede estar vacio"];
           }
