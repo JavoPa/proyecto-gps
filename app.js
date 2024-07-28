@@ -5,10 +5,12 @@ const express = require('express')
 const {PORT, DB_URL} = process.env
 const indexRouter = require('./router/index.router.js')
 const morgan = require("morgan");
+const cors = require("cors");
 
 
 async function servidorGeneral(){
   try {
+    app.use(cors());
     const app = express()
     app.use(express.json())
     app.use(morgan("dev"));
