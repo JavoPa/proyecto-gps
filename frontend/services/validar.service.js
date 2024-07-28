@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import {API_URL2} from './root.service';
+const API_URL2 = process.env.EXPO_PUBLIC_API_URL_I || 'http://38.7.199.239:5000/api';
 import axios from 'axios';
 
 
