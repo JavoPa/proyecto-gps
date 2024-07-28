@@ -36,12 +36,12 @@ async function createUser() {
         }
         if (E.length == 0) {
             await new Estudiante({
-                rut : "11111111-2",
-                nombre: "Estudiante",
-                apellido: "E",
-                fono: "123456789",
-                correo: "estudiante@ubb.cl", 
-                password: await Usuario.encryptPassword("Estudiante123"), 
+                rut : "20720552-4",
+                nombre: "Bayron",
+                apellido: "Garri",
+                fono: "965874540",
+                correo: "bayron@ubb.cl", 
+                password: await Usuario.encryptPassword("Bayron123"), 
                 rol: "Estudiante",
                 carrera: "Informatica",
                 situacion: "Regular"
@@ -78,7 +78,7 @@ async function createUser() {
         if (Ad.length == 0) {
             await new Administrador({
                 rut : "11111111-4",
-                nombre: "Administrador ",
+                nombre: "Administrador",
                 apellido: "Admin",
                 fono: "123456789",
                 correo: "admin@ubb.cl", 
