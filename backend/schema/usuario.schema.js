@@ -69,7 +69,7 @@ const userIdSchema = Joi.object({
 // validar solo rut
 
 const rutSchema = Joi.object({
-  rut: Joi.string().min(9).max(10).required().messages({
+  rut: Joi.string().min(9).max(10).messages({
     "string.empty": "El rut no puede estar vacío.",
     "any.required": "El rut es obligatorio.",
     "string.base": "El rut debe ser de tipo string.",
@@ -78,32 +78,30 @@ const rutSchema = Joi.object({
 
 // validador crear usuario
 
-const usuarioShema = Joi.object({
-  rut: Joi.string().min(9).max(10).required().messages({
+const usuariosShema = Joi.object({
+  rut: Joi.string().min(9).max(12).required().messages({
     "string.empty": "El rut no puede estar vacío.",
     "any.required": "El rut es obligatorio.",
     "string.base": "El rut debe ser de tipo string.",
+    "string.min": "Rut invalido"
   }),
-  nombre: Joi.string().required().messages({
+  nombre: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).messages({
     "string.empty": "El nombre no puede estar vacío.",
-    "any.required": "El nombre es obligatorio.",
     "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  apellido: Joi.string().required().messages({
-    "string.empty": "El apellido no puede estar vacío.",
-    "any.required": "El apellido es obligatorio.",
-    "string.base": "El apellido debe ser de tipo string.",
+  apellido: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).required().messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  fono: Joi.number()
-    .integer()
-    .max(999999999)
-    .required()
-    .messages({
-      "number.empty": "El fono no puede estar vacío.",
-      "any.required": "El fono es obligatorio.",
-      "number.base": "El fono debe ser de tipo number.",
-      "number.max": "El fono debe contener al menos 9 numeros",
-    }),
+  fono: Joi.string().pattern(/^9\d{8}$/).messages({
+    "number.empty": "El fono no puede estar vacío.",
+    "number.max": "El fono debe contener al menos 9 numeros",
+    'string.pattern.base': 'El fono debe comenzar con 9 y tener 9 digitos, no se damiten letras ni + 56 antes del numero'
+  }),
   correo: Joi.string().email().required().messages({
     "string.empty": "El correo no puede estar vacío.",
     "any.required": "El correo es obligatorio.",
@@ -111,43 +109,47 @@ const usuarioShema = Joi.object({
     "string.email": "El correo debe tener un formato válido.",
   }),
   password: Joi.string().alphanum().required().min(5).messages({
-
+    "string.empty": "La contraseña no puede estar vacío.",
+    "string.alphanum": "La contraseña debe ser alfanumérica.",
+    "string.min": "La contraseña debe contener al menos 5 caracteres.",
   }),
   rol: Joi.string().valid(...ROLES).required().messages({
     "string.empty": "El rol no puede estar vacío.",
     "any.required": "El rol es obligatorio.",
     "string.base": "El rol debe ser de tipo string.",
     "any.only": "El rol proporcionado no es válido.",
+  }),
+  situacion: Joi.string().required().messages({
+    "string.empty": "El cargo no puede estar vacío.",
+    "any.required": "El cargo es obligatorio.",
+    "string.base": "El cargo debe ser de tipo string.",
   }),
 })
 
 
 const estudianteSchema = Joi.object({
-  rut: Joi.string().min(9).max(10).required().messages({
+  rut: Joi.string().min(9).max(12).required().messages({
     "string.empty": "El rut no puede estar vacío.",
     "any.required": "El rut es obligatorio.",
     "string.base": "El rut debe ser de tipo string.",
   }),
-  nombre: Joi.string().required().messages({
+  nombre: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).messages({
     "string.empty": "El nombre no puede estar vacío.",
-    "any.required": "El nombre es obligatorio.",
     "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  apellido: Joi.string().required().messages({
-    "string.empty": "El apellido no puede estar vacío.",
-    "any.required": "El apellido es obligatorio.",
-    "string.base": "El apellido debe ser de tipo string.",
+  apellido: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).required().messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  fono: Joi.number()
-    .integer()
-    .max(999999999)
-    .required()
-    .messages({
-      "number.empty": "El fono no puede estar vacío.",
-      "any.required": "El fono es obligatorio.",
-      "number.base": "El fono debe ser de tipo number.",
-      "number.max": "El fono debe contener al menos 9 numeros",
-    }),
+  fono: Joi.string().pattern(/^9\d{8}$/).messages({
+    "number.empty": "El fono no puede estar vacío.",
+    "number.max": "El fono debe contener al menos 9 numeros",
+    'string.pattern.base': 'El fono debe comenzar con 9 y tener 9 digitos, no se damiten letras ni + 56 antes del numero'
+  }),
   correo: Joi.string().email().required().messages({
     "string.empty": "El correo no puede estar vacío.",
     "any.required": "El correo es obligatorio.",
@@ -155,7 +157,9 @@ const estudianteSchema = Joi.object({
     "string.email": "El correo debe tener un formato válido.",
   }),
   password: Joi.string().alphanum().required().min(5).messages({
-
+    "string.empty": "La contraseña no puede estar vacío.",
+    "string.alphanum": "La contraseña debe ser alfanumérica.",
+    "string.min": "La contraseña debe contener al menos 5 caracteres.",
   }),
   rol: Joi.string().valid(...ROLES).required().messages({
     "string.empty": "El rol no puede estar vacío.",
@@ -163,15 +167,15 @@ const estudianteSchema = Joi.object({
     "string.base": "El rol debe ser de tipo string.",
     "any.only": "El rol proporcionado no es válido.",
   }),
+  situacion: Joi.string().required().messages({
+    "string.empty": "El cargo no puede estar vacío.",
+    "any.required": "El cargo es obligatorio.",
+    "string.base": "El cargo debe ser de tipo string.",
+  }),
   carrera: Joi.string().required().messages({
     "string.empty": "La carrera no puede estar vacío.",
     "any.required": "La carrera es obligatoria.",
     "string.base": "La carrera debe ser de tipo string.",
-  }),
-  situacion: Joi.string().required().messages({
-    "string.empty": "La situacion academica no puede estar vacío.",
-    "any.required": "La situacion academica es obligatoria.",
-    "string.base": "La situacion academica debe ser de tipo string.",
   }),
 })
 
@@ -330,26 +334,23 @@ const administradorSchema = Joi.object({
     "any.required": "El rut es obligatorio.",
     "string.base": "El rut debe ser de tipo string.",
   }),
-  nombre: Joi.string().required().messages({
+  nombre: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).messages({
     "string.empty": "El nombre no puede estar vacío.",
-    "any.required": "El nombre es obligatorio.",
     "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  apellido: Joi.string().required().messages({
-    "string.empty": "El apellido no puede estar vacío.",
-    "any.required": "El apellido es obligatorio.",
-    "string.base": "El apellido debe ser de tipo string.",
+  apellido: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).required().messages({
+    "string.empty": "El nombre no puede estar vacío.",
+    "string.base": "El nombre debe ser de tipo string.",
+    'string.pattern.base': "El nombre solo puede contener letras",
+    "string.max": "El nombre debe contener menos de 30 caracteres",
   }),
-  fono: Joi.number()
-    .integer()
-    .max(999999999)
-    .required()
-    .messages({
-      "number.empty": "El fono no puede estar vacío.",
-      "any.required": "El fono es obligatorio.",
-      "number.base": "El fono debe ser de tipo number.",
-      "number.max": "El fono debe contener al menos 9 numeros",
-    }),
+  fono: Joi.string().pattern(/^9\d{8}$/).messages({
+    "number.empty": "El fono no puede estar vacío.",
+    "number.max": "El fono debe contener al menos 9 numeros",
+    'string.pattern.base': 'El fono debe comenzar con 9 y tener 9 digitos, no se damiten letras ni + 56 antes del numero'
+  }),
   correo: Joi.string().email().required().messages({
     "string.empty": "El correo no puede estar vacío.",
     "any.required": "El correo es obligatorio.",
@@ -357,7 +358,7 @@ const administradorSchema = Joi.object({
     "string.email": "El correo debe tener un formato válido.",
   }),
   password: Joi.string().alphanum().required().min(5).messages({
-
+    "string.empty": "La contraseña no puede estar vacío.",
   }),
   rol: Joi.string().valid(...ROLES).required().messages({
     "string.empty": "El rol no puede estar vacío.",
@@ -373,7 +374,7 @@ const administradorSchema = Joi.object({
 })
 
 const nombreSchema = Joi.object({
-  nombre: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).messages({
+  nombre: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).messages({
     "string.empty": "El nombre no puede estar vacío.",
     "string.base": "El nombre debe ser de tipo string.",
     'string.pattern.base': "El nombre solo puede contener letras",
@@ -381,7 +382,7 @@ const nombreSchema = Joi.object({
   })
 })
 const apellidoSchema = Joi.object({
-  apellido: Joi.string().pattern(/^[A-Za-z\s]+$/).max(30).required().messages({
+  apellido: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).required().messages({
     "string.empty": "El nombre no puede estar vacío.",
     "string.base": "El nombre debe ser de tipo string.",
     'string.pattern.base': "El nombre solo puede contener letras",
@@ -405,7 +406,7 @@ const passwordSchema = Joi.object({
 
 module.exports = { /*userBodySchema, */
   userIdSchema,
-  usuarioShema,
+  usuariosShema,
   rutSchema,
   estudianteSchema,
   guardiaSchema,

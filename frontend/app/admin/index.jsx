@@ -1,7 +1,7 @@
-import { StyleSheet, ScrollView ,ActivityIndicator, Modal, TextInput, Alert, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { StyleSheet, ScrollView ,ActivityIndicator, Modal, TextInput, Alert, TouchableOpacity, TouchableHighlight} from 'react-native';
 import { useSession } from '@/flo';
 import { Text, View } from '@/components/Themed';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { obtenerUsuarios } from '@/services/busqueda.user';
 import { eliminarUsuario, editarUsuario } from '@/services/crear.Usuarios';
 import { useRouter } from 'expo-router';
@@ -25,18 +25,35 @@ export default function TabOneScreen() {
     const [fono, setFono] = useState(''); // estado para mostrar el modal// estado para mostrar el modal
     const [contraseña, setContraseña] = useState(''); // estado para mostrar el modal// estado para mostrar el modal
 
-    const router = useRouter();
+    const scrollViewRef = useRef(null);
+    //obtener usuarios por nombre mandando la session a la funcion
+    useEffect(() => {
+      handleSearch();
+      sacarDatos();
+    }, []);
+
+    useEffect(() => {
+      // Reiniciar el desplazamiento a la posición inicial después de actualizar los datos
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: true });
+      }
+    }, [usuarios]);
     
     const sacarDatos = () => {
       setCargando(true);
       setTimeout(() => {
       obtenerUsuarios(session).then((data) => {
         if(!data) Alert.alert('Error al obtener los usuarios');
-        setUsuarios(data.data);
-        setUsuarios3(data.data);
+        const usuariosOrdenados = data.data.sort((a, b) => {
+          const rutA = a.rut.replace(/[^0-9]/g, '');
+          const rutB = b.rut.replace(/[^0-9]/g, '');
+          return parseInt(rutA) - parseInt(rutB);
+        });
+        setUsuarios(usuariosOrdenados);
+        setUsuarios3(usuariosOrdenados);
       });
       setCargando(false);
-    },2000);
+    },500);
     }
  
     //funcion para buscar usuarios por rut
@@ -56,13 +73,7 @@ export default function TabOneScreen() {
       }
     }
 
-    //obtener usuarios por nombre mandando la session a la funcion
-    useEffect(() => {
-      setCargando(true);
-      handleSearch();
-      sacarDatos();
-      setCargando(false);
-    }, []);
+    
 
     
 
@@ -72,10 +83,6 @@ export default function TabOneScreen() {
       setUsuarios2(usuarios.filter((user) => user._id === id)[0]);
       setModalVisible(true);
       setCargando(false);
-      /*
-      setTimeout(() => {
-        setCargando(false);
-      },500);*/
     }
     const handleEditar= (id) => {
       setCargando(true);
@@ -84,24 +91,20 @@ export default function TabOneScreen() {
       setModalVisible(false);
       setModalVisibleEditar(true);
       setCargando(false);
-      /*
-      setTimeout(() => {
-        setModalVisible(false);
-        setModalVisibleEditar(true);
-        setCargando(false);
-      },1000);*/
     }
 
     const handleElminar = (id) => {
-      setCargando(true);
-      console.log(id);
-      eliminarUsuario(id).then((data) => {
-        if(!data) Alert.alert('Error al eliminar el usuario');
-        Alert.alert('Eiminado',`${data.message}`);
-        setCargando(true);
-        sacarDatos();
-        setCargando(false);
-      });
+      Alert.alert('Eliminar Usuario', '¿Está seguro que desea eliminar este usuario?',[{text: 'Cancelar', onPress: () => {return;}},{text: 'Eliminar', onPress: () => {
+          console.log(id);
+          eliminarUsuario(id).then((data) => {
+            if(!data) Alert.alert('Error al eliminar el usuario', 'Intente nuevamente',[{text: 'OK',}]);
+            Alert.alert('Eliminado',`${data.message}`,[{text: 'OK', onPress: () => {
+              setCargando(true);
+              sacarDatos();
+            }}]);
+          });
+        } 
+      }]);
     }
 
     const handleGuardar = (id) => {
@@ -123,22 +126,23 @@ export default function TabOneScreen() {
       const seteo ={
         nombre: nombre,
         apellido: apellido,
-        correo: correo,
+        correo: correo.toLocaleLowerCase(),
         fono: fono,
         password: contraseña,
       }
       //console.log(seteo);
       editarUsuario(id,seteo).then((res) => {
-        if(res.message != undefined){
-            Alert.alert(`Usuario ${User}`,`${res.message}`);
-            setModalVisibleEditar(false);
-            return;
+        if(res){
+          if(res.message != undefined){
+            Alert.alert(`Usuario ${User}`,`${res.message}`,[{text: 'OK', onPress: () => {
+              setModalVisibleEditar(false)
+              setear();
+              return;
+            }}]);
+          }
         }
-        //if(!data) Alert.alert('Error al editar el usuario');
-        //Alert.alert('Editado',`${data.rut} ${data.nombre}`);
       });
       return;
-      //return router.replace('/admin')
     }
 
     const setear = () => {
@@ -164,9 +168,10 @@ export default function TabOneScreen() {
           placeholder='Buscar por rut'
           style={styles.busqueda}
           value={consulta}
+          inputMode='numeric'
           onChangeText={handleSearch}
         />
-        <ScrollView >
+        <ScrollView ref={scrollViewRef}>
            {/* renderiza botones Preseables que al tocarlos activan el modal que muestra detalle*/}
         {usuarios3.map((user) => (
         <View
@@ -179,20 +184,21 @@ export default function TabOneScreen() {
             <TouchableOpacity style={styles.bo} onPress={()=>handleModal(user._id)} >
               <Text style={styles.buttonText}>Ver</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.botonEliminar}  onLongPress={()=>handleElminar(user._id)} >
+            <TouchableHighlight style={styles.botonEliminar}  onPress={()=>handleElminar(user._id)} >
               <Text style={styles.buttonText}>Eliminar</Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
           </View>
           
 
           <Modal
             visible={modalVisible}
-            animationType="fade"
+            animationType="none"
             onRequestClose={()=>setModalVisible(false)}
             transparent={false}
           >
             <View style={styles.modalContainer}>
               <View style={styles.detalle}>
+                <Text style={styles.titel}>Detalles del Usuario</Text>
                 <Text style={styles.usuarios}>Rut: {usuarios2.rut}</Text>
                 <Text style={styles.usuarios}>Nombre: {usuarios2.nombre}</Text>
                 <Text style={styles.usuarios}>Apellido: {usuarios2.apellido}</Text>
@@ -214,7 +220,7 @@ export default function TabOneScreen() {
           {/*Modal de editar */}
           <Modal
             visible={modalVisibleEditar}
-            animationType="fade"
+            animationType="none"
             onRequestClose={()=>setModalVisibleEditar(false)}
             transparent={false}
           >
@@ -231,7 +237,6 @@ export default function TabOneScreen() {
                 <TouchableOpacity
                   onPress={()=>{
                     handleGuardar(usuarios4._id)
-                    setear();
                   }}
                   style={styles.modalButton}
                 >
