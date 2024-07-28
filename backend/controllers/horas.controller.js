@@ -54,9 +54,17 @@ async function updateHorario(req, res) {
   try {
     // const { id } = req.params;
     const { body } = req;
+
+    // Propiedades válidas para actualizar
+    const validBody = {
+      limiteEntrada: body.limiteEntrada,
+      limiteSalida: body.limiteSalida,
+    };
+
     // Validar el cuerpo de la solicitud
-    const { error } = horaSchema.validate(body);
+    const { error } = horaSchema.validate(validBody);
     if (error) {
+      // console.log("OCURRIO UN ERROR: ", error);
       return respondError(req, res, 400, error.details[0].message);
     }
     const [horario, serviceError] = await horasService.updateHorario(body);
