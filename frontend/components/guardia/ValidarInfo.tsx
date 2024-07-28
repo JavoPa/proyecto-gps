@@ -8,6 +8,7 @@ import BicicletaModal from '../BicicletaModal';
 import Colors from '@/constants/Colors';
 import { updateBicicletaUsuario } from '@/services/bicicleta.service';
 import AccesoManualModal from './AccesoManualModal';
+import CustomButton from '../customButton';
 
 export default function ValidarInfo() {
       interface Acceso {
@@ -75,8 +76,8 @@ export default function ValidarInfo() {
                 setFields({marca: response.data.usuario.bicicleta.marca, color: response.data.usuario.bicicleta.color});
               }
               Alert.alert(
-                "Ingreso Registrado",
-                "Ingreso registrado correctamente\n" + 
+                "Registrado",
+                "Usuario registrado correctamente\n" + 
                 "Estudiante:" + response.data.usuario.nombre + " " + response.data.usuario.apellido + 
                 "\nRUT: " + response.data.usuario.rut +
                 "\n" + "Bicicleta: " + (response.data.usuario.bicicleta
@@ -187,18 +188,18 @@ export default function ValidarInfo() {
                 textAlign="center"
               />
           </View>
-          <View style={styles.registrarButton}>
-            <Button
+          <View>
+            <CustomButton
               title="Validar"
               onPress={handleIngresar}
-              color="#2A628F"
+              // color="#2A628F"
             />
           </View>
-          <View style={styles.registrarButton}>
-            <Button
+          <View>
+            <CustomButton
               title="Ingreso manual"
               onPress={() => setModalIngresoManual(true)}
-              color={'green'}
+              style={styles.registrarButton}
             />
           </View>
         </View>
@@ -260,13 +261,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   registrarButton: {
-    backgroundColor: Colors.light.tint,
-    borderRadius: 5,
     margin: 20,
+    // backgroundColor: Colors.light.successButton,
   },
   getStartedText: {
     fontSize: 20,
     lineHeight: 24,
+    marginBottom: 10,
     textAlign: 'center',
   },
   input: {

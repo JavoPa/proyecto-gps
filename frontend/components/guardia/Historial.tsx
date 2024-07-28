@@ -173,7 +173,7 @@ const HistorialViewer: React.FC = () => {
                                 );
                             })}
                         </Picker>
-                        <Text style={styles.chartTitle}>Gráfico de ingresos Mensuales</Text>
+                        <Text style={styles.chartTitle}>Gráfico de Ingresos Mensuales</Text>
                     </View>
                 )}
             </View>
