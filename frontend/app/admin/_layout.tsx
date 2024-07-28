@@ -40,7 +40,9 @@ export default function AdminLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#13293D',
+        tabBarActiveBackgroundColor: '#EDF2F4',
+        tabBarInactiveBackgroundColor: '#EDF2F4',
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: headerShown,
