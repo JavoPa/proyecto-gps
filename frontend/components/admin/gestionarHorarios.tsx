@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Button, Alert, TextInput, Modal, TouchableOpacity, Dimensions } from 'react-native';
+import { FlatList, StyleSheet, Alert, TextInput, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { getHorarios, putHorarios } from '@/services/horario.service';
 import Card from '@/components/Card';
@@ -13,6 +13,7 @@ interface Horas {
 
 const GestionarHorarios: React.FC = () => {
     const { width } = Dimensions.get('window');
+    const [error, setError] = useState<string | null>(null);
     const [horarios, setHorarios] = useState<Horas[]>([]);
     const [selectedHorario, setSelectedHorario] = useState<Horas | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -36,10 +37,11 @@ const GestionarHorarios: React.FC = () => {
                 setHorarios(validHorarios);
             } else {
                 console.error('Unexpected response format:', response);
+                setError('Formato de respuesta inesperado');
                 Alert.alert('Error', 'Formato de respuesta inesperado');
             }
         } catch (error) {
-            console.error('Error fetching horarios:', error);
+            setError('No se pudo cargar la lista de horarios');
             Alert.alert('Error', 'No se pudo cargar la lista de horarios');
         }
     };
@@ -57,9 +59,24 @@ const GestionarHorarios: React.FC = () => {
         return timePattern.test(time);
     };
 
+    const validateEntradaBeforeSalida = (entrada: string, salida: string) => {
+        const [entradaHora, entradaMinuto] = entrada.split(':').map(Number);
+        const [salidaHora, salidaMinuto] = salida.split(':').map(Number);
+
+        if (entradaHora > salidaHora || (entradaHora === salidaHora && entradaMinuto >= salidaMinuto)) {
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = async () => {
         if (!validateTime(newLimiteEntrada) || !validateTime(newLimiteSalida)) {
-            Alert.alert('Error', 'Por favor, ingresa una hora válida en el formato HH:mm');
+            setError('Por favor, ingresa una hora válida en el formato HH:mm');
+            return;
+        }
+
+        if (!validateEntradaBeforeSalida(newLimiteEntrada, newLimiteSalida)) {
+            setError('El límite de entrada debe ser anterior al límite de salida.');
             return;
         }
 
@@ -75,9 +92,10 @@ const GestionarHorarios: React.FC = () => {
                 setModalVisible(false);
                 fetchHorarios(); // Refresh the list
                 Alert.alert('Guardado', 'Horario actualizado correctamente');
+                setError(null); // Limpiar el error después de una operación exitosa
             } catch (error) {
                 console.error('Error updating horario:', error);
-                Alert.alert('Error', 'No se pudo actualizar el horario');
+                setError('No se pudo actualizar el horario');
             }
         }
     };
@@ -85,6 +103,7 @@ const GestionarHorarios: React.FC = () => {
     const handleCancelEdit = () => {
         setIsEditing(false);
         setModalVisible(false);
+        setError(null); // Limpiar el error al cancelar la edición
     };
 
     return (
@@ -131,6 +150,7 @@ const GestionarHorarios: React.FC = () => {
                                         onChangeText={setNewLimiteSalida}
                                     />
                                 </View>
+                                {error && <Text style={styles.errorText}>⚠ {error} ⚠</Text>}
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleSubmit}>
                                         <Text style={styles.modalButtonText}>Guardar</Text>
@@ -226,6 +246,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 10,
+    },
+    errorText: {
+        textAlign: 'center',
+        fontSize: 15,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        padding: 10,
+        margin: 10,
     },
 });
 
