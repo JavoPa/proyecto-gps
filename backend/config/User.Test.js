@@ -104,7 +104,7 @@ async function createUser() {
             console.log("Guardia inicial creado Exitosamente!!");
 
             const guardiaJavier = await new Guardia({
-                rut : "11111111-5",
+                rut : "10027342-2",
                 nombre: "Gerardo",
                 apellido: "Gutierrez",
                 fono: "984327564",
