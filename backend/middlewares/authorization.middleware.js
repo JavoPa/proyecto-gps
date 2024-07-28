@@ -59,8 +59,9 @@ async function esAdmin(req, res, next) {
         const adminAux = await Administrador.findOne({ correo: req.correo });
         if(adminAux) {
             next();
-            return
             console.log("es Administrador");
+            return
+            
         } else {
             console.log("no es Administrador");
             return res.status(403).send({ message: "Usuario no autorizado!!" });

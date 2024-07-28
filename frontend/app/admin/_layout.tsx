@@ -24,7 +24,7 @@ function TabBarIcon(props: {
 export default function AdminLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
-  const { session,isLoading} = useSession();
+  const { session,isLoading,signOut} = useSession();
 
   if (isLoading) {
     return <Text>Cargando..</Text>;
@@ -40,7 +40,9 @@ export default function AdminLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#13293D',
+        tabBarActiveBackgroundColor: '#EDF2F4',
+        tabBarInactiveBackgroundColor: '#EDF2F4',
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: headerShown,
@@ -51,19 +53,24 @@ export default function AdminLayout() {
           title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal.usuarios" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="reorder"
+                    name="sign-out"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    onPress={() => {
+                      signOut();
+                    }}
                   />
                 )}
               </Pressable>
-            </Link>
+
           ),
+          headerStyle: {
+            backgroundColor: '#EDF2F4'
+          }
         }}
       />
         <Tabs.Screen
@@ -71,7 +78,12 @@ export default function AdminLayout() {
             options={{
                 title: 'Jaulas',
                 tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+                headerStyle: {
+                  backgroundColor: '#EDF2F4'
+                }
             }}
+            
+
         />
 
       <Tabs.Screen
@@ -79,6 +91,9 @@ export default function AdminLayout() {
         options={{
           title: 'Guardias',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          headerStyle: {
+            backgroundColor: '#EDF2F4'
+          }
         }}
       />
         <Tabs.Screen
@@ -86,6 +101,9 @@ export default function AdminLayout() {
             options={{
                 title: 'Agregar Jaula',
                 tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+                headerStyle: {
+                  backgroundColor: '#EDF2F4'
+                }
             }}
         />
       <Tabs.Screen
@@ -93,13 +111,19 @@ export default function AdminLayout() {
         options={{
           title: 'Guardia',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+          headerStyle: {
+            backgroundColor: '#EDF2F4'
+          }
         }}
       />
       <Tabs.Screen
         name="crearUsuarios"
         options={{
-          title: 'Crear User',
+          title: 'Agregar Usuario',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+          headerStyle: {
+            backgroundColor: '#EDF2F4'
+          }
         }}
       />
       <Tabs.Screen
@@ -107,6 +131,9 @@ export default function AdminLayout() {
         options={{
          title: 'Horarios',
          tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
+         headerStyle: {
+            backgroundColor: '#EDF2F4'
+        }
         }}
       />
     </Tabs>

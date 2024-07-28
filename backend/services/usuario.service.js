@@ -9,6 +9,7 @@ const Administrador = require("../models/administrador.model.js");
 const Guardia = require("../models/guardia.model.js");
 
 
+
 async function crearUser(aux) {
     try {
         //validar formato de los campos no obligatorios
@@ -22,7 +23,7 @@ async function crearUser(aux) {
             fono: aux.fono,
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
-            rol: aux.tipo,
+            rol: aux.rol,
             situacion_academica: aux.situacion
         }).save();
 
@@ -68,7 +69,7 @@ async function crearAdministrador(aux) {
             fono: aux.fono,
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
-            rol: aux.tipo,
+            rol: aux.rol,
             situacion: aux.situacion,
         }).save();
         return usuarioNuevo;
@@ -141,7 +142,7 @@ async function crearFuncionario(aux) {
             correo: aux.correo,
             password: await Usuario.encryptPassword(aux.password),
             rol: aux.rol,
-            situacion_laboral: aux.situacion,
+            situacion: aux.situacion,
         }).save();
 
         return usuarioNuevo;
