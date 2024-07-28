@@ -66,7 +66,7 @@ const MostrarIncidentes: React.FC<MostrarIncidentesProps> = ({ navigateTo }) => 
             const filtered = incidentes.filter(incidente =>
                 incidente.tipo.toLowerCase().includes(term.toLowerCase()) || 
                 incidente.lugar.toLowerCase().includes(term.toLowerCase()) || 
-                formatDate(incidente.fecha).toLowerCase().includes(term.toLowerCase())
+                formatDateDMY(incidente.fecha).toLowerCase().includes(term.toLowerCase())
             );
             setFilteredIncidentes(filtered);
         }

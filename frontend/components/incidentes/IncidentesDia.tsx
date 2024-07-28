@@ -39,7 +39,7 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
           break;
 
         case 204:
-          Alert.alert('Error', 'No hay incidentes en ese día');
+          alert('No hay incidentes en ese día');
           setError('Seleccione una fecha diferente');
           break;
 
@@ -185,10 +185,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   errorText: {
-    color: 'red',
     textAlign: 'center',
-    marginVertical: 10,
-  },
+    fontSize: 15,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: 'pink',
+    borderRadius: 5,
+    padding: 10,
+},
   itemContainer: {
     marginBottom: 16,
     padding: 16,
