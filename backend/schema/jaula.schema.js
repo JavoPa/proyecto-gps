@@ -8,7 +8,6 @@ const Joi = require("joi");
  */
 const jaulaSchema = Joi.object({
     ubicacion: Joi.string()
-        .pattern(/^https:\/\/www\.google\.com\/maps\//)
         .required()
         .messages({
             "string.empty": "La ubicación no puede estar vacía.",
