@@ -2,6 +2,18 @@ const Jaula = require('../models/jaula.model');
 const Guardia = require('../models/guardia.model');
 const Acceso = require('../models/acceso.model');
 const { jaulaSchema } = require("../schema/jaula.schema");
+const {handleError} = require("../utils/errorHandler");
+
+const contarAccesosJaula = async (jaulaId) => {
+    try {
+        if(!jaulaId) return 0;
+        const accesos = await Acceso.find({ jaula: jaulaId, entrada: { $ne: null }, salida: null });
+        return accesos.length;
+    } catch (error) {
+        handleError(error, "acceso.service -> contarAccesosJaula");
+        throw error;
+    }
+};
 
 function generarEnlaceGoogleMaps(ubicacion) {
     if (ubicacion.startsWith("http")) {
@@ -33,7 +45,7 @@ async function getJaula(req, res) {
             return res.status(404).send({ message: 'Jaula no encontrada.' });
         }
 
-        const countAccesos = await Acceso.countDocuments({ guardia: jaula.guardiaAsignado?._id });
+        const countAccesos = await contarAccesosJaula(jaula._id);
         const situacion_actual = jaula.capacidad - countAccesos;
 
         const response = {
