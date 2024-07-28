@@ -280,7 +280,7 @@ const ListaJaulas: React.FC = () => {
                                         <Text style={styles.modalButtonText}>Retirar Guardia</Text>
                                     </TouchableOpacity>
                                 )}
-                            </View>
+                                </View>
 
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>

@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://146.83.198.35:1264/api';
+export const API_URL2 = process.env.EXPO_PUBLIC_API_URL_I || 'http://192.168.1.7/5000/api';
 
 // Crea una instancia de Axios con configuraciones por defecto
 const axiosInstance = axios.create({
   baseURL: API_URL,
 });
-
 // Función para actualizar el token de autorización
 export const setAuthToken = (token) => {
   if (token) {
@@ -18,3 +18,4 @@ export const setAuthToken = (token) => {
 };
 
 export default axiosInstance;
+

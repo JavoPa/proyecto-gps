@@ -1,19 +1,19 @@
-import { StyleSheet, Pressable, ScrollView ,ActivityIndicator, Button, Modal, TextInput, FlatList, Alert } from 'react-native';
+import { StyleSheet, ScrollView ,ActivityIndicator, Modal, TextInput, Alert, TouchableOpacity, TouchableHighlight} from 'react-native';
 import { useSession } from '@/flo';
 import { Text, View } from '@/components/Themed';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { obtenerUsuarios } from '@/services/busqueda.user';
 import { eliminarUsuario, editarUsuario } from '@/services/crear.Usuarios';
 import { useRouter } from 'expo-router';
 
 
 export default function TabOneScreen() {
-    const { signOut, session } = useSession();
+    const { session } = useSession();
     const [usuarios, setUsuarios] = useState([]);
     const [usuarios2, setUsuarios2] = useState([]); // mostrar detalle de usuario espeficico
     const [usuarios3, setUsuarios3] = useState([]); // copia de usuarios para buscar y renderizar
     const [usuarios4, setUsuarios4] = useState([]); // usuarios4 para editar
-    const [cargando,setCargando] = useState(true);
+    const [cargando,setCargando] = useState(false);
     const [consulta,setConsulta] = useState(); // busqueda de usuarios
     const [modalVisible, setModalVisible] = useState(false); // estado para mostrar el modal
     const [modalVisibleEditar, setModalVisibleEditar] = useState(false); // estado para mostrar el modal
@@ -21,26 +21,44 @@ export default function TabOneScreen() {
     const [rut, setRut] = useState(''); // estado para mostrar el modal
     const [nombre, setNombre] = useState(''); // estado para mostrar el modal
     const [apellido, setApellido] = useState(''); // estado para mostrar el modal
-    const [correo, setCorreo] = useState(''); // estado para mostrar el modal
+    const [correo, setCorreo] = useState(""); // estado para mostrar el modal
     const [fono, setFono] = useState(''); // estado para mostrar el modal// estado para mostrar el modal
-    const [contraseña, setContraseña] = useState('Password'); // estado para mostrar el modal// estado para mostrar el modal
+    const [contraseña, setContraseña] = useState(''); // estado para mostrar el modal// estado para mostrar el modal
 
-    const router = useRouter();
+    const scrollViewRef = useRef(null);
+    //obtener usuarios por nombre mandando la session a la funcion
+    useEffect(() => {
+      handleSearch();
+      sacarDatos();
+    }, []);
+
+    useEffect(() => {
+      // Reiniciar el desplazamiento a la posición inicial después de actualizar los datos
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: true });
+      }
+    }, [usuarios]);
     
-
-
-
     const sacarDatos = () => {
+      setCargando(true);
+      setTimeout(() => {
       obtenerUsuarios(session).then((data) => {
         if(!data) Alert.alert('Error al obtener los usuarios');
-        setUsuarios(data.data);
-        setUsuarios3(data.data);
-        setCargando(false);
+        const usuariosOrdenados = data.data.sort((a, b) => {
+          const rutA = a.rut.replace(/[^0-9]/g, '');
+          const rutB = b.rut.replace(/[^0-9]/g, '');
+          return parseInt(rutA) - parseInt(rutB);
+        });
+        setUsuarios(usuariosOrdenados);
+        setUsuarios3(usuariosOrdenados);
       });
+      setCargando(false);
+    },500);
     }
  
     //funcion para buscar usuarios por rut
-    const handleSearch = () => {
+    const handleSearch = (consulta) => {
+      setConsulta(consulta);
       if(consulta == undefined) {
         setUsuarios3(usuarios);
       }else{
@@ -55,74 +73,93 @@ export default function TabOneScreen() {
       }
     }
 
-    //obtener usuarios por nombre mandando la session a la funcion
-    useEffect(() => {
-      handleSearch();
-      sacarDatos();
-    }, []);
+    
 
-    if(cargando){
-      return <ActivityIndicator size="large" color="#0000ff"/>
-    }
+    
 
     //funcion para mostrar el modal con usuario especifico
     const handleModal = (id) => {
+      //setCargando(true);
       setUsuarios2(usuarios.filter((user) => user._id === id)[0]);
       setModalVisible(true);
+      setCargando(false);
     }
     const handleEditar= (id) => {
+      setCargando(true);
       const User = usuarios.filter((user) => user._id === id)[0];
       setUsuarios4(User);
       setModalVisible(false);
       setModalVisibleEditar(true);
+      setCargando(false);
     }
 
     const handleElminar = (id) => {
-      console.log(id);
-      eliminarUsuario(id).then((data) => {
-        if(!data) Alert.alert('Error al eliminar el usuario');
-        Alert.alert('Eiminado',`${data.message}`);
-        setCargando(true);
-        sacarDatos();
-        setCargando(false);
-      });
+      Alert.alert('Eliminar Usuario', '¿Está seguro que desea eliminar este usuario?',[{text: 'Cancelar', onPress: () => {return;}},{text: 'Eliminar', onPress: () => {
+          console.log(id);
+          eliminarUsuario(id).then((data) => {
+            if(!data) Alert.alert('Error al eliminar el usuario', 'Intente nuevamente',[{text: 'OK',}]);
+            Alert.alert('Eliminado',`${data.message}`,[{text: 'OK', onPress: () => {
+              setCargando(true);
+              sacarDatos();
+            }}]);
+          });
+        } 
+      }]);
     }
 
     const handleGuardar = (id) => {
-      //console.log(usuarios4);
-      if(rut == '') {
-        setRut(usuarios4.rut);
+      const User = (usuarios.filter((user) => user._id === id)[0]).nombre;
+      //comprobar que los datos no esten vacios
+      if(!nombre ) { 
+        if(!apellido) {
+          if(!correo) {
+            if(!fono) {
+              if(!contraseña) {
+                Alert.alert('No se ha modificado ningun campo');
+                return;
+              }
+            }
+          }
+        }
       }
-      if(nombre == '') {
-        setNombre(usuarios4.nombre);
-      }
-      if(apellido == '') {
-        setApellido(usuarios4.apellido);
-      }
-      if(correo == '') {
-        setCorreo(usuarios4.correo);
-      }
-      if(fono == '') {
-        setFono(usuarios4.fono);
-      }
-      if(contraseña == 'Password') {
-        setContraseña(usuarios4.password);
-      }
-      const data ={
-        rut: rut,
+     
+      const seteo ={
         nombre: nombre,
         apellido: apellido,
-        correo: correo,
+        correo: correo.toLocaleLowerCase(),
         fono: fono,
         password: contraseña,
       }
-      editarUsuario(id,data).then((data) => {
-        if(!data) Alert.alert('Error al editar el usuario');
-        Alert.alert('Editado',`${data.rut} ${data.nombre}`);
+      //console.log(seteo);
+      editarUsuario(id,seteo).then((res) => {
+        if(res){
+          if(res.message != undefined){
+            Alert.alert(`Usuario ${User}`,`${res.message}`,[{text: 'OK', onPress: () => {
+              setModalVisibleEditar(false)
+              setear();
+              return;
+            }}]);
+          }
+        }
       });
-      return router.replace('/admin')
+      return;
     }
-   
+
+    const setear = () => {
+      setNombre("");
+      setApellido("");
+      setFono("");
+      setCorreo("");
+      setContraseña("");
+      sacarDatos();
+    }
+    const espera = () => {
+      setCargando(true);
+      // Simula una tarea asincrónica
+      setTimeout(() => {
+        setCargando(false);
+      }, 3000); // Cambia el tiempo según sea necesario
+    };
 
     return (
       <View style={styles.container}>
@@ -131,79 +168,104 @@ export default function TabOneScreen() {
           placeholder='Buscar por rut'
           style={styles.busqueda}
           value={consulta}
-          onChangeText={setConsulta}
-          onChange={handleSearch}
+          inputMode='numeric'
+          onChangeText={handleSearch}
         />
-        <ScrollView >
+        <ScrollView ref={scrollViewRef}>
            {/* renderiza botones Preseables que al tocarlos activan el modal que muestra detalle*/}
         {usuarios3.map((user) => (
         <View
           style={styles.vistaUsuario}
           key={user._id}
-        >  
-          <View style={{ alignItems:'center',backgroundColor:'#3e92cc'}}>
-            <Text style={styles.usuarios}>Rut: {user.rut}</Text>
-            <Text style={styles.usuarios}>{user.nombre}</Text>
-          </View>
-          <View style={{backgroundColor:'#3e92cc', flexDirection:'row',marginLeft:'auto',}}>
-            <Pressable style={styles.bo}  onPress={()=>handleModal(user._id)} >
-              <Text style={styles.usuarios}>Ver</Text>
-            </Pressable>
-            <Pressable style={styles.bo}  onLongPress={()=>handleElminar(user._id)} >
-              <Text style={styles.usuarios}>Eliminar</Text>
-            </Pressable>
-            
+        >    
+          <Text style={styles.usuarios}>Rut: {user.rut}</Text>
+          <Text style={styles.usuarios}>{user.nombre}</Text>
+          <View style={styles.vistaBotones}>
+            <TouchableOpacity style={styles.bo} onPress={()=>handleModal(user._id)} >
+              <Text style={styles.buttonText}>Ver</Text>
+            </TouchableOpacity>
+            <TouchableHighlight style={styles.botonEliminar}  onPress={()=>handleElminar(user._id)} >
+              <Text style={styles.buttonText}>Eliminar</Text>
+            </TouchableHighlight>
           </View>
           
 
           <Modal
             visible={modalVisible}
-            animationType="fade"
+            animationType="none"
             onRequestClose={()=>setModalVisible(false)}
             transparent={false}
           >
-            <View style={styles.detalle}>
-              <Text style={styles.usuarios}>Rut: {usuarios2.rut}</Text>
-              <Text style={styles.usuarios}>Nombre: {usuarios2.nombre}</Text>
-              <Text style={styles.usuarios}>Apellido: {usuarios2.apellido}</Text>
-              <Text style={styles.usuarios}>Correo:{usuarios2.correo}</Text>
-              <Text style={styles.usuarios}>Fono: {usuarios2.fono}</Text>
-              <Pressable style={styles.bo}  onPress={()=>setModalVisible(false)} >
-                <Text style={styles.usuarios}>Cerrar</Text>
-              </Pressable>
-              <Pressable style={styles.bo}  onPress={()=>handleEditar(usuarios2._id)} >
-                <Text style={styles.usuarios}>Editar</Text>
-              </Pressable>
+            <View style={styles.modalContainer}>
+              <View style={styles.detalle}>
+                <Text style={styles.titel}>Detalles del Usuario</Text>
+                <Text style={styles.usuarios}>Rut: {usuarios2.rut}</Text>
+                <Text style={styles.usuarios}>Nombre: {usuarios2.nombre}</Text>
+                <Text style={styles.usuarios}>Apellido: {usuarios2.apellido}</Text>
+                <Text style={styles.usuarios}>Correo:{usuarios2.correo}</Text>
+                <Text style={styles.usuarios}>Fono: {usuarios2.fono}</Text>
+                <View style={styles.modalButtonContainer}>
+                  <TouchableOpacity style={styles.modalButton}  onPress={()=>setModalVisible(false)} >
+                    <Text style={styles.modalButtonText}>Cerrar</Text>
+                  </TouchableOpacity>
+                  <TouchableHighlight style={styles.modalButton}  onPress={()=>{
+                    handleEditar(usuarios2._id)
+                    }}>
+                    <Text style={styles.modalButtonText}>Editar</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
             </View>
           </Modal>
           {/*Modal de editar */}
           <Modal
             visible={modalVisibleEditar}
-            animationType="fade"
+            animationType="none"
             onRequestClose={()=>setModalVisibleEditar(false)}
             transparent={false}
           >
-            <View style={styles.vistaEditar}>
+          <View style={styles.modalContainer}>
+            <View style={styles.detalle}>
               <Text style={styles.titel}>Editar Usuario</Text>
-              <Text style={styles.titel}>{usuarios4.rut}</Text>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.nombre} onChangeText={setNombre}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.apellido} onChangeText={setApellido}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.fono} onChangeText={setFono}/>
-              <TextInput style={styles.textoEditar} placeholder={usuarios4.correo} onChangeText={setCorreo}/>
+              <Text style={styles.textoNoEditar}>{usuarios4.rut}</Text>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.nombre || 'Nombre'} onChangeText={setNombre}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.apellido || 'Apellido'} onChangeText={setApellido}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.fono || 'Fono'} onChangeText={setFono}/>
+              <TextInput style={styles.textoEditar} placeholder={usuarios4.correo || 'Correo'} onChangeText={setCorreo}/>
               <TextInput style={styles.textoEditar} placeholder='********' onChangeText={setContraseña}/>
-              <View style={styles.vistaBotones}>
-                <Pressable
-                  onPress={()=>handleGuardar(usuarios4._id)}
-                  style={styles.botoEditar}
+              <View style={styles.modalButtonContainer}>
+                <TouchableOpacity
+                  onPress={()=>{
+                    handleGuardar(usuarios4._id)
+                  }}
+                  style={styles.modalButton}
                 >
-                  <Text>Guardar</Text>
-                </Pressable>
-                <Pressable
-                  onPress={()=>setModalVisibleEditar(false)}
-                  style={styles.botoEditar}
+                  <Text style={styles.modalButtonText}>Guardar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>{
+                    setear();
+                    setModalVisibleEditar(false)
+                  }}
+
+                  style={styles.modalButton}
                 >
-                  <Text>Cancelar</Text>
-                </Pressable>
+                  <Text style={styles.modalButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          </Modal>
+          {/*Modal de Cargando */}
+          <Modal
+            visible={cargando}
+            animationType="none"
+            transparent={true}
+            onRequestClose={()=>setCargando(false)}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContent}>
+                <ActivityIndicator size="large" color="#0000ff" />
               </View>
             </View>
           </Modal>
@@ -211,9 +273,9 @@ export default function TabOneScreen() {
         
         ))}
       </ScrollView>
-        <Pressable onPress={sacarDatos} style={styles.bo}>
-          <Text style={styles.usuarios}>Actualizar</Text>
-        </Pressable>
+        <TouchableOpacity onPress={sacarDatos} style={styles.bo}>
+          <Text style={styles.modalButtonText}>Actualizar</Text>
+        </TouchableOpacity>
       </View>
 
     );
@@ -222,79 +284,134 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#3e92cc',
+    padding: 16,
+    backgroundColor: '#EDF2F4',
   },
   vistaUsuario : {
-    alignContent: 'center',
-    backgroundColor: '#2a628f',
-    padding: 10,
-    marginVertical: 8,
-    marginLeft:20,
-    marginRight:20,
-    borderRadius: 10,
-    elevation: 5,  
-    flexDirection: 'row',
-    backgroundColor: '#3e92cc'  
+    marginBottom: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    backgroundColor: '#ffffff'  
   },
   usuarios : {
-    fontSize: 19,
-    marginVertical: 2,
-    color: 'black',
-    width: '25',
-    margin: 5,
+    fontSize: 18,
+    color: '#16324F',
+  },
+  modalButtonText: {
+    color: '#FFFFFF', // Color del texto de los botones del modal
+    fontSize: 16,
+  },
+  modalButton: {
+    backgroundColor: '#2A628F', // Color de los botones del modal
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginHorizontal: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  vistaBotones: {
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+  },
+  buttonText: {
+    color: '#FFFFFF', // Color del texto de los botones
+    fontSize: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
+  },
+  modalButtonContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#EDF2F4',
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF', // Fondo del input
   },
   detalle : {
-    flex: 1,
-    backgroundColor: '#3e92cc',
-    padding:30,
-    borderRadius: 10,
+    width: '90%',
+    maxWidth: 600,
+    backgroundColor: '#EDF2F4', // Fondo del modal
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
     elevation: 5,
-    margin: 15,
-    justifyContent: 'center',
-    textAlign: 'center',
   },
   titel : {
-    fontSize: 30,
-    marginVertical: 8,
-    color: '#000',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#13293D',
     textAlign: 'center',
-    backgroundColor: '#3e92cc',
-    borderRadius: 25,
-    width: 'auto',
   },
   busqueda: {
-    backgroundColor: '#edf2f4',
-    padding: 10,
-    margin: 5,
-    borderRadius: 10,
-    borderColor: '#000',
-    borderWidth: 2,
+    height: 40,
+    borderColor: '#ccc',
+    backgroundColor: '#ffffff',
+    padding: 8,
+    marginBottom: 16,
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+  botonEliminar:{
+    backgroundColor: '#DB2B39', // Color de los botones de eliminar
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bo:{
-    backgroundColor: '#edf2f4',
-    padding: 10,
-    margin:10,
-    borderRadius: 10,
+    backgroundColor: '#2A628F',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderRightColor: '#000',
-    borderWidth: 2,
   },
   vistaEditar:{
     flex: 1,
-    backgroundColor: '#3e92cc',
     justifyContent: 'center',
-    alignItems: 'stretch',
-    padding: 22,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
   },
   textoEditar:{
-    fontSize: 20,
-    color: '#000',
-    margin: 5,
-    borderRadius: 10,
-    borderColor: '#000',
-    borderWidth: 2,
-    padding: 12,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+  },
+  textoNoEditar:{
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+    borderRadius: 4,
+    backgroundColor: '#EDF2F4',
   },
   botoEditar:{
     padding:10,
@@ -305,10 +422,19 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 5,
   },
-  vistaBotones: {
-    flexDirection: 'row',
+  modalContent: {
+    flex: 0.05,
+    width: 150,
+    padding: 20,
+    borderRadius: 10,
+    backgroundColor: '#EDF2F4',
+    
+  },
+  modalBackground: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3e92cc',
-  }
+    backgroundColor: '#EDF2F4'
+    
+  },
 });

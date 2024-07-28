@@ -28,6 +28,7 @@ export async function eliminarUsuario(data) {
             //console.log(error.response.status);
             //console.log(error.response.data.message);
             Alert.alert(`Error ${error.response.status}`, `${error.response.data.message}`);
+            return undefined;
         }else{
             //console.log(error);
         }
@@ -36,6 +37,7 @@ export async function eliminarUsuario(data) {
 
 export async function editarUsuario(id,data) {
     try {
+        //console.log(id,data)
         const res = await axiosInstance.put(`/users/update/${id}`,data);
         //console.log("await",res);
         //console.log(res.data)
