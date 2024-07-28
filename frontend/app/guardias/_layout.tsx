@@ -42,6 +42,9 @@ export default function GuardiasLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: headerShown,
+        headerStyle: {
+          backgroundColor: '#EDF2F4'
+        }
       }}>
       <Tabs.Screen
         name="index"
@@ -72,7 +75,7 @@ export default function GuardiasLayout() {
       <Tabs.Screen
         name="ingreso"
         options={{
-          title: 'Validar Ingreso',
+          title: 'Registro Manual',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
