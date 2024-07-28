@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { postJaula, getJaulas } from '@/services/jaula.service';
 import { useNavigation } from '@react-navigation/native';
+import CustomButton from '../customButton';
 
 const JaulaForm: React.FC = () => {
     const [ubicacion, setUbicacion] = useState('');
@@ -58,9 +59,8 @@ const JaulaForm: React.FC = () => {
                 onChangeText={setCapacidad}
                 keyboardType="numeric"
             />
-            <Button title="Guardar" onPress={handleSubmit} color="#2A628F" />
+            <CustomButton title="Guardar" onPress={handleSubmit} />
             {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-
         </View>
     );
 };

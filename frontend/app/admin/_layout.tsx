@@ -56,7 +56,7 @@ export default function AdminLayout() {
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="sign-out"
+                    name="power-off"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}

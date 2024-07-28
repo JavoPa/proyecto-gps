@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { Alert } from 'react-native';
 import { validar } from '@/services/acceso.service';
+import CustomButton from '@/components/customButton';
 
 export default function EscaneoScreen() {
   interface BarcodeData {
@@ -50,7 +51,8 @@ export default function EscaneoScreen() {
       <View style={styles.containerPermission}>
         <Text style={styles.title}>Se requieren permisos para usar la cámara</Text>
         <View style={styles.button}>
-          <Button onPress={requestPermission} title="Otorgar permisos" color="#2A628F"/>
+          <CustomButton title="Otorgar permisos" onPress={requestPermission} />
+          {/* <Button onPress={requestPermission} title="Otorgar permisos" color="#2A628F"/> */}
         </View>
       </View>
     );
