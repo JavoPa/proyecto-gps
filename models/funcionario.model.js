@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Usuario = require("./user.models");
 
 const funcionarioSchema = new mongoose.Schema({
-    situacion_laboral: {
+    situacion: {
         type: String,
         required: true
     },

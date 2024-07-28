@@ -41,4 +41,4 @@ function validarRut(y){
 }
 
 
-module.exports = {validarRut}
+module.exports = validarRut

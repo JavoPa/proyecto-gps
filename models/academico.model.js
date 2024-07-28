@@ -2,27 +2,7 @@ const mongoose = require("mongoose");
 const Usuario = require("./user.models");
 
 const academicoSchema = new mongoose.Schema({
-    cargo: {
-        type: String,
-        required: true
-    },
-    area: {
-        type: String,
-        required: true
-    },
-    jefatura: {
-        type: String,
-        required: true
-    },
-    anexo: {
-        type: Number,
-        required: true
-    },
-    oficina: {
-        type: String,
-        required: true
-    },
-    situacion_laboral: {
+    situacion: {
         type: String,
         required: true
     }

@@ -14,7 +14,7 @@ async function servidorGeneral(){
     app.use(morgan("dev"));
     app.use("/api",indexRouter);
     app.listen(PORT, () => {
-      console.log(`Servidor en ecucha en http://localhost:${PORT}`)
+      console.log(`Servidor en escucha en http://localhost:${PORT}`)
     });
   } catch (error) {
     console.log(error);
@@ -38,7 +38,7 @@ async function backendInicio(){
     // conexion bd
     await connectBaseDatos();
     // poblar Bd
-    await poblarBD(5);
+    await poblarBD(15);
     //iniciar servidor
     await servidorGeneral();
   } catch (error) {

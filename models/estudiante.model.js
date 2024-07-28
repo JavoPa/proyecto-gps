@@ -14,7 +14,7 @@ const estudianteSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    situacion_academica: {
+    situacion: {
         type: String,
         required: true
     }
