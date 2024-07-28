@@ -23,20 +23,16 @@ export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
-  const { signOut } = useSession();
-
   
   if (isLoading) {
     return <Text>Cagando..</Text>;
   }
-
 
   if(!session) {
     return <Redirect href="/login" />;
   }else{
     setAuthToken(session);
   }
-
   return (
     <Tabs
       screenOptions={{
