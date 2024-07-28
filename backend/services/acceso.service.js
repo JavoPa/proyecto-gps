@@ -247,7 +247,13 @@ async function ingresoInvitado(body, guardiaId) {
     });
   
     await acceso.save();
-    acceso.usuario = invitado;
+    await acceso.populate({
+      path: 'usuario',
+      select: '-password',
+      populate: {
+        path: 'bicicleta',
+      },
+    });
     // Devolver el ACCESO
     return [acceso, null];
   } catch (error) {

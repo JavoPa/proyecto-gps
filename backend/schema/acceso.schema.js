@@ -24,11 +24,13 @@ const tokenSchema = Joi.object({
  * @constant {Object}
  */
 const invitadoSchema = Joi.object({
-  rut: Joi.string().min(9).max(12).required().messages({
+  rut: Joi.string().pattern(/^[0-9]+-[0-9kK]{1}$/).min(9).max(12).required().messages({
     "string.empty": "El rut no puede estar vacío.",
     "any.required": "El rut es obligatorio.",
     "string.base": "El rut debe ser de tipo string.",
-    "string.min": "Rut invalido"
+    "string.min": "Rut debe contener al menos 9 caracteres",
+    "string.max": "Rut debe contener menos de 12 caracteres",
+    "string.pattern.base": "El rut solo puede contener números y un guión.",
   }),
   nombre: Joi.string().pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+(?:[-' ][A-Za-zÁÉÍÓÚÑáéíóúñüÜ]+)*$/).max(30).messages({
     "string.empty": "El nombre no puede estar vacío.",
