@@ -22,6 +22,7 @@ function TabBarIcon(props: {
 }
 
 export default function AdminLayout() {
+  const { signOut } = useSession();
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading} = useSession();
@@ -53,18 +54,16 @@ export default function AdminLayout() {
           title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal.usuarios" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="reorder"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <Pressable onPress={signOut}>
+              {({ pressed }) => (
+                <FontAwesome
+                  name="power-off"
+                  size={25}
+                  color='#13293D'
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                />
+              )}
+            </Pressable>
           ),
         }}
       />
