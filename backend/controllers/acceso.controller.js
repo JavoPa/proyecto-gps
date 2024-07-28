@@ -19,7 +19,7 @@ async function registrarIngreso(req, res) { //Solicitud emitida por el Usuario p
     if (idError) return respondError(req, res, 400, idError.message);
 
     const [token, tokenError] = await accesoService.registrarIngreso(userId);
-    if (tokenError) return respondError(req, res, 500, tokenError);
+    if (tokenError) return respondError(req, res, 400, tokenError);
     if(!token) return respondError(req, res, 400, 'No se creó el token');
     respondSuccess(req, res, 201, token);
   } catch (error) {
@@ -88,7 +88,7 @@ async function ingresoInvitado(req, res) { //Solicitud emitida por el Guardia
     if (bodyError) return respondError(req, res, 400, bodyError.message);
 
     const [ingreso, ingresoError] = await accesoService.ingresoInvitado(body, guardiaId);
-    if (ingresoError) return respondError(req, res, 500, ingresoError);
+    if (ingresoError) return respondError(req, res, 400, ingresoError);
     if(!ingreso) return respondError(req, res, 400, 'No se registró el ingreso');
     respondSuccess(req, res, 201, ingreso);
   } catch (error) {

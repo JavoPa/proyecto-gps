@@ -204,7 +204,7 @@ async function getUserById(req, res) {
         const [user, userError] = await usuarioService.getUserById(id);
         if (userError) return respondError(req, res, 500, userError);
         if(!user) return respondError(req, res, 400, 'No se obtuvo el usuario');
-        respondSuccess(req, res, 201, user);
+        respondSuccess(req, res, 200, user);
     } catch (error) {
         handleError(error, "usuario.controller -> getUserById");
         respondError(req, res, 500, "No se pudo obtener el usuario");
