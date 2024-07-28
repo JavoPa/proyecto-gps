@@ -21,8 +21,23 @@ const data2 = [
 ];
 
 const data3 = [
-  {label: 'ICINF', value: 'Ingenieria Civil Informatica'},
-  {label: 'IECI', value: 'Ingenieria En Ejecucion Informatica'},
+  {label: 'Ingeniería Civil Informática', value: 'Ingenieria Civil Informatica'},
+  {label: 'Ingeniería Civil Industrial', value: 'Ingeniería Civil Industrial'},
+  {label: 'Ingeniería Civil', value: 'Ingeniería Civil'},
+  {label: 'Ingeniería Ejecucion en informatica y Computación', value: 'Ingeniería Ejecucion en informatica y Computación'},
+  {label: 'Ingeniería Civil en Electrica', value: 'Ingeniería Civil en Electrica'},
+  {label: 'Ingeniería Civil en Automatizacion', value: 'Ingeniería Civil en Automatizacion'},
+  {label: 'Ingeniería Civil en Mecánica', value: 'Ingeniería Civil en Mecánica'},
+  {label: 'Ingeniería Civil en Química', value: 'Ingeniería Civil en Química'},
+  {label: 'Ingeniería Ejecucion Electrica', value: 'Ingeniería Ejecucion Electrica'},
+  {label: 'Ingeniería Ejecucion Mecanica', value: 'Ingeniería Ejecucion Mecanica'},
+  {label: 'Ingeniería Comercial', value: 'Ingeniería Comercial'},
+  {label: 'Ingeniería Construccion', value: 'Ingeniería Construccion'},
+  {label: 'Diseño Industrial', value: 'Diseño Industrial'},
+  {label: '_Arquitectura', value: '_Arquitectura'},
+  {label: 'Trabajo Social', value: 'Trabajo Social'},
+  {label: 'Ingenieria Estadistica', value: 'Ingenieria Estadistica'},
+  {label: 'Bachillerato en ciencias', value: 'Bachillerato en ciencias'},
 ];
 
 const data4 = [
@@ -81,11 +96,17 @@ const CrearUsuarios: React.FC = () =>{
 
     const setear = () => {
         setRut('rut');
+        setRut2('rut');
         setNombre('Nombre');
+        setNombre2('Nombre');
         setApellido('Apellido');
+        setApellido2('Apellido');
         setNumero('Numero de telefono');
+        setNumero2('Numero de telefono');
         setCorreo('Correo');
+        setCorreo2('Correo');
         setPassword('Contraseña');
+        setPassword2('Contraseña');
         setTipo('Tipo');
         setSituacion('Situacion');
         setCarrera('Carrera');
@@ -112,7 +133,7 @@ const CrearUsuarios: React.FC = () =>{
             CrearUsuario(datos).then((respuesta) => {
               if(respuesta){
                 if(respuesta.message != undefined){
-                  console.log(respuesta.message);
+                  //console.log(respuesta.message);
                   Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK', onPress: () => setear()}]);
                 }
               }
@@ -134,7 +155,7 @@ const CrearUsuarios: React.FC = () =>{
             if(respuesta.message != undefined){
               if(respuesta){
                 if(respuesta.message != undefined){
-                  console.log(respuesta.message);
+                  //console.log(respuesta.message);
                   Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
                   setear();
                 }
@@ -161,7 +182,7 @@ const CrearUsuarios: React.FC = () =>{
             CrearUsuario(datos).then((respuesta) => {
               if(respuesta){
                 if(respuesta.message != undefined){
-                  console.log(respuesta.message);
+                  //console.log(respuesta.message);
                   Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
                   setear();
                 }
@@ -182,7 +203,7 @@ const CrearUsuarios: React.FC = () =>{
           CrearUsuario(datos).then((respuesta) => {
             if(respuesta){
               if(respuesta.message != undefined){
-                console.log(respuesta.message);
+                //console.log(respuesta.message);
                 Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
                 setear();
               }
@@ -207,13 +228,32 @@ const CrearUsuarios: React.FC = () =>{
         setApellido2(resp.apellido);
         setNumero2(resp.fono.toString());
         setCorreo2(resp.correo);
+        setPassword(resp.password);
         //setPassword2(resp.password);
         if(resp.__t == 'Academico' || resp.__t == 'Funcionario' || resp.__t == 'Estudiante' || resp.__t == 'Administrador'){
           setTipo(resp.__t);
         }
-        if(resp.situacion == 'Regular' || resp.situacion == 'Irregular'){
-          setSituacion(resp.situacion);
+       
+        if(resp.__t == 'Estudiante'){
+          
+          if(data3.some(e => e.value === resp.carrera)){
+            const carrera = resp.carrera;
+            console.log(carrera);
+            setCarrera(carrera);
+          }
+          if(resp.situacion_academica== 'Regular' || resp.situacion_academica== 'Egresado'){
+            const situacion = resp.situacion_academica;
+            //console.log(carrera);
+            setSituacion(situacion);
+            console.log(carrera);
+          }
+        }else{
+          if(resp.situacion_laboral== 'Planta' || resp.situacion_laboral == 'Contratado' || resp.situacion_laboral == 'Honorario'){
+            const situacion = resp.situacion_laboral;
+            setSituacion(situacion);
+          }
         }
+        console.log(password,password2);
       }else{
         setCargando(false);
         setNombre2('Nombre');
@@ -275,7 +315,7 @@ const CrearUsuarios: React.FC = () =>{
                   <ScrollView >
                     <View style={styles.vistaRutIntranet}>
                       <TextInput style={styles.rut} placeholder={rut2} inputMode= 'numeric' onChangeText={setRut}></TextInput>
-                      <Pressable onPress={handleVerificar} style={styles.boton}>
+                      <Pressable onPress={handleVerificar} style={styles.boton} onTouchEnd={()=>setRut2(rut)}>
                           <Text style={styles.modalButtonText}>Buscar Intranet</Text>
                       </Pressable>
                     </View>
@@ -319,7 +359,7 @@ const CrearUsuarios: React.FC = () =>{
                         labelField="label"
                         valueField="value"
                         placeholder={carrera}
-                        value={situacion}
+                        value={carrera}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
@@ -331,7 +371,7 @@ const CrearUsuarios: React.FC = () =>{
                       <Pressable style={styles.modalButton} onPress={handleCrear}>
                             <Text style={styles.modalButtonText}>Crear</Text>
                         </Pressable>
-                      <Pressable style={styles.modalButton} onPress={()=>{setTipo('Tipo'),setRut2('Rut')}}>
+                      <Pressable style={styles.modalButton} onPress={()=>{setear()}}>
                             <Text style={styles.modalButtonText}>Volver</Text>
                       </Pressable>
                     </View>
