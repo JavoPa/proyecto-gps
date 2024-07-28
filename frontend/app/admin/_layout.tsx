@@ -56,7 +56,7 @@ export default function AdminLayout() {
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="sign-out"
+                    name="power-off"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -96,16 +96,7 @@ export default function AdminLayout() {
           }
         }}
       />
-        <Tabs.Screen
-            name="crearJaula"
-            options={{
-                title: 'Agregar Jaula',
-                tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
-                headerStyle: {
-                  backgroundColor: '#EDF2F4'
-                }
-            }}
-        />
+
       <Tabs.Screen
         name="crearUsuarios"
         options={{
