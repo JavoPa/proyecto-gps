@@ -134,22 +134,48 @@ const HistorialViewer: React.FC = () => {
         </View>
     );
 
+    const screenWidth = Dimensions.get('window').width;
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Historial</Text>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={[styles.button, viewMode === 'list' && styles.activeButton]}
-                    onPress={() => setViewMode('list')}
-                >
-                    <Text style={styles.buttonText}>Lista</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.button, viewMode === 'chart' && styles.activeButton]}
-                    onPress={() => setViewMode('chart')}
-                >
-                    <Text style={styles.buttonText}>Gráfico</Text>
-                </TouchableOpacity>
+            <Text style={styles.title}>Historial de Accesos</Text>
+            <View style={styles.controlContainer}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={[styles.button, viewMode === 'list' && styles.activeButton]}
+                        onPress={() => setViewMode('list')}
+                    >
+                        <Text style={styles.buttonText}>Lista</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.button, viewMode === 'chart' && styles.activeButton]}
+                        onPress={() => setViewMode('chart')}
+                    >
+                        <Text style={styles.buttonText}>Gráfico</Text>
+                    </TouchableOpacity>
+                </View>
+                {viewMode === 'chart' && (
+                    <View style={styles.pickerContainer}>
+                        <Text style={styles.pickerLabel}>Selecciona el Mes</Text>
+                        <Picker
+                            selectedValue={selectedMonth}
+                            style={styles.picker}
+                            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+                        >
+                            {getPastMonths().map(month => {
+                                const [year, monthNum] = month.split('-');
+                                return (
+                                    <Picker.Item
+                                        key={month}
+                                        label={`${monthNum}/${year}`}
+                                        value={month}
+                                    />
+                                );
+                            })}
+                        </Picker>
+                        <Text style={styles.chartTitle}>Gráfico de Ingresos Mensuales</Text>
+                    </View>
+                )}
             </View>
 
             {viewMode === 'list' && (
@@ -173,29 +199,12 @@ const HistorialViewer: React.FC = () => {
                 </>
             )}
             {viewMode === 'chart' && (
-                <ScrollView horizontal contentContainerStyle={styles.chartContainer}>
+                <ScrollView contentContainerStyle={styles.chartContainer} horizontal>
                     <View style={styles.chartInnerContainer}>
-                        <Text style={styles.pickerLabel}>Selecciona el Mes</Text>
-                        <Picker
-                            selectedValue={selectedMonth}
-                            style={styles.picker}
-                            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
-                        >
-                            {getPastMonths().map(month => {
-                                const [year, monthNum] = month.split('-');
-                                return (
-                                    <Picker.Item
-                                        key={month}
-                                        label={`${monthNum}/${year}`}
-                                        value={month}
-                                    />
-                                );
-                            })}
-                        </Picker>
                         <LineChart
                             data={chartData}
-                            width={Dimensions.get('window').width * 1.5}
-                            height={220}
+                            width={Math.max(screenWidth -32, 800)}
+                            height={250}
                             chartConfig={chartConfig}
                             bezier
                             style={styles.chart}
@@ -218,8 +227,12 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         textAlign: 'center',
     },
+    controlContainer: {
+        marginBottom: 16,
+    },
     buttonContainer: {
         flexDirection: 'row',
+        justifyContent: 'center',
         marginBottom: 16,
     },
     button: {
@@ -229,6 +242,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2A628F',
         marginHorizontal: 4,
         alignItems: 'center',
+        maxWidth: 150,
     },
     activeButton: {
         backgroundColor: '#007bff',
@@ -261,33 +275,41 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     chartContainer: {
-        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 10,
     },
     chartInnerContainer: {
-        width: Dimensions.get('window').width * 1.5,
+        marginTop: -100,
         alignItems: 'center',
+    },
+    chartTitle: {
+        marginTop: 15,
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        textAlign:'center',
     },
     chart: {
         borderRadius: 16,
         marginVertical: 8,
     },
+    pickerContainer: {
+        alignItems: 'center',
+    },
     pickerLabel: {
         fontSize: 16,
-        textAlign: "center",
         marginBottom: 8,
         color: '#333',
         fontWeight: 'bold',
+        textAlign: 'center',
     },
     picker: {
         textAlign: 'center',
-        width: '50%',
+        width: 200,
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 2,
+        borderRadius: 4,
         backgroundColor: '#fff',
         color: '#333',
     },

@@ -69,6 +69,9 @@ async function createGuardia(guardiaData) {
         if (newGuardia.nombre.includes('  ')) {
             return [null, "El nombre del guardia no puede estar vacio"];
           }
+        if (newGuardia.apellido.includes('  ')) {
+        return [null, "El apellido del guardia no puede estar vacio"];
+        }          
         await newGuardia.save();
         return [newGuardia, null];
     } catch (error) {

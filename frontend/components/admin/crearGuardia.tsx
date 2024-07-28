@@ -1,7 +1,7 @@
-import React, { useState, useCallback  } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { postGuardia } from '@/services/gestion.service';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, CommonActions  } from '@react-navigation/native';
 
 const GuardiaForm: React.FC = () => {
     const [rut, setRut] = useState('');
@@ -12,7 +12,6 @@ const GuardiaForm: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
-
 
     useFocusEffect(
         useCallback(() => {
@@ -35,6 +34,7 @@ const GuardiaForm: React.FC = () => {
             };
         }, [])
     );
+
     const handleSubmit = async () => {
         const newGuardia = {
             rut,
@@ -43,7 +43,7 @@ const GuardiaForm: React.FC = () => {
             fono,
             correo,
             password,
-            rol: 'Guardia', 
+            rol: 'Guardia',
             cargo: 'Guardia',
             situacion_laboral: 'Vigente'
         };
@@ -52,63 +52,72 @@ const GuardiaForm: React.FC = () => {
 
         if (response && response._id) {
             Alert.alert('Éxito', 'Guardia creado correctamente');
-            navigation.goBack();
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'listaGuardias' }],
+                })
+            );
         } else {
             setError(response.message || 'Hubo un error al crear el guardia');
         }
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Crear Nuevo Guardia</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="RUT"
-                value={rut}
-                onChangeText={setRut}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Nombre"
-                value={nombre}
-                onChangeText={setNombre}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Apellido"
-                value={apellido}
-                onChangeText={setApellido}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Teléfono"
-                value={fono}
-                onChangeText={setFono}
-                keyboardType="phone-pad"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Correo"
-                value={correo}
-                onChangeText={setCorreo}
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Guardar</Text>
-            </TouchableOpacity> 
-            {error && (
-                <View>
-                <Text style={styles.errorText}>{error}</Text>
-                </View>
-            )}
-        </View>
+        <KeyboardAvoidingView 
+            style={{ flex: 1 }} 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.title}>Crear Nuevo Guardia</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="RUT"
+                    value={rut}
+                    onChangeText={setRut}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nombre"
+                    value={nombre}
+                    onChangeText={setNombre}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Apellido"
+                    value={apellido}
+                    onChangeText={setApellido}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Teléfono"
+                    value={fono}
+                    onChangeText={setFono}
+                    keyboardType="phone-pad"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Correo"
+                    value={correo}
+                    onChangeText={setCorreo}
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Contraseña"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Guardar</Text>
+                </TouchableOpacity>
+                {error && (
+                    <View>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                )}
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -116,7 +125,7 @@ export default GuardiaForm;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 16,
     },
     title: {
@@ -155,7 +164,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'pink',
         borderRadius: 5,
         padding: 10,
-      },
+    },
     button: {
         backgroundColor: '#2A628F',
         borderRadius: 8,
@@ -169,4 +178,3 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
-

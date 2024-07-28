@@ -23,19 +23,16 @@ export default function GuardiasLayout() {
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
-
   
   if (isLoading) {
     return <Text>Cagando..</Text>;
   }
-
 
   if(!session) {
     return <Redirect href="/login" />;
   }else{
     setAuthToken(session);
   }
-
   return (
     <Tabs
       screenOptions={{
@@ -45,6 +42,9 @@ export default function GuardiasLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: headerShown,
+        headerStyle: {
+          backgroundColor: '#EDF2F4'
+        }
       }}>
       <Tabs.Screen
         name="index"
@@ -75,7 +75,7 @@ export default function GuardiasLayout() {
       <Tabs.Screen
         name="ingreso"
         options={{
-          title: 'Validar Ingreso',
+          title: 'Registro Manual',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
@@ -93,15 +93,6 @@ export default function GuardiasLayout() {
                 tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
             }}
         />
-
-      <Tabs.Screen
-        name="historial"
-        options={{
-          title: 'Historial',
-          tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
-        }}
-      />
-
       <Tabs.Screen
         name="incidente"
         options={{
