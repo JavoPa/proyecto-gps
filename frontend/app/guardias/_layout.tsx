@@ -19,6 +19,7 @@ function TabBarIcon(props: {
 }
 
 export default function GuardiasLayout() {
+  const { signOut } = useSession();
   const colorScheme = useColorScheme();
   const headerShown = useClientOnlyValue(false, true);
   const { session,isLoading } = useSession();
@@ -51,18 +52,16 @@ export default function GuardiasLayout() {
           title: 'Inicio',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+            <Pressable onPress={signOut}>
+              {({ pressed }) => (
+                <FontAwesome
+                  name="power-off"
+                  size={25}
+                  color='#13293D'
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                />
+              )}
+            </Pressable>
           ),
         }}
       />
