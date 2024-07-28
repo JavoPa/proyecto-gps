@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, Pla
 import { Picker } from '@react-native-picker/picker'; // Import the Picker component
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { createIncidente } from '@/services/incidentes.service';
-import { formatDate } from '../../Utils';
+import { formatDate, formatDateDMY } from '../../Utils';
 
 // Listo
 
@@ -89,7 +89,7 @@ const RegistrarIncidente: React.FC<RegistrarIncidenteProps> = ({ navigateTo }) =
         <TouchableOpacity onPress={showDatePicker}>
           <TextInput
             style={styles.input}
-            value={fecha ? formatDate(fecha) : ''}
+            value={fecha ? formatDateDMY(fecha) : ''}
             editable={false}
             placeholder="Seleccione la fecha"
           />

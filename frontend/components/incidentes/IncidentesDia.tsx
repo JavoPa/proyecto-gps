@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert, TextInput, TouchableOpacity, FlatList, Modal } from 'react-native';
 import DateTimePickerWrapper from './DateTimePickerWrapper'; // Adjust the path accordingly
 import { getIncidentesDia } from '@/services/incidentes.service'; // Adjust the path accordingly
-import { formatDate } from '../../Utils';
+import { formatDate, formatDateDMY } from '../../Utils';
 
 interface IncidentesDiaProps {
   navigateTo: (component: string) => void;
@@ -77,7 +77,7 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
 
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.itemContainer} onPress={() => handleViewDetails(item)}>
-      <Text style={styles.itemText}>Fecha: {formatDate(item.fecha)}</Text>
+      <Text style={styles.itemText}>Fecha: {formatDateDMY(item.fecha)}</Text>
       <Text style={styles.itemText}>Hora: {item.hora}</Text>
       <Text style={styles.itemText}>Lugar: {item.lugar}</Text>
       <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
@@ -90,7 +90,7 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
       <TouchableOpacity onPress={showDatePicker}>
         <TextInput
           style={styles.input}
-          value={selectedDate ? formatDate(selectedDate) : ''}
+          value={selectedDate ? formatDateDMY(selectedDate) : ''}
           editable={false}
           placeholder="Seleccione la fecha"
         />
@@ -131,7 +131,7 @@ const IncidentesDia: React.FC<IncidentesDiaProps> = ({ navigateTo }) => {
             <Text style={styles.modalTitle}>Detalles del Incidente</Text>
             {selectedIncidente && (
               <>
-                <Text style={styles.itemText}>Fecha: {formatDate(selectedIncidente.fecha)}</Text>
+                <Text style={styles.itemText}>Fecha: {formatDateDMY(selectedIncidente.fecha)}</Text>
                 <Text style={styles.itemText}>Hora: {selectedIncidente.hora}</Text>
                 <Text style={styles.itemText}>Lugar: {selectedIncidente.lugar}</Text>
                 <Text style={styles.itemText}>Tipo: {selectedIncidente.tipo}</Text>
