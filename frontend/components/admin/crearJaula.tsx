@@ -37,7 +37,6 @@ const JaulaForm: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Crear Nueva Jaula</Text>
-            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
             <Text style={styles.helpText}>Recomendamos ingresar las coordenadas de la ubicación para mayor precisión.</Text>
             <TextInput
                 style={styles.input}
@@ -60,6 +59,8 @@ const JaulaForm: React.FC = () => {
                 keyboardType="numeric"
             />
             <Button title="Guardar" onPress={handleSubmit} color="#2A628F" />
+            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+
         </View>
     );
 };
@@ -93,8 +94,13 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     errorText: {
-        color: 'red',
-        marginBottom: 16,
+        textAlign: 'center',
+        fontSize: 15,
+        marginTop: 10,
+        marginBottom: 10,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        padding: 10,
     },
     button: {
         backgroundColor: '#2A628F', // Color de los botones
