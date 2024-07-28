@@ -18,13 +18,11 @@ const jaulaSchema = Joi.object({
         .positive()
         .max(200)
         .required()
-        .pattern(/^\S*$/)
         .messages({
             "number.base": "La capacidad debe ser un número.",
             "number.positive": "La capacidad debe ser un número positivo.",
             "number.max": "La capacidad debe ser menor o igual a 200.",
             "any.required": "La capacidad es obligatoria.",
-            "string.pattern.base": "La capacidad no debe contener espacios.",
         }),
     identificador: Joi.string()
         .max(100)
