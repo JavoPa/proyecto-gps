@@ -32,7 +32,7 @@ async function login(user) {
         { correo: userFound.correo, roles: userFound.rol, id: userFound._id},
         ACCESS_JWT_SECRET,
         {
-          expiresIn: "1d",
+          expiresIn: "30d",
         },
       );
     
