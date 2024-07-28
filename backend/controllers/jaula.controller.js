@@ -1,6 +1,7 @@
 const Jaula = require('../models/jaula.model');
 const Guardia = require('../models/guardia.model');
 const Acceso = require('../models/acceso.model');
+const { jaulaSchema } = require("../schema/jaula.schema");
 
 function generarEnlaceGoogleMaps(ubicacion) {
     if (ubicacion.startsWith("http")) {
@@ -55,7 +56,12 @@ async function getJaula(req, res) {
 }
 
 async function crearJaula(req, res) {
-    const { ubicacion, capacidad, identificador } = req.body;
+    const { error, value } = jaulaSchema.validate(req.body);
+    if (error) {
+        return res.status(400).send({ message: error.details[0].message });
+    }
+
+    const { ubicacion, capacidad, identificador } = value;
 
     try {
         const googleMapsLink = generarEnlaceGoogleMaps(ubicacion);
@@ -64,7 +70,6 @@ async function crearJaula(req, res) {
             ubicacion: googleMapsLink,
             capacidad,
             identificador,
-            situacion_actual: 0,
             guardiaAsignado: null
         });
 
@@ -77,9 +82,14 @@ async function crearJaula(req, res) {
 }
 
 async function modificarJaula(req, res) {
+    const { error, value } = jaulaSchema.validate(req.body);
+    if (error) {
+        return res.status(400).send({ message: error.details[0].message });
+    }
+
     try {
         const { id } = req.params;
-        const { ubicacion, capacidad, situacion_actual, identificador, guardiaAsignado } = req.body;
+        const { ubicacion, capacidad, identificador } = value;
 
         const jaula = await Jaula.findById(id);
         if (!jaula) {
@@ -90,7 +100,6 @@ async function modificarJaula(req, res) {
             jaula.ubicacion = generarEnlaceGoogleMaps(ubicacion);
         }
         jaula.capacidad = capacidad || jaula.capacidad;
-        jaula.situacion_actual = situacion_actual || jaula.situacion_actual;
         jaula.identificador = identificador || jaula.identificador;
 
         const jaulaModificada = await jaula.save();
