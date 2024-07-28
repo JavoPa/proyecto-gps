@@ -268,19 +268,21 @@ const ListaJaulas: React.FC = () => {
                                 <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                                 <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
                                 <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
+
+                                <View style={styles.modalButtonContainer}>
+
+                                    {selectedJaula?.guardiaAsignado && (
+                                        <TouchableOpacity style={styles.modalButton} onPress={handleRetirarGuardia}>
+                                            <Text style={styles.modalButtonText}>Retirar Guardia</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={styles.modalButtonContainer}>
 
-                                {selectedJaula?.guardiaAsignado && (
-                                    <TouchableOpacity style={styles.modalButton} onPress={handleRetirarGuardia}>
-                                        <Text style={styles.modalButtonText}>Retirar Guardia</Text>
-                                    </TouchableOpacity>
-                                )}
-                                </View>
 
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>

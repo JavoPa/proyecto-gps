@@ -212,11 +212,7 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                         <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
-                        <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
-                                <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
-                            </TouchableOpacity>
-                        </View>
+
                         <View style={styles.modalButtonContainer}>
                             {selectedJaula && !selectedJaula.guardiaAsignado && !jaulaAsignada && (
                                 <TouchableOpacity style={styles.modalButton} onPress={handleAsignarGuardia}>
@@ -231,6 +227,12 @@ const ListaJaulas: React.FC = () => {
                                 </TouchableOpacity>
                             )}
                         </View>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
+                                <Text style={styles.modalButtonText}>Ver en Google Maps</Text>
+                            </TouchableOpacity>
+                        </View>
+
                         <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
                                 <Text style={styles.modalButtonText}>Volver al Listado</Text>
