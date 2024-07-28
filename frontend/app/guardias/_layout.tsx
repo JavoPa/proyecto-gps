@@ -75,7 +75,7 @@ export default function GuardiasLayout() {
       <Tabs.Screen
         name="ingreso"
         options={{
-          title: 'Registro Manual',
+          title: 'Ingresar',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />

@@ -14,6 +14,7 @@ export default function ValidarInfo() {
       interface Acceso {
         token: string;
         entrada: Date;
+        salida: Date | null;
         usuario: {
           _id: string;
           nombre: string;
@@ -159,14 +160,24 @@ export default function ValidarInfo() {
               setError(null);
               setFieldsIngreso({rut: '',nombre: '',apellido: '',fono: '',correo: '',});
               setAcceso(response.data)
-              setBicicleta(null);
-              Alert.alert(
-                "Ingreso Manual Registrado",
-                "Datos de ingreso registrado de forma manual correctamente\n",
-                [
-                  { text: 'OK'}
-                ]
-              );
+              setBicicleta(response.data.usuario.bicicleta || null);
+              if(response.data.salida !== null){
+                Alert.alert(
+                  "Salida Registrada",
+                  "Datos de salida registrados correctamente\n",
+                  [
+                    { text: 'OK'}
+                  ]
+                );
+              }else{
+                Alert.alert(
+                  "Ingreso Manual Registrado",
+                  "Datos de ingreso registrado de forma manual correctamente\n",
+                  [
+                    { text: 'OK'}
+                  ]
+                );
+              }
             }else{
               alert(response.message || 'Hubo un error al ingresar manualmente 🥺');
             }
@@ -207,16 +218,23 @@ export default function ValidarInfo() {
       {acceso && (
         <View style={styles.container}>
           <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-          <Text style={styles.getStartedText}>Último ingreso registrado:</Text>
+          <Text style={styles.getStartedText}>Último registro:</Text>
           <Text style={styles.text}>Nombre: {acceso.usuario.nombre} {acceso.usuario.apellido}</Text>
           <Text style={styles.text}>RUT: {acceso.usuario.rut}</Text>
-          <Text style={styles.text}>Bicicleta: {bicicleta ? `${bicicleta.marca} ${bicicleta.color}` : 'No registrada'}</Text>
-          <Text style={styles.text}>Fecha: {new Date(acceso.entrada).toLocaleDateString()}</Text>
-          <Text style={styles.text}>Hora: {new Date(acceso.entrada).toLocaleTimeString()}</Text>
-          <Button
-            title="Modificar bicicleta"
-            onPress={() => setModalActualizarVisible(true)}
-          />
+          <Text style={styles.text}>Bicicleta: {bicicleta ? `${bicicleta.marca} ${bicicleta.color}` : 'Sin datos'}</Text>
+          <Text style={styles.text}>Fecha entrada: {new Date(acceso.entrada).toLocaleDateString()}</Text>
+          <Text style={styles.text}>Hora entrada: {new Date(acceso.entrada).toLocaleTimeString()}</Text>
+          {acceso.salida && (
+            <>
+              <Text style={styles.text}>Fecha salida: {new Date(acceso.salida).toLocaleDateString()}</Text>
+              <Text style={styles.text}>Hora salida: {new Date(acceso.salida).toLocaleTimeString()}</Text>
+            </>
+          )}
+          <CustomButton
+              title="Modificar bicicleta"
+              onPress={() => setModalActualizarVisible(true)}
+              style={styles.biciButton}
+            />
         </View>
       )}
       <BicicletaModal 
@@ -263,6 +281,10 @@ const styles = StyleSheet.create({
   registrarButton: {
     margin: 20,
     // backgroundColor: Colors.light.successButton,
+  },
+  biciButton: {
+    margin: 20,
+    backgroundColor: Colors.light.successButton,
   },
   getStartedText: {
     fontSize: 20,

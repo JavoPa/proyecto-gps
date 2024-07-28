@@ -1,18 +1,25 @@
 const { respondSuccess, respondError } = require('../utils/resHandler');
 const { handleError } = require('../utils/errorHandler');
 const horasService = require('../services/horas.service');
+const { horaSchema } = require('../schema/horas.schema');
 
 /**
  * Crea un horario
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
  */
-
 async function createHorario(req, res) {
   try {
     const { body } = req;
-    const [horario, error] = await horasService.createHorario(body);
-    if (error) return respondError(req, res, 500, error);
+
+    // Validar el cuerpo de la solicitud
+    const { error } = horaSchema.validate(body);
+    if (error) {
+      return respondError(req, res, 400, error.details[0].message);
+    }
+
+    const [horario, serviceError] = await horasService.createHorario(body);
+    if (serviceError) return respondError(req, res, 500, serviceError);
     if (!horario) return respondError(req, res, 400, 'No se creó el horario');
     respondSuccess(req, res, 201, horario);
   } catch (error) {
@@ -47,8 +54,13 @@ async function updateHorario(req, res) {
   try {
     // const { id } = req.params;
     const { body } = req;
-    const [horario, error] = await horasService.updateHorario(body);
-    if (error) return respondError(req, res, 500, error);
+    // Validar el cuerpo de la solicitud
+    const { error } = horaSchema.validate(body);
+    if (error) {
+      return respondError(req, res, 400, error.details[0].message);
+    }
+    const [horario, serviceError] = await horasService.updateHorario(body);
+    if (serviceError) return respondError(req, res, 500, error);
     if (!horario) return respondError(req, res, 400, 'No se actualizó el horario');
     respondSuccess(req, res, 200, horario);
   } catch (error) {

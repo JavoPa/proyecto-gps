@@ -31,7 +31,7 @@ const jaulaSchema = Joi.object({
         .messages({
             "string.empty": "El identificador no puede estar vacío.",
             "any.required": "El identificador es obligatorio.",
-            "string.max": "El identificador debe tener menos de 200 caracteres.",
+            "string.max": "El identificador debe tener menos de 100 caracteres.",
             "string.pattern.base": "El identificador debe contener solo letras, números y símbolos.",
         })
 });

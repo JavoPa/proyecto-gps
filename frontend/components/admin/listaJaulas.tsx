@@ -28,6 +28,7 @@ const ListaJaulas: React.FC = () => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Añade estado para el mensaje de error
 
     useFocusEffect(
         useCallback(() => {
@@ -102,6 +103,7 @@ const ListaJaulas: React.FC = () => {
     const handleViewDetails = async (id: string) => {
         try {
             setLoading(true);
+            setErrorMessage(null); // Restablece el mensaje de error
             const response = await getJaulaById(id);
             setSelectedJaula(response);
             setModalVisible(true);
@@ -145,11 +147,11 @@ const ListaJaulas: React.FC = () => {
                     setModalVisible(false);  // Cerrar el modal
                     fetchJaulas();  // Actualizar la lista de jaulas
                 } else {
-                    alert('No se pudo actualizar la jaula');
+                    setErrorMessage(response.message || 'No se pudo actualizar la jaula');
                 }
             } catch (error) {
                 console.error('Error updating jaula:', error);
-                alert('No se pudo actualizar la jaula');
+                setErrorMessage('No se pudo actualizar la jaula');
             }
         }
     };
@@ -268,19 +270,21 @@ const ListaJaulas: React.FC = () => {
                                 <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
                                 <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
                                 <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
+
+                                <View style={styles.modalButtonContainer}>
+
+                                    {selectedJaula?.guardiaAsignado && (
+                                        <TouchableOpacity style={styles.modalButton} onPress={handleRetirarGuardia}>
+                                            <Text style={styles.modalButtonText}>Retirar Guardia</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleEdit}>
                                         <Text style={styles.modalButtonText}>Modificar</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={styles.modalButtonContainer}>
 
-                                {selectedJaula?.guardiaAsignado && (
-                                    <TouchableOpacity style={styles.modalButton} onPress={handleRetirarGuardia}>
-                                        <Text style={styles.modalButtonText}>Retirar Guardia</Text>
-                                    </TouchableOpacity>
-                                )}
-                                </View>
 
                                 <View style={styles.modalButtonContainer}>
                                     <TouchableOpacity style={styles.modalButton} onPress={handleOpenMaps}>
@@ -292,8 +296,10 @@ const ListaJaulas: React.FC = () => {
                                         <Text style={styles.modalButtonText}>Volver al Listado</Text>
                                     </TouchableOpacity>
                                 </View>
+
                             </>
                         )}
+                        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
                     </View>
                 </View>
             </Modal>
@@ -411,6 +417,15 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: '#FFFFFF', // Color del texto de los botones del modal
         fontSize: 16,
+    },
+    errorText: {
+        textAlign: 'center',
+        fontSize: 15,
+        marginTop: 10,
+        marginBottom: 10,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        padding: 10,
     },
 });
 

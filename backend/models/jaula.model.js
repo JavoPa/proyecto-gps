@@ -16,7 +16,7 @@ const jaulaSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        maxlength: 200
+        maxlength: 100
     },
     guardiaAsignado: {
         type: mongoose.Schema.Types.ObjectId,
