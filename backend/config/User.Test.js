@@ -46,7 +46,6 @@ async function createUser() {
                 carrera: "Informatica",
                 situacion: "Regular"
             }).save();
-            console.log("Estudiante inicial creado Exitosamente!!");
 
             await new Estudiante({
                 rut : "20738483-2",
@@ -59,6 +58,19 @@ async function createUser() {
                 carrera: "Informatica",
                 situacion: "Regular"
             }).save();
+
+            await new Estudiante({
+                rut : "9787456-5",
+                nombre: "Javier",
+                apellido: "Placencia",
+                fono: "915895773",
+                correo: "javier@ubb.cl", 
+                password: await Usuario.encryptPassword("Javier123"), 
+                rol: "Estudiante",
+                carrera: "Informatica",
+                situacion: "Regular"
+            }).save();
+            console.log("Estudiantes creados Exitosamente!!");
         }
         if (F.length == 0) {
             await new Funcionario({
@@ -73,7 +85,7 @@ async function createUser() {
                 departamento: "Y",
                 cargo: "X"
             }).save();
-            console.log("Funcionario inicial creado Exitosamente!!");
+            console.log("Funcionarios creados Exitosamente!!");
         }
         if (Ad.length == 0) {
             await new Administrador({
@@ -84,10 +96,24 @@ async function createUser() {
                 correo: "admin@ubb.cl", 
                 password: await Usuario.encryptPassword("Admin123"), 
                 rol: "Administrador",
-                cargo: "x",
-                departamento: "y",
+                cargo: "Presidente",
+                departamento: "Fisica",
             }).save();
-            console.log("Administrador inicial creado Exitosamente!!");
+
+            await new Administrador({
+                rut : "15660760-6",
+                nombre: "Sebastian",
+                apellido: "Espinoza",
+                fono: "912345678",
+                correo: "sebastian@ubb.cl", 
+                password: await Usuario.encryptPassword("Sebastian123"), 
+                rol: "Administrador",
+                cargo: "Jefe de Informatica",
+                departamento: "Ciencias Empresariales"
+            }).save();
+
+            console.log("Administradores creados Exitosamente!!");
+
         }
         if (G.length == 0) {
             await new Guardia({
@@ -98,10 +124,21 @@ async function createUser() {
                 correo: "guardia@ubb.cl", 
                 password: await Usuario.encryptPassword("Guardia123"), 
                 rol: "Guardia",
-                cargo: "x",
-                situacion_laboral: "Contratado"
+                cargo: "Guardia",
+                situacion_laboral: "Vigente"
             }).save();
-            console.log("Guardia inicial creado Exitosamente!!");
+
+            await new Guardia({
+                rut : "21198754-5",
+                nombre: "Sergio",
+                apellido: "Morales",
+                fono: "987654321",
+                correo: "sergio@ubb.cl", 
+                password: await Usuario.encryptPassword("Sergio123"), 
+                rol: "Guardia",
+                cargo: "Guardia",
+                situacion_laboral: "Vigente"
+            }).save();
 
             const guardiaJavier = await new Guardia({
                 rut : "10027342-2",
@@ -111,9 +148,12 @@ async function createUser() {
                 correo: "gerardo@ubb.cl", 
                 password: await Usuario.encryptPassword("Gerardo123"), 
                 rol: "Guardia",
-                cargo: "x",
+                cargo: "Guardia",
                 situacion_laboral: "Vigente"
             }).save();
+
+            console.log("Guardias creados Exitosamente!!");
+
             await new Jaula({
                 ubicacion: "Estacionamiento FACE",
                 capacidad: 1,
