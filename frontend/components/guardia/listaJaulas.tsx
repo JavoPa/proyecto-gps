@@ -168,7 +168,7 @@ const ListaJaulas: React.FC = () => {
                     <Text style={styles.assignedTitle}>Jaula Asignada</Text>
                     <Text style={styles.itemText}>Identificador: {jaulaAsignada.identificador}</Text>
                     <Text style={styles.itemText}>Capacidad: {jaulaAsignada.capacidad}</Text>
-                    <Text style={styles.itemText}>Situación Actual: {jaulaAsignada.situacion_actual}</Text>
+                    <Text style={styles.itemText}>Espacios disponibles: {jaulaAsignada.situacion_actual}</Text>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(jaulaAsignada._id)}>
                             <Text style={styles.buttonText}>Ver</Text>
@@ -210,7 +210,7 @@ const ListaJaulas: React.FC = () => {
                         <Text style={styles.modalTitle}>Detalles de la Jaula</Text>
                         <Text style={styles.itemText}>Capacidad: {selectedJaula?.capacidad}</Text>
                         <Text style={styles.itemText}>Identificador: {selectedJaula?.identificador}</Text>
-                        <Text style={styles.itemText}>Situación Actual: {selectedJaula?.situacion_actual}</Text>
+                        <Text style={styles.itemText}>Espacios disponibles: {selectedJaula?.situacion_actual}</Text>
                         <Text style={styles.itemText}>Guardia Asignado: {selectedJaula?.guardiaAsignado ? `${selectedJaula.guardiaAsignado.nombre} ${selectedJaula.guardiaAsignado.apellido}` : 'No asignado'}</Text>
 
                         <View style={styles.modalButtonContainer}>
