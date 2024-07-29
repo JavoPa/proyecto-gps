@@ -115,3 +115,16 @@ export async function salidaGuardiaAdmin(jaulaId) {
     }
   }
 }
+
+export async function getJaulaActualUsuario() {
+  try {
+    const response = await axios.get('/jaulas/usuario/jaula');
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      return { message: 'Ocurrió un error en la api' };
+    }
+  }
+}

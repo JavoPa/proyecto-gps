@@ -202,7 +202,7 @@ async function getJaulaUsuario(req, res) {
             .populate('jaula');
 
         if (!acceso || !acceso.jaula) {
-            return respondSuccess(req, res, 200, "El usuario no está actualmente en ninguna jaula");
+            return res.status(200).send({ message: 'El usuario no está ninguna jaula.' });
         }
 
 
@@ -224,10 +224,10 @@ async function getJaulaUsuario(req, res) {
             } : null
         };
 
-        respondSuccess(req, res, 200, response);
+        res.status(200).json(response);
     } catch (error) {
-        handleError(error, "jaula.controller -> getJaulaUsuario");
-        respondError(req, res, 500, "Error al procesar la solicitud");
+        console.error('Error al obtener la jaula asignada al usuario', error);
+        res.status(500).send({ message: 'Error al procesar la solicitud' });
     }
 }
 
