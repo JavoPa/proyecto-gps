@@ -27,7 +27,7 @@ async function createUser() {
                 fono: "123456789",
                 correo: "academico@ubb.cl", 
                 password: await Usuario.encryptPassword("Academico123"), 
-                rol: "Academico",
+                rol: "academico",
                 cargo: "Academico",
                 area: "x",
                 situacion: "Contrato"
@@ -42,19 +42,19 @@ async function createUser() {
                 fono: "965874540",
                 correo: "bayron@ubb.cl", 
                 password: await Usuario.encryptPassword("Bayron123"), 
-                rol: "Estudiante",
+                rol: "estudiante",
                 carrera: "Informatica",
                 situacion: "Regular"
             }).save();
 
-            await new Estudiante({
+            const estudianteJavier = await new Estudiante({
                 rut : "20738483-2",
                 nombre: "Esteban",
                 apellido: "Rojas",
                 fono: "918938273",
                 correo: "esteban@ubb.cl", 
                 password: await Usuario.encryptPassword("Esteban123"), 
-                rol: "Estudiante",
+                rol: "estudiante",
                 carrera: "Informatica",
                 situacion: "Regular"
             }).save();
@@ -66,7 +66,7 @@ async function createUser() {
                 fono: "915895773",
                 correo: "javier@ubb.cl", 
                 password: await Usuario.encryptPassword("Javier123"), 
-                rol: "Estudiante",
+                rol: "estudiante",
                 carrera: "Informatica",
                 situacion: "Regular"
             }).save();
@@ -154,10 +154,10 @@ async function createUser() {
 
             console.log("Guardias creados Exitosamente!!");
 
-            await new Jaula({
-                ubicacion: "Estacionamiento FACE",
+            const jaulaJavier = await new Jaula({
+                ubicacion: "https://www.google.com/maps/search/?api=1&query=Aulas%27AC%27UBB",
                 capacidad: 1,
-                identificador: "EST-FACE",
+                identificador: "EST-AULAS-AA",
                 guardiaAsignado: guardiaJavier._id ? guardiaJavier._id : null
             }).save();
         }
