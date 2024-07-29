@@ -116,13 +116,13 @@ async function createUser() {
 
         }
         if (G.length == 0) {
-            await new Guardia({
-                rut : "11111111-5",
-                nombre: "Guardia",
-                apellido: "G",
+            const guardiTomas = await new Guardia({
+                rut : "19511677-6",
+                nombre: "Matias",
+                apellido: "Navea",
                 fono: "123456789",
-                correo: "guardia@ubb.cl", 
-                password: await Usuario.encryptPassword("Guardia123"), 
+                correo: "mnavea@ubb.cl", 
+                password: await Usuario.encryptPassword("Mnavea123"), 
                 rol: "Guardia",
                 cargo: "Guardia",
                 situacion_laboral: "Vigente"
