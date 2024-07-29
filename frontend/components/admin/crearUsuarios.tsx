@@ -1,9 +1,11 @@
 import React, { useState,useEffect } from 'react'
-import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal} from 'react-native';
+import { StyleSheet, View, Text, TextInput, Pressable , ScrollView, Button, Alert, Modal, Platform} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import validarRut from "@/services/validar.service"
 import { useRouter } from 'expo-router';
 import { CrearUsuario } from '@/services/crear.Usuarios';
+
+
 
 
 const data = [
@@ -133,40 +135,47 @@ const CrearUsuarios: React.FC = () =>{
             CrearUsuario(datos).then((respuesta) => {
               if(respuesta){
                 if(respuesta.message != undefined){
-                  //console.log(respuesta.message);
-                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK', onPress: () => setear()}]);
+                  if(Platform.OS === 'web'){
+                    alert(`${respuesta.message}`);
+                    setear();
+                  }else{
+                    Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK' , onPress: () => setear()}]);
+                  }
                 }
               }
             });
           
-          }
-          const datos = {
-            rut: rut2,
-            nombre: nombre2,
-            apellido: apellido2,
-            fono: numero2,
-            correo: correo2,
-            password: password,
-            rol: Tipo,
-            situacion: situacion,
-          }
-          //madar datos a funcion de crear usuario
-          CrearUsuario(datos).then((respuesta) => {
-            if(respuesta.message != undefined){
-              if(respuesta){
-                if(respuesta.message != undefined){
-                  //console.log(respuesta.message);
-                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
-                  setear();
+          }else{
+            const datos = {
+              rut: rut2,
+              nombre: nombre2,
+              apellido: apellido2,
+              fono: numero2,
+              correo: correo2,
+              password: password,
+              rol: Tipo,
+              situacion: situacion,
+            }
+            //madar datos a funcion de crear usuario
+            CrearUsuario(datos).then((respuesta) => {
+              if(respuesta.message != undefined){
+                if(respuesta){
+                  if(respuesta.message != undefined){
+                    if(Platform.OS === 'web'){
+                      alert(`${respuesta.message}`);
+                      setear();
+                    }else{
+                      Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK' , onPress: () => setear()}]);
+                    }
+                  }
                 }
               }
-            }
-          });
-  
+            });
+          }  
         }else{
           //crear usuario con los datos ingresados
           if(Tipo == "Estudiante"){
-            console.log("entrw")
+            
             const datos = {
               rut: rut,
               nombre: nombre,
@@ -182,34 +191,45 @@ const CrearUsuarios: React.FC = () =>{
             CrearUsuario(datos).then((respuesta) => {
               if(respuesta){
                 if(respuesta.message != undefined){
+                  if(Platform.OS === 'web'){
+                    alert(`${respuesta.message}`);
+                    setear();
+                  }else{
+                    Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK' , onPress: () => setear()}]);
+                  }
+                }
+              }
+            });
+          }else{
+            const datos = {
+              rut: rut,
+              nombre: nombre,
+              apellido: apellido,
+              fono: numero,
+              correo: correo,
+              password: password,
+              rol: Tipo,
+              situacion: situacion,
+            }
+            //madar datos a funcion de crear usuario
+            CrearUsuario(datos).then((respuesta) => {
+              if(respuesta){
+                if(respuesta.message != undefined){
                   //console.log(respuesta.message);
-                  Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
-                  setear();
+                  if(Platform.OS === 'web'){
+                    alert(`${respuesta.message}`);
+                    setear();
+                  }else{
+                    Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`,[{text: 'OK' , onPress: () => setear()}]);
+                  }
+                 
                 }
               }
             });
           }
-          const datos = {
-            rut: rut,
-            nombre: nombre,
-            apellido: apellido,
-            fono: numero,
-            correo: correo,
-            password: password,
-            rol: Tipo,
-            situacion: situacion,
-          }
-          //madar datos a funcion de crear usuario
-          CrearUsuario(datos).then((respuesta) => {
-            if(respuesta){
-              if(respuesta.message != undefined){
-                //console.log(respuesta.message);
-                Alert.alert(`${nombre} ${apellido}`,`${respuesta.message}`);
-                setear();
-              }
-            }
-          });
+          
         }
+        setear();
 
     }
 
@@ -229,6 +249,7 @@ const CrearUsuarios: React.FC = () =>{
         setNumero2(resp.fono.toString());
         setCorreo2(resp.correo);
         setPassword(resp.password);
+        setPassword2(resp.password);
         //setPassword2(resp.password);
         if(resp.__t == 'Academico' || resp.__t == 'Funcionario' || resp.__t == 'Estudiante' || resp.__t == 'Administrador'){
           setTipo(resp.__t);
@@ -274,10 +295,10 @@ const CrearUsuarios: React.FC = () =>{
             <Text style={styles.texto}>Crear Usuario</Text>
             <Dropdown
                 data={data}
-                style={styles.input}
+                style={styles.inputCrear}
                 labelField="label"
                 valueField="value"
-                placeholder={Tipo}
+                placeholder={"Seleccione el Tipo de Usuario a crear"}
                 value={Tipo}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
@@ -323,14 +344,14 @@ const CrearUsuarios: React.FC = () =>{
                     <TextInput style={styles.input} placeholder={apellido2}  onChangeText={setApellido}></TextInput>
                     <TextInput style={styles.input} placeholder={numero2} inputMode= 'numeric' onChangeText={setNumero} ></TextInput>
                     <TextInput style={styles.input} placeholder={correo2} inputMode= 'email' onChangeText={setCorreo}></TextInput>
-                    <TextInput style={styles.input} placeholder={password2} secureTextEntry onChangeText={setPassword}></TextInput>
+                    <TextInput style={styles.input} placeholder={password2} secureTextEntry={true} onChangeText={setPassword}></TextInput>
                     {tipoLabel()}
                     <Dropdown
                         data={data}
                         style={styles.input}
                         labelField="label"
                         valueField="value"
-                        placeholder={Tipo}
+                        placeholder={"Seleccione el Tipo de usuario"}
                         value={Tipo}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
@@ -344,7 +365,7 @@ const CrearUsuarios: React.FC = () =>{
                         style={styles.input}
                         labelField="label"
                         valueField="value"
-                        placeholder={situacion}
+                        placeholder={"Ingrese la Situacion Academica"}
                         value={situacion}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
@@ -358,7 +379,7 @@ const CrearUsuarios: React.FC = () =>{
                         style={styles.input}
                         labelField="label"
                         valueField="value"
-                        placeholder={carrera}
+                        placeholder={"Seleccione una Carrera"}
                         value={carrera}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
@@ -409,7 +430,7 @@ const CrearUsuarios: React.FC = () =>{
                           style={styles.input}
                           labelField="label"
                           valueField="value"
-                          placeholder={Tipo}
+                          placeholder={"Tipo de usuario"}
                           value={Tipo}
                           onFocus={() => setIsFocus(true)}
                           onBlur={() => setIsFocus(false)}
@@ -423,7 +444,7 @@ const CrearUsuarios: React.FC = () =>{
                           style={styles.input}
                           labelField="label"
                           valueField="value"
-                          placeholder={situacion}
+                          placeholder={"Seleccione una Situacion laboral"}
                           value={situacion}
                           onFocus={() => setIsFocus(true)}
                           onBlur={() => setIsFocus(false)}
@@ -459,9 +480,22 @@ const styles = StyleSheet.create({
       padding: 16,
       backgroundColor: '#EDF2F4',
       justifyContent: 'center',
+      alignItems: 'center',
+      alignContent: 'center',
+    },
+    inputCrear: {
+      height: 40,
+      width: '90%',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      marginBottom: 12,
+      padding: 8,
+      borderRadius: 4,
+      backgroundColor: '#FFFFFF', 
     },
     input: {
       height: 40,
+      width: 'auto',
       borderColor: '#ccc',
       borderWidth: 1,
       marginBottom: 12,

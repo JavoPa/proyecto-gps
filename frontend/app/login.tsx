@@ -41,7 +41,10 @@ export default function login() {
       setCargando(false);
       if(session){
         const rol = rolesService(session);
-        if(rol == "academico" || rol == "funcionario" || rol == "estudiante" || rol == "invitado"){
+        if(rol == "academico"  || rol == "Academico"|| 
+          rol == "funcionario"  || rol == "Funcionario"|| 
+          rol == "estudiante" || rol == "Estudiante" || 
+          rol == "invitado" || rol == "Invitado"){
           setCargando(false);
           putPushToken(session, pushToken);
           return router.replace('/tabs')

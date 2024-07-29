@@ -4,7 +4,7 @@ import { Text, View } from '@/components/Themed';
 import React, { useState, useEffect, useRef} from 'react';
 import { obtenerUsuarios } from '@/services/busqueda.user';
 import { eliminarUsuario, editarUsuario } from '@/services/crear.Usuarios';
-import { useRouter } from 'expo-router';
+import { Platform } from 'react-native';
 
 
 export default function TabOneScreen() {
@@ -14,7 +14,7 @@ export default function TabOneScreen() {
     const [usuarios3, setUsuarios3] = useState([]); // copia de usuarios para buscar y renderizar
     const [usuarios4, setUsuarios4] = useState([]); // usuarios4 para editar
     const [cargando,setCargando] = useState(false);
-    const [consulta,setConsulta] = useState(); // busqueda de usuarios
+    const [consulta,setConsulta] = useState(""); // busqueda de usuarios
     const [modalVisible, setModalVisible] = useState(false); // estado para mostrar el modal
     const [modalVisibleEditar, setModalVisibleEditar] = useState(false); // estado para mostrar el modal
 
@@ -49,6 +49,7 @@ export default function TabOneScreen() {
           const rutB = b.rut.replace(/[^0-9]/g, '');
           return parseInt(rutA) - parseInt(rutB);
         });
+        setConsulta("");
         setUsuarios(usuariosOrdenados);
         setUsuarios3(usuariosOrdenados);
       });
@@ -94,7 +95,15 @@ export default function TabOneScreen() {
     }
 
     const handleElminar = (id) => {
-      Alert.alert('Eliminar Usuario', '¿Está seguro que desea eliminar este usuario?',[{text: 'Cancelar', onPress: () => {return;}},{text: 'Eliminar', onPress: () => {
+      if(Platform.OS === 'web') {
+        eliminarUsuario(id).then((data) => {
+          if(!data) alert('Error al eliminar el usuario', 'Intente nuevamente');
+          alert('Eliminado');
+          setCargando(true);
+          sacarDatos();
+        });
+      }else{
+        Alert.alert('Eliminar Usuario', '¿Está seguro que desea eliminar este usuario?',[{text: 'Cancelar', onPress: () => {return;}},{text: 'Eliminar', onPress: () => {
           console.log(id);
           eliminarUsuario(id).then((data) => {
             if(!data) Alert.alert('Error al eliminar el usuario', 'Intente nuevamente',[{text: 'OK',}]);
@@ -105,6 +114,8 @@ export default function TabOneScreen() {
           });
         } 
       }]);
+      }
+      
     }
 
     const handleGuardar = (id) => {
@@ -163,6 +174,9 @@ export default function TabOneScreen() {
 
     return (
       <View style={styles.container}>
+        <TouchableOpacity onPress={sacarDatos} style={styles.bo}>
+          <Text style={styles.modalButtonText}>Actualizar</Text>
+        </TouchableOpacity>
         <Text style= {styles.titel}>Lista de usuarios</Text>
         <TextInput
           placeholder='Buscar por rut'
@@ -205,8 +219,13 @@ export default function TabOneScreen() {
                 <Text style={styles.usuarios}>Apellido: {usuarios2.apellido}</Text>
                 <Text style={styles.usuarios}>Correo:{usuarios2.correo}</Text>
                 <Text style={styles.usuarios}>Fono: {usuarios2.fono}</Text>
+                <Text style={styles.usuarios}>Rol: {usuarios2.__t}</Text>
+                <Text style={styles.usuarios}>Situacion: {usuarios2.situacion}</Text>
                 <View style={styles.modalButtonContainer}>
-                  <TouchableOpacity style={styles.modalButton}  onPress={()=>setModalVisible(false)} >
+                  <TouchableOpacity style={styles.modalButton}  onPress={()=>{
+                    setModalVisible(false);
+                    sacarDatos();
+                    }} >
                     <Text style={styles.modalButtonText}>Cerrar</Text>
                   </TouchableOpacity>
                   <TouchableHighlight style={styles.modalButton}  onPress={()=>{
@@ -274,9 +293,6 @@ export default function TabOneScreen() {
         
         ))}
       </ScrollView>
-        <TouchableOpacity onPress={sacarDatos} style={styles.bo}>
-          <Text style={styles.modalButtonText}>Actualizar</Text>
-        </TouchableOpacity>
       </View>
 
     );
@@ -285,12 +301,15 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 30,
     backgroundColor: '#EDF2F4',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   vistaUsuario : {
-    marginBottom: 16,
-    padding: 16,
+    
+    marginBottom: 10,
+    padding: 10,
     borderWidth: 1,
     borderRadius: 8,
     borderColor: '#ccc',
@@ -314,7 +333,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   vistaBotones: {
-    marginTop: 8,
+    marginTop: 10,
+    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#ffffff',
@@ -366,6 +386,7 @@ const styles = StyleSheet.create({
   },
   busqueda: {
     height: 40,
+    width: 'auto',
     borderColor: '#ccc',
     backgroundColor: '#ffffff',
     padding: 8,
@@ -376,6 +397,7 @@ const styles = StyleSheet.create({
   botonEliminar:{
     backgroundColor: '#DB2B39', // Color de los botones de eliminar
     borderRadius: 8,
+    margin: 15,
     paddingVertical: 10,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -384,6 +406,7 @@ const styles = StyleSheet.create({
   bo:{
     backgroundColor: '#2A628F',
     borderRadius: 8,
+    margin: 15,
     paddingVertical: 10,
     paddingHorizontal: 16,
     justifyContent: 'center',
