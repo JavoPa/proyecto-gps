@@ -3,8 +3,7 @@ const Usuario = require("./usuario.model.js");
 
 const administradorSchema = new mongoose.Schema({
     situacion: {
-        type: String,
-        required: true
+        type: String
     }
 });
 
