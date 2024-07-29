@@ -28,7 +28,7 @@ export default function TabOneScreen() {
     const scrollViewRef = useRef(null);
     //obtener usuarios por nombre mandando la session a la funcion
     useEffect(() => {
-      handleSearch();
+      //handleSearch();
       sacarDatos();
     }, []);
 
