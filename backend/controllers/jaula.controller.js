@@ -191,4 +191,45 @@ async function getJaulaAsignada(req, res) {
     }
 }
 
-module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula, getGuardiaAsignado, getJaulaAsignada };
+async function getJaulaUsuario(req, res) {
+    try {
+        const userId = req.id; // Asumimos que el ID del usuario está disponible en req.id
+        if (!userId) return respondError(req, res, 400, "ID de usuario no proporcionado");
+
+        // Buscar el acceso más reciente donde entrada no es null y salida es null
+        const acceso = await Acceso.findOne({ usuario: userId, entrada: { $ne: null }, salida: null })
+            .sort({ entrada: -1 }) // Ordenar por entrada descendente para obtener el más reciente
+            .populate('jaula');
+
+        if (!acceso || !acceso.jaula) {
+            return respondSuccess(req, res, 200, "El usuario no está actualmente en ninguna jaula");
+        }
+
+
+        const jaula = acceso.jaula;
+
+
+        const countAccesos = await contarAccesosJaula(jaula._id);
+        const situacion_actual = jaula.capacidad - countAccesos;
+
+        const response = {
+            _id: jaula._id,
+            ubicacion: jaula.ubicacion,
+            capacidad: jaula.capacidad,
+            situacion_actual: situacion_actual,
+            identificador: jaula.identificador,
+            guardiaAsignado: jaula.guardiaAsignado ? {
+                nombre: jaula.guardiaAsignado.nombre,
+                apellido: jaula.guardiaAsignado.apellido
+            } : null
+        };
+
+        respondSuccess(req, res, 200, response);
+    } catch (error) {
+        handleError(error, "jaula.controller -> getJaulaUsuario");
+        respondError(req, res, 500, "Error al procesar la solicitud");
+    }
+}
+
+
+module.exports = { listarJaulas, getJaula, crearJaula, modificarJaula, eliminarJaula, getGuardiaAsignado, getJaulaAsignada, getJaulaUsuario };
