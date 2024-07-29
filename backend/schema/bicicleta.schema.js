@@ -14,7 +14,7 @@ const bicicletaSchema = Joi.object({
         "string.empty": "La marca no puede estar vacía.",
         "any.required": "La marca es obligatoria.",
         "string.base": "La marca debe ser de tipo string.",
-        "string.pattern.base": "El color solo puede contener letras y espacios.",
+        "string.pattern.base": "La marca solo puede contener letras y espacios.",
       }),
     modelo: Joi.string()
       .messages({
