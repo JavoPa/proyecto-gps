@@ -341,7 +341,6 @@ module.exports = {
     indexUsuariosConBicicleta,
     getUsuario,
     getUsuarios,
-    crearUsuario,
     verificarIntranet,
     eliminarUsuario,
     enviarNotif,
