@@ -66,8 +66,9 @@ const GuardiaForm: React.FC = () => {
     return (
         <KeyboardAvoidingView 
             style={{ flex: 1 }} 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <ScrollView contentContainerStyle={styles.container}>
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
                 <Text style={styles.title}>Crear Nuevo Guardia</Text>
                 <TextInput
                     style={styles.input}
