@@ -169,8 +169,8 @@ async function getJaulaAsignada(req, res) {
             return res.status(200).send({ message: 'El guardia no está asignado a ninguna jaula.' });
         }
 
-        const countAccesos = await contarAccesosJaula(jaula._id);
-        const situacion_actual = jaula.capacidad - countAccesos;
+        const countAccesos = await contarAccesosJaula(jaulaAsignada._id);
+        const situacion_actual = jaulaAsignada.capacidad - countAccesos;
 
         const response = {
             _id: jaulaAsignada._id,
