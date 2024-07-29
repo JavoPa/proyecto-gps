@@ -91,7 +91,17 @@ const ListaJaulas: React.FC = () => {
                 tokens: pushToken,
                 message: `Se le solicita en bicicletero ${selectedJaula?.identificador}`
             });
-
+            
+            if (notificationResponse.data.tickets) {
+                alert('Guardia solicitado');
+                console.log("hay guardia");
+                return;
+            } else {
+                alert('No se pudo enviar la notificación, intente de nuevo');
+                console.log("no hay guardia");
+                return;
+            }
+            /*
             if (notificationResponse.data.tickets[0].status === 'ok') {
                 alert('Guardia solicitado');
                 return;
@@ -99,6 +109,7 @@ const ListaJaulas: React.FC = () => {
                 alert('No se pudo enviar la notificación, intente de nuevo');
                 return;
             }
+            */
         } catch (error) {
             console.error('Error', error);
         }
