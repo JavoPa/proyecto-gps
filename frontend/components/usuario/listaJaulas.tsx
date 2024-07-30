@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Modal, TouchableOpacity, Linking, Dimensions } from 'react-native';
-import { getJaulas, getJaulaById } from '@/services/jaula.service';
+import { getJaulas, getJaulaById, getJaulaActualUsuario } from '@/services/jaula.service';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from '../../services/root.service';
 
@@ -26,10 +26,13 @@ const ListaJaulas: React.FC = () => {
     const [selectedJaula, setSelectedJaula] = useState<Jaula | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [jaulaActual, setJaulaActual] = useState<Jaula | null>(null);
 
     useFocusEffect(
         useCallback(() => {
             fetchJaulas();
+            fetchJaulaActual();
+
         }, [])
     );
 
@@ -48,6 +51,20 @@ const ListaJaulas: React.FC = () => {
             alert('No se pudo cargar la lista de jaulas');
         } finally {
             setLoading(false);
+        }
+    }, []);
+
+    const fetchJaulaActual = useCallback(async () => {
+        try {
+            const response = await getJaulaActualUsuario();
+            if (response.message) {
+                setJaulaActual(null);
+            } else {
+                setJaulaActual(response);
+            }
+        } catch (error) {
+            console.error('Error fetching jaula actual:', error);
+            alert('No se pudo cargar la jaula actual del usuario');
         }
     }, []);
 
@@ -91,7 +108,17 @@ const ListaJaulas: React.FC = () => {
                 tokens: pushToken,
                 message: `Se le solicita en bicicletero ${selectedJaula?.identificador}`
             });
-
+            
+            if (notificationResponse.data.tickets) {
+                alert('Guardia solicitado');
+                console.log("hay guardia");
+                return;
+            } else {
+                alert('No se pudo enviar la notificación, intente de nuevo');
+                console.log("no hay guardia");
+                return;
+            }
+            /*
             if (notificationResponse.data.tickets[0].status === 'ok') {
                 alert('Guardia solicitado');
                 return;
@@ -99,6 +126,7 @@ const ListaJaulas: React.FC = () => {
                 alert('No se pudo enviar la notificación, intente de nuevo');
                 return;
             }
+            */
         } catch (error) {
             console.error('Error', error);
         }
@@ -136,6 +164,19 @@ const ListaJaulas: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            {jaulaActual && (
+                <View style={styles.assignedContainer}>
+                    <Text style={styles.assignedTitle}>Jaula Actual</Text>
+                    <Text style={styles.itemText}>Identificador: {jaulaActual.identificador}</Text>
+                    <Text style={styles.itemText}>Capacidad: {jaulaActual.capacidad}</Text>
+                    <Text style={styles.itemText}>Espacios disponibles: {jaulaActual.situacion_actual}</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={() => handleViewDetails(jaulaActual._id)}>
+                            <Text style={styles.buttonText}>Ver</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
             <Text style={styles.title}>Listado de Jaulas</Text>
             <TextInput
                 style={styles.searchInput}
@@ -178,15 +219,16 @@ const ListaJaulas: React.FC = () => {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
-                                <Text style={styles.modalButtonText}>Volver al Listado</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.modalButtonContainer}>
                             <TouchableOpacity style={styles.modalButton} onPress={handleNotification}>
                                 <Text style={styles.modalButtonText}>Solicitar guardia</Text>
                             </TouchableOpacity>
                         </View>
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleBackToList}>
+                                <Text style={styles.modalButtonText}>Volver al Listado</Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
                 </View>
             </Modal>
@@ -289,6 +331,20 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: '#FFFFFF',
         fontSize: 16,
+    },
+    assignedContainer: {
+        padding: 16,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ccc',
+        backgroundColor: '#FFFFFF',
+        marginBottom: 16,
+    },
+    assignedTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        color: '#13293D',
     },
 });
 

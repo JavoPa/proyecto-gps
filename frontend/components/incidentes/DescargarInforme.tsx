@@ -12,7 +12,7 @@ interface DescargarInformeProps {
 const DescargarInforme: React.FC<DescargarInformeProps> = ({ navigateTo }) => {
   const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedMonth, setSelectedMonth] = useState('5');
+  const [selectedMonth, setSelectedMonth] = useState('7');
 
   const years = Array.from({ length: 35 }, (_, i) => (1990 + i).toString());
   const months = [
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   picker: {
-    height: 40,
+    height: 50,
     width: '100%',
   },
   button: {

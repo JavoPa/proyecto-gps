@@ -43,7 +43,7 @@ const BicicletaModal: React.FC<BicicletaModalProps> = ({ modalVisible, setModalV
                         />
                     </View>
                     <View style={styles.line}>
-                        <Text style={styles.txtInput}>Modelo: </Text>
+                        <Text style={styles.txtInput}>Color: </Text>
                         <TextInput
                             style={styles.input} 
                             onChangeText={(value) => handleFieldChange('color', value)}
