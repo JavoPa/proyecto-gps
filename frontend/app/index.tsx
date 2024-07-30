@@ -25,6 +25,9 @@ export default function TabOneScreen() {
   }
   //verificar token renvia
   const rol = rolesService(session);
+  if(session == null){
+    return <Redirect href={('/login')}/> //router.replace('/login')
+  }
   if(rol == "academico" || rol == "funcionario" || rol == "estudiante"){
     return <Redirect href={('/tabs')}/> // router.replace('/tabs')modificar la rediccion
   }else{
