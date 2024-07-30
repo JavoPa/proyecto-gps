@@ -80,8 +80,8 @@ const HistorialViewer: React.FC = () => {
         if (term === '') {
             setFilteredHistorial(historial);
         } else {
-            const filtered = historial.filter(item =>
-                item.usuario.rut.toLowerCase().includes(term.toLowerCase())
+            const filtered = historial.filter(item => 
+                item.usuario && item.usuario.rut.toLowerCase().includes(term.toLowerCase())
             );
             setFilteredHistorial(filtered);
         }
